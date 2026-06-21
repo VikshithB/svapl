@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { TurbineCanvas } from "@/app/components/TurbineCanvas";
+import { motion, useScroll, useTransform } from "motion/react";
 
 import imgHeader from "@/imports/Desktop1/44363911e71cf9a03eb8eca1d986961f050713d9.png";
 import imgLogo from "@/imports/Desktop1/1d148265799be8543f36d6a99d6999ef7e88dcf8.png";
@@ -19,18 +21,20 @@ import NewsroomPage from "@/app/pages/NewsroomPage";
 import CareersPage from "@/app/pages/CareersPage";
 import WhatWeBuildPage from "@/app/pages/WhatWeBuildPage";
 import HowWeBuildPage from "@/app/pages/HowWeBuildPage";
+import { VerificationProofStrip } from "@/app/components/VerificationProofStrip";
+import { ProductShowcase3D } from "@/app/components/ProductShowcase3D";
+import { FactoryVideoPanel } from "@/app/components/FactoryVideoPanel";
+import { CompletedProjectsGrid } from "@/app/components/CompletedProjectsGrid";
 
 type Page = "home" | "about" | "what-we-build" | "how-we-build" | "programmes" | "newsroom" | "contact" | "careers";
 
 // Nav items: [label, page | null for scroll-to-section, sectionId?]
 type NavItem = { label: string; page?: Page; section?: string };
 const NAV_ITEMS: NavItem[] = [
-  { label: "About", page: "about" },
-  { label: "What We Build", page: "what-we-build" as Page },
-  { label: "How We Build", page: "how-we-build" as Page },
-  { label: "Programmes", page: "programmes" },
-  { label: "Newsroom", page: "newsroom" },
-  { label: "Contact", page: "contact" },
+  { label: "CAPABILITIES", page: "what-we-build" as Page },
+  { label: "INFRASTRUCTURE", page: "how-we-build" as Page },
+  { label: "ABOUT", page: "about" as Page },
+  { label: "CONNECT", page: "contact" as Page },
 ];
 
 const CAPABILITIES = [
@@ -124,119 +128,90 @@ function EtLogo({ className }: { className?: string }) {
 
 function NavBar({ onNavigate, currentPage }: { onNavigate: (page: Page, section?: string) => void; currentPage: Page }) {
   const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
-  const lastY = useRef(0);
 
-  // Hide on scroll-down, reveal on scroll-up
   useEffect(() => {
     const onScroll = () => {
-      const y = window.scrollY;
-      const goingDown = y > lastY.current;
-      // Always show when near top (< 80px) or scrolling up
-      setVisible(!goingDown || y < 80);
-      // Past the hero edge → fill with a subtle grey so the bar reads cleanly
-      setScrolled(y > 80);
-      lastY.current = y;
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNav = (item: NavItem) => {
+  const handleNav = (targetPage: Page) => {
     setOpen(false);
-    if (item.page) onNavigate(item.page);
-    else if (item.section) onNavigate("home", item.section);
+    onNavigate(targetPage);
   };
 
-  const isActive = (item: NavItem) => item.page ? currentPage === item.page : currentPage === "home";
-
   return (
-    /*
-      No backdrop-blur, no background.
-      mix-blend-mode:difference on text/icon elements makes them auto-invert
-      against any background colour — white on dark, dark on light.
-      The "Request Briefing" button is kept outside blend-mode so its
-      solid white bg always reads cleanly on dark sections.
-    */
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-        visible ? "translate-y-0" : "-translate-y-full"
-      } ${
-        scrolled
-          ? "bg-white/[0.04] border-b border-white/[0.06]"
-          : "bg-transparent border-b border-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled ? "bg-[#050505]/90 backdrop-blur-md border-b border-white/[0.04]" : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="flex items-center justify-between px-5 sm:px-10 lg:px-20 h-20">
-
+      <div className="flex items-center justify-between px-6 sm:px-10 lg:px-20 h-20">
         {/* Logo */}
-        <button
-          onClick={() => onNavigate("home")}
-        >
-          {/* Logo artwork is black-on-transparent; the site is dark, so render
-              the white variant via invert. (brightness(0) → solid black,
-              invert(1) → solid white; transparent pixels stay transparent.) */}
+        <button onClick={() => handleNav("home")} className="relative group focus:outline-none">
           <ImageWithFallback
             src={imgLogo}
             alt="SVAPL"
-            className="h-11 lg:h-12 w-auto object-contain [filter:brightness(0)_invert(1)]"
+            className="h-10 lg:h-11 w-auto object-contain [filter:brightness(0)_invert(1)] transition-transform duration-500 group-hover:scale-[1.03]"
           />
+          {/* Blueprint subtle corner indicators */}
+          <div className="absolute -top-1.5 -left-1.5 w-1.5 h-1.5 border-t border-l border-blueprint/30 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute -bottom-1.5 -right-1.5 w-1.5 h-1.5 border-b border-r border-blueprint/30 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
 
-        {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-[24px]">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.label}
-              onClick={() => handleNav(item)}
-              /* mix-blend-mode:difference: white text → appears white on dark, black on light */
-              className={`[mix-blend-mode:difference] font-['Space_Grotesk',sans-serif] text-sm font-medium transition-colors ${
-                isActive(item) ? "text-blueprint" : "text-white hover:text-white/70"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          {/* Button intentionally has no blend-mode — solid white always works on dark sections */}
-          <button
-            onClick={() => onNavigate("contact")}
-            className="bg-white text-black font-['Archivo',sans-serif] font-semibold text-sm px-5 py-[10px] rounded-[4px] hover:bg-[#f70] hover:text-white transition-colors"
-          >
-            Request Briefing
-          </button>
+        {/* Minimal Navigation Links separated by thin slashes */}
+        <div className="hidden md:flex items-center">
+          {NAV_ITEMS.map((item, idx) => {
+            const active = currentPage === item.page;
+            return (
+              <div key={item.label} className="flex items-center">
+                {idx > 0 && <span className="text-white/10 font-tech text-xs mx-4 select-none">/</span>}
+                <button
+                  onClick={() => handleNav(item.page!)}
+                  className={`font-tech text-[12px] tracking-[0.22em] font-medium transition-all duration-300 relative py-1 focus:outline-none ${
+                    active ? "text-blueprint" : "text-blueprint-dim hover:text-[#FFFFFF]"
+                  }`}
+                >
+                  {item.label}
+                  {active && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blueprint shadow-[0_0_6px_#ff7700]" />
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Mobile hamburger — blends like text */}
+        {/* Mobile menu trigger */}
         <button
-          className="lg:hidden [mix-blend-mode:difference] text-white p-1"
+          className="md:hidden text-blueprint-dim hover:text-white p-1 transition-colors focus:outline-none"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile menu — solid panel, no blend needed */}
+      {/* Mobile nav panel */}
       {open && (
-        <div className="lg:hidden bg-black/95 border-t border-white/10 px-5 pb-6 flex flex-col gap-4 pt-4">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.label}
-              onClick={() => handleNav(item)}
-              className={`text-left font-['Space_Grotesk',sans-serif] text-sm font-medium transition-colors ${
-                isActive(item) ? "text-blueprint" : "text-white hover:text-blueprint"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          <button
-            onClick={() => { setOpen(false); onNavigate("contact"); }}
-            className="bg-white text-black font-['Archivo',sans-serif] font-semibold text-sm px-5 py-3 rounded-[4px] self-start hover:bg-[#f70] hover:text-white transition-colors"
-          >
-            Request Briefing
-          </button>
+        <div className="md:hidden bg-[#050505] border-b border-white/[0.05] px-6 py-6 flex flex-col gap-4">
+          {NAV_ITEMS.map((item) => {
+            const active = currentPage === item.page;
+            return (
+              <button
+                key={item.label}
+                onClick={() => handleNav(item.page!)}
+                className={`text-left font-tech text-[12px] tracking-[0.2em] uppercase transition-colors py-2 focus:outline-none ${
+                  active ? "text-blueprint" : "text-blueprint-dim hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </nav>
@@ -246,47 +221,218 @@ function NavBar({ onNavigate, currentPage }: { onNavigate: (page: Page, section?
 // ─── Hero ──────────────────────────────────────────────────────────────────────
 
 function HeroSection() {
+  const [stats, setStats] = useState({
+    lat: 17.3850,
+    lng: 78.4867,
+    clock: "10:10:34",
+    calib: 0.9998,
+  });
+
+  const [hoveredWord, setHoveredWord] = useState<"precision" | "aerospace" | "manufacturing" | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStats({
+        lat: 17.3850 + (Math.random() - 0.5) * 0.0003,
+        lng: 78.4867 + (Math.random() - 0.5) * 0.0003,
+        clock: new Date().toLocaleTimeString(),
+        calib: 0.9995 + Math.random() * 0.0009,
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const lines = ["PRECISION", "AEROSPACE", "MANUFACTURING."];
+  const hoverKeys: ("precision" | "aerospace" | "manufacturing")[] = ["precision", "aerospace", "manufacturing"];
+
+  const HOVER_IMAGES = {
+    precision: {
+      src: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600",
+      label: "TITANIUM ROTOR IMPELLER // 5-AXIS MILLING",
+      coords: "X: 384.29 // Y: 104.58 // Z: -12.39"
+    },
+    aerospace: {
+      src: "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&q=80&w=600",
+      label: "ROCKET MOTOR CASE INTEGRATION",
+      coords: "ALT: 120KM // ORBITAL DEPLOYMENT"
+    },
+    manufacturing: {
+      src: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600",
+      label: "CNC HEAVY MULTI-AXIS MILLING STATION",
+      coords: "FEED: 1200MM/MIN // SPINDLE: 18K RPM"
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const lineVariants = {
+    hidden: { y: "100%", opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 1.2,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  const microVariants = {
+    hidden: { opacity: 0, x: -15 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: 0.9,
+        duration: 1.0,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  const turbineVariants = {
+    hidden: { opacity: 0, scale: 0.92 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: 0.5,
+        duration: 1.6,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
   return (
-    <section className="relative min-h-[860px] h-screen max-h-[980px] flex items-end">
-      <ImageWithFallback
-        src={imgHeader}
-        alt="SVAPL manufacturing facility"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.05)] via-transparent to-black/85" />
+    <section className="relative min-h-screen w-full bg-[#050505] bp-grid overflow-hidden flex items-center pt-20">
+      {/* Blueprint background lines */}
+      <div className="absolute left-6 md:left-10 top-0 bottom-0 w-[1px] bg-blueprint/5 pointer-events-none" />
+      <div className="absolute right-6 md:right-10 top-0 bottom-0 w-[1px] bg-blueprint/5 pointer-events-none" />
+      <div className="absolute left-0 right-0 top-20 h-[1px] bg-blueprint/5 pointer-events-none" />
 
-      <div className="relative z-10 w-full px-5 sm:px-10 lg:px-[44px] xl:px-20 pb-16 sm:pb-20 lg:pb-[116px] max-w-[1440px] mx-auto">
-        <h1
-          className="font-['Space_Grotesk',sans-serif] font-normal text-white text-4xl sm:text-5xl lg:text-[64px] leading-tight lg:leading-[1.1] tracking-[-2px] lg:tracking-[-2.76px] mb-5 lg:mb-6"
-          style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.1)" }}
-        >
-          Fabricate. Assemble. Certify.
-        </h1>
+      {/* Top left technical corner */}
+      <div className="absolute top-24 left-6 md:left-10 w-4 h-4 border-t border-l border-blueprint/30 pointer-events-none" />
+      <div className="absolute top-24 left-6 md:left-10 w-1 h-1 -translate-x-1/2 -translate-y-1/2 bg-blueprint/50 rounded-full" />
 
-        <div className="flex flex-col lg:flex-row items-start lg:items-end gap-6 lg:gap-0 lg:flex-wrap">
-          {/* Description */}
-          <div className="flex-1 min-w-0 lg:border-l lg:border-white lg:pl-6">
-            <p
-              className="font-['Space_Grotesk',sans-serif] font-medium text-white text-base lg:text-lg leading-relaxed max-w-xl"
-              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.1)" }}
-            >
-              Mission-critical manufacturing for the world&apos;s most demanding
-              aerospace and defence programmes — advanced fabrication, precision
-              machining, welding, assembly and testing, under one certified roof.
-            </p>
-          </div>
+      {/* Bottom right technical corner */}
+      <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-4 h-4 border-b border-r border-blueprint/30 pointer-events-none" />
+      <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-1 h-1 translate-x-1/2 translate-y-1/2 bg-blueprint/50 rounded-full" />
 
-          {/* CTAs */}
-          <div className="flex flex-wrap gap-[14px] lg:ml-8 shrink-0">
-            <button className="bg-white text-black font-['Space_Grotesk',sans-serif] font-bold text-sm lg:text-base px-6 lg:px-8 py-3 rounded-[4px] hover:bg-[#f70] hover:text-white transition-colors">
-              Request Strategic Briefing
-            </button>
-            <button className="border border-white text-white font-['Space_Grotesk',sans-serif] font-bold text-sm lg:text-base px-6 lg:px-8 py-3 rounded-[4px] hover:bg-white/10 transition-colors">
-              Contact Us
-            </button>
-          </div>
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-12 md:py-20 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-4 items-center">
+        {/* Left Column: Massive Header */}
+        <div className="col-span-12 md:col-span-7 flex flex-col justify-center">
+          <motion.h1
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="font-sans text-[36px] sm:text-[52px] md:text-[60px] lg:text-[72px] xl:text-[84px] leading-[0.9] tracking-tighter text-white select-none flex flex-col"
+          >
+            {lines.map((line, idx) => {
+              const hoverKey = hoverKeys[idx];
+              return (
+                <span
+                  key={idx}
+                  className="overflow-hidden block py-1 cursor-pointer"
+                  onMouseEnter={() => setHoveredWord(hoverKey)}
+                  onMouseLeave={() => setHoveredWord(null)}
+                >
+                  <motion.span
+                    variants={lineVariants}
+                    className={`block font-light transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                      hoveredWord && hoveredWord !== hoverKey
+                        ? "text-white/20 scale-[0.98] blur-[1px]"
+                        : hoveredWord === hoverKey
+                        ? "text-blueprint font-medium drop-shadow-[0_0_12px_rgba(255,119,0,0.25)]"
+                        : "text-white"
+                    }`}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              );
+            })}
+          </motion.h1>
+
+          {/* Monospace Sub-text */}
+          <motion.div
+            variants={microVariants}
+            initial="hidden"
+            animate="visible"
+            className="font-tech text-[11px] lg:text-[12px] tracking-[0.25em] text-blueprint mt-8 flex items-center gap-3 select-none"
+          >
+            <span className="w-1.5 h-1.5 bg-blueprint rounded-full animate-pulse shadow-[0_0_8px_#ff7700]" />
+            <span>SVAPL // SUB-MICRON TOLERANCE FOR GLOBAL ORBITAL SYSTEMS.</span>
+          </motion.div>
         </div>
+
+        {/* Right Column: 3D Turbine Canvas & Real-world Photo overlay stack */}
+        <div className="col-span-12 md:col-span-5 flex items-center justify-center">
+          <motion.div
+            variants={turbineVariants}
+            initial="hidden"
+            animate="visible"
+            className="relative w-full aspect-square max-w-[450px] border border-white/[0.06] bg-[#0d0f12]/40 p-2 overflow-hidden"
+          >
+            {/* Blueprint corner tags */}
+            <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-blueprint/30 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-blueprint/30 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-blueprint/30 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-blueprint/30 pointer-events-none" />
+
+            {/* Rotating 3D wireframe */}
+            <div
+              className={`w-full h-full transition-all duration-700 ease-in-out ${
+                hoveredWord ? "opacity-0 scale-95 blur-sm pointer-events-none" : "opacity-100 scale-100"
+              }`}
+            >
+              <TurbineCanvas />
+            </div>
+
+            {/* Real component photo overlays */}
+            {Object.entries(HOVER_IMAGES).map(([key, data]) => {
+              const active = hoveredWord === key;
+              return (
+                <div
+                  key={key}
+                  className={`absolute inset-2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-end p-5 overflow-hidden ${
+                    active ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-105 pointer-events-none"
+                  }`}
+                >
+                  <img
+                    src={data.src}
+                    alt={data.label}
+                    className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 contrast-125 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
+
+                  {/* Micro label for the physical part */}
+                  <div className="relative z-10 font-tech text-[10px] tracking-wider flex flex-col gap-1 select-none text-left">
+                    <span className="text-white font-bold uppercase">{data.label}</span>
+                    <span className="text-blueprint text-[9px] uppercase tracking-widest">{data.coords}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Bottom-Left Live Telemetry Coordinates Ticker */}
+      <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 font-tech text-[10px] sm:text-[11px] text-blueprint-dim tracking-wider select-none z-10">
+        <span className="text-blueprint">LAT:</span> {stats.lat.toFixed(4)}° N <span className="mx-2 text-white/5">//</span> 
+        <span className="text-blueprint">LNG:</span> {stats.lng.toFixed(4)}° E <span className="mx-2 text-white/5">//</span> 
+        <span className="text-blueprint">CALIBRATION:</span> {(stats.calib * 100).toFixed(4)}% <span className="mx-2 text-white/5">//</span> 
+        <span className="text-blueprint">UTC:</span> {stats.clock} <span className="mx-2 text-white/5">//</span> 
+        <span className="text-blueprint">SYSTEM:</span> ACTIVE
       </div>
     </section>
   );
@@ -372,178 +518,145 @@ function ClientLogos() {
 // ─── What We Build ─────────────────────────────────────────────────────────────
 
 function WhatWeBuild() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+  });
 
-  // Scroll-driven active index on desktop
-  useEffect(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
+  // Translate vertical scroll (0 to 1) to horizontal translation (0% to -66.66%)
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-66.666%"]);
 
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const scrolledIn = -rect.top;
-      const range = el.offsetHeight - window.innerHeight;
-      if (range <= 0 || scrolledIn < 0) return;
-      const progress = Math.min(1, scrolledIn / range);
-      const idx = Math.min(
-        CATEGORY_DATA.length - 1,
-        Math.floor(progress * CATEGORY_DATA.length)
-      );
-      setActiveIndex(idx);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollToCategory = (i: number) => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    const wrapperTop = el.getBoundingClientRect().top + window.scrollY;
-    const range = el.offsetHeight - window.innerHeight;
-    const target = wrapperTop + (i / CATEGORY_DATA.length) * range;
-    window.scrollTo({ top: target, behavior: "smooth" });
-  };
+  const items = [
+    {
+      id: "01",
+      title: "5-AXIS CNC MILLING",
+      image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
+      alt: "Close-up of high-precision multi-axis milled aerospace titanium manifold showcasing sub-micron edge tolerances.",
+      specs: [
+        "COMPATIBILITY: TITANIUM, INCONEL, AL718",
+        "ACCURACY: < 0.005MM (5 MICRONS)",
+        "VOLUMETRIC CAPACITY: 1200MM X 1000MM X 800MM",
+        "SPINDLE SPEED: 24,000 RPM / HIGH-TORQUE",
+        "CALIBRATION: LASER-MEASURED IN-SITU"
+      ]
+    },
+    {
+      id: "02",
+      title: "PRECISION TURNING",
+      image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
+      alt: "Aerospace cylindrical rotor shaft being turned to tight tolerances under high-contrast lighting.",
+      specs: [
+        "COMPATIBILITY: EXOTIC ALLOYS, SUPERALLOYS",
+        "ACCURACY: < 0.003MM (3 MICRONS)",
+        "SWING ENVELOPE: Ø550MM X 1500MM LENGTH",
+        "SURFACE FINISH: RA 0.2 MICRONS",
+        "INSPECTION: AUTOMATED OPTICAL CMM"
+      ]
+    },
+    {
+      id: "03",
+      title: "AEROSPACE ASSEMBLY",
+      image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1200&h=800",
+      alt: "Cleanroom assembly of flight-critical structural brackets and aerostructure bulkheads.",
+      specs: [
+        "COMPATIBILITY: FLIGHT-CRITICAL AEROSTRUCTURES",
+        "CERTIFICATION: NADCAP, AS9100D COMPLIANT",
+        "LOAD TOLERANCE: 450KN TESTING RATING",
+        "ENVIRONMENTS: CLASS-10K CLEAN ROOM HALL",
+        "NDT METHODS: ULTRASONIC, DYE PENETRANT"
+      ]
+    }
+  ];
 
   return (
-    <section id="what-we-build" className="bg-[#0a0a0a]">
-      <style>{`
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .anim-fade-up { animation: fadeSlideUp 0.38s cubic-bezier(0.22,1,0.36,1) both; }
-      `}</style>
+    <section id="what-we-build" ref={targetRef} className="relative h-[300vh] bg-[#050505] overflow-visible">
+      {/* Sticky viewport container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
+        
+        {/* Absolute blueprint markers overlay */}
+        <div className="absolute top-12 left-10 font-tech text-[10px] text-blueprint/30 tracking-[0.3em] uppercase hidden md:block select-none pointer-events-none">
+          SYSTEM: ACC_TRANS // HORIZ_GALLERY // PAGE_2
+        </div>
+        <div className="absolute top-12 right-10 font-tech text-[10px] text-blueprint/30 tracking-[0.3em] uppercase hidden md:block select-none pointer-events-none">
+          COORDS: 02_CAPABILITIES
+        </div>
 
-      {/* ── DESKTOP: sticky scroll (md and up) ───────────────────────────── */}
-      <div
-        ref={wrapperRef}
-        className="hidden md:block relative"
-        style={{ height: `${CATEGORY_DATA.length * 100}vh` }}
-      >
-        <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
-          <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] w-full flex flex-col gap-6 lg:gap-8">
+        {/* Hairline structural frame */}
+        <div className="absolute left-6 md:left-10 top-0 bottom-0 w-[1px] bg-white/[0.03] pointer-events-none" />
+        <div className="absolute right-6 md:right-10 top-0 bottom-0 w-[1px] bg-white/[0.03] pointer-events-none" />
+        <div className="absolute left-0 right-0 top-20 h-[1px] bg-white/[0.03] pointer-events-none" />
+        <div className="absolute left-0 right-0 bottom-20 h-[1px] bg-white/[0.03] pointer-events-none" />
 
-            {/* Heading inside sticky area */}
-            <div>
-              <p className="font-['Space_Grotesk',sans-serif] text-[#f70] text-xs font-bold tracking-[2.64px] uppercase mb-2">
-                WHAT WE BUILD
-              </p>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[36px] xl:text-[42px] leading-tight tracking-[-1px]">
-                Hardware that has to work the first time.
-              </h2>
-            </div>
-
-            <div className="flex items-center gap-6 lg:gap-10 xl:gap-14">
-
-              {/* Left: category list */}
-              <nav className="flex flex-col gap-1 shrink-0 w-[160px] lg:w-[200px] xl:w-[230px]">
-                {CATEGORY_DATA.map((cat, i) => (
-                  <button
-                    key={cat.label}
-                    onClick={() => scrollToCategory(i)}
-                    className={`text-left font-['Space_Grotesk',sans-serif] font-bold text-base lg:text-xl xl:text-2xl px-3 py-[5px] rounded-[8px] transition-all duration-300 leading-snug ${
-                      i === activeIndex
-                        ? "text-[#eaf2fb]"
-                        : "text-[#333] hover:text-[#666]"
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </nav>
-
-              {/* Center: crossfading image */}
-              <div
-                className="relative flex-1 min-w-0 rounded-[8px] border border-[#2f2f2f] overflow-hidden"
-                style={{ height: "54vh" }}
-              >
-                {CATEGORY_DATA.map((cat, i) => (
-                  <ImageWithFallback
-                    key={cat.label}
-                    src={cat.image}
-                    alt={cat.label}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
-                      i === activeIndex ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                ))}
-                {/* Subtle vignette */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40 pointer-events-none" />
+        {/* Slide track */}
+        <motion.div style={{ x }} className="flex h-[80vh] w-[300vw]">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="relative w-screen h-full flex items-center justify-between px-6 sm:px-16 md:px-24 lg:px-32 xl:px-40 select-none overflow-hidden"
+            >
+              {/* Massive background number outline */}
+              <div className="absolute left-10 md:left-24 top-1/2 -translate-y-1/2 font-sans font-black text-[22vw] text-white/[0.015] leading-none tracking-tighter select-none pointer-events-none font-bold">
+                {item.id}
               </div>
 
-              {/* Right: description + CTA */}
-              <div className="shrink-0 w-[200px] lg:w-[240px] xl:w-[270px]">
-                {/* key forces re-mount → triggers animation on each change */}
-                <div key={activeIndex} className="anim-fade-up flex flex-col gap-5">
-                  <p className="font-['Space_Grotesk',sans-serif] text-white text-sm lg:text-[15px] xl:text-base leading-relaxed">
-                    {CATEGORY_DATA[activeIndex].desc}
-                  </p>
-                  <button className="border-[0.5px] border-white/50 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm lg:text-base px-6 py-[9px] rounded-[4px] self-start hover:bg-white/10 transition-colors">
-                    Explore capability
-                  </button>
+              {/* Grid content structure */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center w-full relative z-10">
+                {/* Title and image block */}
+                <div className="col-span-12 md:col-span-8 flex flex-col gap-6 md:gap-8">
+                  <div className="flex items-center gap-4">
+                    <span className="font-tech text-xs tracking-wider text-blueprint font-semibold">{item.id} // CAPABILITY</span>
+                    <div className="h-[1px] w-12 bg-blueprint/30" />
+                    <h3 className="font-sans font-bold text-xl sm:text-2xl tracking-tight text-white uppercase">{item.title}</h3>
+                  </div>
+
+                  {/* Isolated image container */}
+                  <div className="relative aspect-[16/9] w-full rounded-sm border border-white/[0.05] bg-[#0D0F12] overflow-hidden group">
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      className="w-full h-full object-cover grayscale brightness-90 contrast-110 group-hover:scale-[1.02] group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
+                    
+                    {/* Bounding box corners indicator */}
+                    <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-blueprint/40" />
+                    <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-blueprint/40" />
+                    <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-blueprint/40" />
+                    <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-blueprint/40" />
+                  </div>
+                </div>
+
+                {/* Technical micro-sidebar on the right */}
+                <div className="col-span-12 md:col-span-4 flex flex-col justify-center border-l border-blueprint/10 pl-6 md:pl-10 h-full">
+                  <div className="font-tech text-[10px] text-blueprint tracking-[0.2em] font-bold mb-4 uppercase">
+                    METROLOGY & PRODUCTION SPECS
+                  </div>
+                  
+                  <div className="flex flex-col gap-4">
+                    {item.specs.map((spec, sIdx) => {
+                      const [label, val] = spec.split(": ");
+                      return (
+                        <div key={sIdx} className="flex flex-col border-b border-white/[0.03] pb-2">
+                          <span className="font-tech text-[9px] tracking-wider text-blueprint-dim uppercase">{label}</span>
+                          <span className="font-tech text-xs tracking-widest text-white font-medium uppercase mt-0.5">{val}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Micro digital status indicator */}
+                  <div className="mt-8 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-verified animate-pulse" />
+                    <span className="font-tech text-[9px] tracking-widest text-verified uppercase">VERIFIED SYSTEM ACCURACY</span>
+                  </div>
                 </div>
               </div>
-
-            </div>{/* end 3-col row */}
-          </div>{/* end max-w container */}
-        </div>{/* end sticky */}
-      </div>{/* end wrapper */}
-
-      {/* ── MOBILE: tab + stacked layout (below md) ─────────────────────── */}
-      <div className="md:hidden pb-16 px-5">
-        {/* Heading */}
-        <div className="mb-6">
-          <p className="font-['Space_Grotesk',sans-serif] text-[#f70] text-xs font-bold tracking-[2.64px] uppercase mb-3">WHAT WE BUILD</p>
-          <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-3xl leading-tight tracking-[-1px]">
-            Hardware that has to work the first time.
-          </h2>
-        </div>
-        {/* Horizontal scrollable tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-3 mb-5 -mx-1 px-1">
-          {CATEGORY_DATA.map((cat, i) => (
-            <button
-              key={cat.label}
-              onClick={() => setActiveIndex(i)}
-              className={`whitespace-nowrap font-['Space_Grotesk',sans-serif] font-bold text-sm px-4 py-2 rounded-[8px] transition-all duration-200 border ${
-                i === activeIndex
-                  ? "text-[#eaf2fb] border-white/20 bg-white/5"
-                  : "text-[#555] border-transparent"
-              }`}
-            >
-              {cat.label}
-            </button>
+              
+            </div>
           ))}
-        </div>
-
-        {/* Image */}
-        <div className="relative rounded-[8px] border border-[#2f2f2f] overflow-hidden h-[260px] mb-5">
-          {CATEGORY_DATA.map((cat, i) => (
-            <img
-              key={cat.label}
-              src={cat.image}
-              alt={cat.label}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 ${
-                i === activeIndex ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 pointer-events-none" />
-        </div>
-
-        {/* Description */}
-        <div key={activeIndex} className="anim-fade-up">
-          <p className="font-['Space_Grotesk',sans-serif] text-white text-sm leading-relaxed mb-4">
-            {CATEGORY_DATA[activeIndex].desc}
-          </p>
-          <button className="border border-white/40 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm px-6 py-2 rounded-[4px] hover:bg-white/10 transition-colors">
-            Explore capability
-          </button>
-        </div>
+        </motion.div>
+        
       </div>
-
     </section>
   );
 }
@@ -603,7 +716,7 @@ function HowWeBuild() {
                 <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   Special-Process Welding
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.68)] text-[13px] leading-[1.5]">
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
                   TIG and electron-beam welding by certified operators, NADCAP accredited
                   for special processes.
                 </p>
@@ -613,7 +726,7 @@ function HowWeBuild() {
                 <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   Sheet-Metal Fabrication
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.68)] text-[13px] leading-[1.5]">
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
                   Forming, rolling and large-format fabrication of structural assemblies
                   up to 6 metres.
                 </p>
@@ -630,7 +743,7 @@ function HowWeBuild() {
               <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[18px] lg:text-[20px] xl:text-[22px] mb-3 leading-snug tracking-[-0.2px]">
                 5-Axis Precision Machining
               </h4>
-              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.72)] text-[13px] lg:text-sm leading-relaxed max-w-[340px]">
+              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.88)] text-[13px] lg:text-sm leading-relaxed max-w-[340px]">
                 Complex geometries in titanium, aluminium and exotic alloys, held
                 to ±5µm across the full envelope — ideal for flight-critical hardware.
               </p>
@@ -645,11 +758,11 @@ function HowWeBuild() {
               />
               {/* Bottom gradient for text */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/75" />
-              <div className="absolute bottom-7 left-7 right-7 z-10">
+              <div className="absolute bottom-7 left-7 right-7 z-10 text-left">
                 <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   NDT &amp; Testing
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.74)] text-[13px] leading-[1.5]">
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.9)] text-[13px] leading-[1.5]">
                   Non-destructive testing, CMM metrology and full dimensional
                   verification on every shipment.
                 </p>
@@ -729,7 +842,7 @@ function InsightsSection() {
               <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[18px] leading-[1.25] pt-1">
                 {item.title}
               </h3>
-              <p className="font-['Archivo',sans-serif] text-[#6e6e6e] text-[14px] leading-[1.55]">
+              <p className="font-['Archivo',sans-serif] text-[#a6a6a6] text-[14px] leading-[1.55]">
                 {item.desc}
               </p>
             </article>
@@ -788,7 +901,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
             <p className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[36px] lg:text-[40px] tracking-[1.6px] leading-none mb-4">
               SVAPL
             </p>
-            <p className="font-['Archivo',sans-serif] text-[#aeaeae] text-lg lg:text-xl leading-[1.4] max-w-[400px]">
+            <p className="font-['Archivo',sans-serif] text-blueprint-dim text-lg lg:text-xl leading-[1.4] max-w-[400px]">
               Mission-critical manufacturing for aerospace &amp; defence.
             </p>
           </div>
@@ -810,7 +923,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
                 <li key={label}>
                   <button
                     onClick={() => onNavigate(page || "home", section)}
-                    className="font-['Archivo',sans-serif] text-[#aeaeae] text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {label}
                   </button>
@@ -827,7 +940,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
                 <li key={label}>
                   <button
                     onClick={() => onNavigate(page)}
-                    className="font-['Archivo',sans-serif] text-[#aeaeae] text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {label}
                   </button>
@@ -844,7 +957,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
                 <li key={l}>
                   <button
                     onClick={() => onNavigate("programmes")}
-                    className="font-['Archivo',sans-serif] text-[#aeaeae] text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {l}
                   </button>
@@ -860,11 +973,11 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
               {contactInfo.map(({ label, href }) => (
                 <li key={label}>
                   {href ? (
-                    <a href={href} className="font-['Archivo',sans-serif] text-[#aeaeae] text-[15px] leading-normal hover:text-white transition-colors">
+                    <a href={href} className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors">
                       {label}
                     </a>
                   ) : (
-                    <span className="font-['Archivo',sans-serif] text-[#aeaeae] text-[15px] leading-normal">{label}</span>
+                    <span className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal">{label}</span>
                   )}
                 </li>
               ))}
@@ -902,8 +1015,12 @@ function HomePage() {
       <HeroSection />
       <CapabilityTicker />
       <ClientLogos />
+      <VerificationProofStrip />
       <WhatWeBuild />
+      <ProductShowcase3D />
+      <FactoryVideoPanel />
       <HowWeBuild />
+      <CompletedProjectsGrid />
       <NewsSection />
       <InsightsSection />
     </>

@@ -1,0 +1,49 @@
+interface StatItem {
+  value: string;
+  label: string;
+  code: string;
+}
+
+const STATS: StatItem[] = [
+  { value: "99.984%", label: "QUALITY YIELD RATE", code: "6-SIGMA CONFORMANCE" },
+  { value: "110+", label: "CASINGS DELIVERED", code: "M250 MARAGING STEEL" },
+  { value: "25+ YRS", label: "FLIGHT-PROVEN HERITAGE", code: "ESTABLISHED IN 2000" },
+  { value: "< 5µm", label: "MACHINING PRECISION", code: "SUB-MICRON METROLOGY" },
+  { value: "1,20,000", label: "SQ.FT FACILITY FOOTPRINT", code: "UNIT I, II & III" },
+  { value: "CLASS 10K", label: "CLEANROOM HALLS", code: "ISO CLASS 7 ASSEMBLY" }
+];
+
+export function VerificationProofStrip() {
+  return (
+    <section className="bg-[#050505] border-b border-white/[0.06] py-1 relative">
+      <div className="absolute inset-0 bg-[#0d0f12]/5 pointer-events-none" />
+      
+      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-y divide-white/[0.06] md:divide-y-0 lg:divide-x border-l border-r border-white/[0.06] bg-[#0d0f12]/10">
+          {STATS.map((s, idx) => (
+            <div
+              key={s.label}
+              className="px-6 py-7 flex flex-col gap-1.5 text-left font-tech relative group hover:bg-[#0d0f12]/25 transition-all duration-500"
+            >
+              {/* Corner accent details */}
+              <div className="absolute top-1 left-1 w-1 h-1 bg-blueprint/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+              
+              <span className="text-blueprint text-[9px] tracking-[0.2em] font-semibold">
+                SYS_PROOF_0{idx + 1}
+              </span>
+              <span className="font-sans font-bold text-white text-2xl lg:text-[28px] tracking-tight uppercase mt-1">
+                {s.value}
+              </span>
+              <span className="text-white/80 text-[9px] tracking-[0.15em] uppercase mt-0.5">
+                {s.label}
+              </span>
+              <span className="text-blueprint-dim text-[8px] tracking-[0.1em] uppercase mt-0.5 opacity-60">
+                {s.code}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

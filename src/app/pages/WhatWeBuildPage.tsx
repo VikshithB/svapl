@@ -135,7 +135,7 @@ export default function WhatWeBuildPage() {
           <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-2xl">
             Five decades of critical hardware. One roof.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-base lg:text-lg max-w-sm leading-relaxed shrink-0">
+          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-sm leading-relaxed shrink-0">
             From aerostructures to defence motor casings — mission-critical manufacturing under AS9100D quality management.
           </p>
         </div>
@@ -152,7 +152,7 @@ export default function WhatWeBuildPage() {
               className={`whitespace-nowrap font-['Space_Grotesk',sans-serif] font-bold text-sm px-5 py-2.5 rounded-[4px] transition-all duration-200 shrink-0 ${
                 active === c.id
                   ? "bg-blueprint text-black"
-                  : "text-[#666] hover:text-white border border-rule"
+                  : "text-blueprint-dim hover:text-white border border-rule"
               }`}
             >
               {c.label}
@@ -173,7 +173,7 @@ export default function WhatWeBuildPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute top-5 left-5">
-              <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] border border-white/20 px-2 py-[3px] rounded-[3px]">
+              <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] border border-white/20 px-2 py-[3px] rounded-[3px]">
                 {cap.tag}
               </span>
             </div>
@@ -185,7 +185,7 @@ export default function WhatWeBuildPage() {
               <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[30px] leading-snug tracking-[-0.5px] mb-4">
                 {cap.headline}
               </h2>
-              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.65)] text-sm lg:text-base leading-relaxed">
+              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-sm lg:text-base leading-relaxed">
                 {cap.desc}
               </p>
             </div>
@@ -194,7 +194,7 @@ export default function WhatWeBuildPage() {
             <div className="grid grid-cols-2 gap-px bg-white/10">
               {cap.specs.map((s) => (
                 <div key={s.label} className="bg-[#0a0a0a] p-4">
-                  <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[9px] tracking-[1.5px] uppercase mb-1">{s.label}</p>
+                  <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[9px] tracking-[1.5px] uppercase mb-1">{s.label}</p>
                   <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-sm">{s.value}</p>
                 </div>
               ))}
@@ -202,10 +202,10 @@ export default function WhatWeBuildPage() {
 
             {/* Materials */}
             <div>
-              <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] uppercase mb-3">MATERIALS</p>
+              <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">MATERIALS</p>
               <div className="flex flex-wrap gap-2">
                 {cap.materials.map((m) => (
-                  <span key={m} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.65)] font-['Archivo',sans-serif] text-xs px-3 py-1.5 rounded-[3px]">
+                  <span key={m} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.82)] font-['Archivo',sans-serif] text-xs px-3 py-1.5 rounded-[3px]">
                     {m}
                   </span>
                 ))}
@@ -214,12 +214,12 @@ export default function WhatWeBuildPage() {
 
             {/* Key products */}
             <div>
-              <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] uppercase mb-3">KEY PRODUCTS DELIVERED</p>
+              <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY PRODUCTS DELIVERED</p>
               <ul className="flex flex-col gap-2">
                 {cap.products.map((p) => (
                   <li key={p} className="flex items-start gap-2">
                     <span className="text-blueprint mt-[3px] text-xs shrink-0">—</span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-xs leading-relaxed">{p}</span>
+                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-xs leading-relaxed">{p}</span>
                   </li>
                 ))}
               </ul>
@@ -246,7 +246,7 @@ export default function WhatWeBuildPage() {
             ].map((item) => (
               <div key={item.label} className="bg-panel p-6">
                 <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[15px] mb-2">{item.label}</p>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.5)] text-[13px] leading-relaxed">{item.spec}</p>
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[13px] leading-relaxed">{item.spec}</p>
               </div>
             ))}
           </div>
@@ -260,7 +260,7 @@ export default function WhatWeBuildPage() {
             <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-2">
               Have a programme requirement?
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-base max-w-lg">
+            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base max-w-lg">
               Share your drawing package or specification. Our engineering team will assess feasibility and provide a first-response within 5 working days.
             </p>
           </div>

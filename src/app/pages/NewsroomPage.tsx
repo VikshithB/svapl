@@ -94,7 +94,7 @@ export default function NewsroomPage() {
           <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[52px] leading-[1.05] tracking-[-2px]">
             Insights from the shop floor.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.5)] text-sm max-w-xs">
+          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-sm max-w-xs">
             Engineering notes, programme updates and manufacturing depth from the SVAPL team.
           </p>
         </div>
@@ -120,13 +120,13 @@ export default function NewsroomPage() {
                 <span className={`border text-[10px] font-['Space_Grotesk',sans-serif] font-bold px-2 py-[3px] rounded-[3px] tracking-wide ${TAG_COLORS[featured.tag]}`}>
                   {featured.tag}
                 </span>
-                <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-xs tracking-[1.5px]">{featured.date}</span>
+                <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-xs tracking-[1.5px]">{featured.date}</span>
                 <span className="font-['Archivo',sans-serif] text-blueprint text-xs ml-auto">Featured</span>
               </div>
               <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[30px] leading-snug tracking-[-0.5px] mb-4">
                 {featured.title}
               </h2>
-              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-sm lg:text-base leading-relaxed mb-8">
+              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-sm lg:text-base leading-relaxed mb-8">
                 {featured.desc}
               </p>
               <button className="self-start border-[0.5px] border-white/30 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm px-6 py-[10px] rounded-[4px] hover:bg-white/5 transition-colors">
@@ -147,7 +147,7 @@ export default function NewsroomPage() {
               className={`font-['Space_Grotesk',sans-serif] font-bold text-xs px-4 py-2 rounded-[4px] border transition-all ${
                 tag === t
                   ? "bg-blueprint text-black border-[#f70]"
-                  : "border-rule text-[#a6a6a6] hover:text-white hover:border-white/20"
+                  : "border-rule text-blueprint-dim hover:text-white hover:border-white/20"
               }`}
             >
               {t}
@@ -174,12 +174,12 @@ export default function NewsroomPage() {
                   <span className={`border text-[10px] font-['Space_Grotesk',sans-serif] font-bold px-2 py-[2px] rounded-[3px] tracking-wide ${TAG_COLORS[a.tag] || ""}`}>
                     {a.tag}
                   </span>
-                  <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1px]">{a.date}</span>
+                  <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1px]">{a.date}</span>
                 </div>
                 <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[17px] leading-snug mb-3 flex-1">
                   {a.title}
                 </h3>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.55)] text-[13px] leading-relaxed mb-5">
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[13px] leading-relaxed mb-5">
                   {a.desc}
                 </p>
                 <span className="font-['Archivo',sans-serif] text-blueprint text-xs font-semibold group-hover:underline">
@@ -192,7 +192,7 @@ export default function NewsroomPage() {
 
         {rest.length === 0 && (
           <div className="py-20 text-center">
-            <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-sm">No articles in this category yet.</p>
+            <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-sm">No articles in this category yet.</p>
           </div>
         )}
       </section>

@@ -87,7 +87,7 @@ export default function CareersPage() {
           <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
             Build the hardware that builds India's future.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-base lg:text-lg max-w-xl leading-relaxed">
+          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
             Join a team that has been at the heart of India's ISRO and DRDO programmes for 25 years.
             We are expanding for the next generation of defence and space work — and we hire for depth.
           </p>
@@ -103,7 +103,7 @@ export default function CareersPage() {
               <div key={v.label}>
                 <div className="w-8 h-px bg-blueprint mb-4" />
                 <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[16px] mb-2">{v.label}</h3>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-sm leading-relaxed">{v.desc}</p>
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-sm leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export default function CareersPage() {
                 key={d}
                 onClick={() => setDept(d)}
                 className={`font-['Space_Grotesk',sans-serif] font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
-                  dept === d ? "bg-blueprint text-black" : "border border-rule text-[#a6a6a6] hover:text-white"
+                  dept === d ? "bg-blueprint text-black" : "border border-rule text-blueprint-dim hover:text-white"
                 }`}
               >
                 {d}
@@ -145,16 +145,16 @@ export default function CareersPage() {
               >
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-1">
-                    <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
+                    <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
                       {pos.dept}
                     </span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.4)] text-xs">{pos.exp} exp.</span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.4)] text-xs">{pos.location}</span>
+                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.72)] text-xs">{pos.exp} exp.</span>
+                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.72)] text-xs">{pos.location}</span>
                   </div>
                   <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-lg">{pos.title}</h3>
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
-                  <span className="font-['Archivo',sans-serif] text-[#a6a6a6] text-xs border border-rule px-3 py-1 rounded-full">{pos.type}</span>
+                  <span className="font-['Archivo',sans-serif] text-blueprint-dim text-xs border border-rule px-3 py-1 rounded-full">{pos.type}</span>
                   <span className={`text-blueprint text-lg transition-transform ${open === pos.title ? "rotate-45" : ""}`}>+</span>
                 </div>
               </button>
@@ -164,11 +164,11 @@ export default function CareersPage() {
                 <div className="px-6 lg:px-8 pb-8 border-t border-white/[0.06]">
                   <div className="pt-6 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-start">
                     <div>
-                      <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.68)] text-sm leading-relaxed mb-6">{pos.desc}</p>
-                      <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] uppercase mb-3">KEY SKILLS</p>
+                      <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-sm leading-relaxed mb-6">{pos.desc}</p>
+                      <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY SKILLS</p>
                       <div className="flex flex-wrap gap-2">
                         {pos.skills.map((s) => (
-                          <span key={s} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.7)] font-['Archivo',sans-serif] text-xs px-3 py-1 rounded-[3px]">
+                          <span key={s} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.88)] font-['Archivo',sans-serif] text-xs px-3 py-1 rounded-[3px]">
                             {s}
                           </span>
                         ))}
@@ -189,7 +189,7 @@ export default function CareersPage() {
 
         {visible.length === 0 && (
           <div className="py-16 text-center border border-rule rounded-[4px]">
-            <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-sm">No open positions in this department currently.</p>
+            <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-sm">No open positions in this department currently.</p>
           </div>
         )}
       </section>
@@ -201,7 +201,7 @@ export default function CareersPage() {
             <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[30px] tracking-[-0.5px] mb-2">
               Don&apos;t see the right role?
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-base max-w-md">
+            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base max-w-md">
               Send us your CV with a note on your specialisation. We review all applications — especially from
               aerospace welders, precision machinists and NDT inspectors.
             </p>

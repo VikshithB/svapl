@@ -160,7 +160,7 @@ export default function ProgrammesPage() {
           <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
             25 years of trusted delivery to India's most critical programmes.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-base lg:text-lg max-w-xl leading-relaxed">
+          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
             From PSLV and LVM3 to Agni and Pralay — every structure, motor casing and integrated assembly
             built to print, certified and delivered flight-ready.
           </p>
@@ -181,13 +181,13 @@ export default function ProgrammesPage() {
               className={`font-['Space_Grotesk',sans-serif] font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
                 filter === f
                   ? "bg-blueprint text-black"
-                  : "text-[#a6a6a6] hover:text-white"
+                  : "text-blueprint-dim hover:text-white"
               }`}
             >
               {f}
             </button>
           ))}
-          <span className="ml-auto font-['Archivo',sans-serif] text-[#a6a6a6] text-xs self-center">
+          <span className="ml-auto font-['Archivo',sans-serif] text-blueprint-dim text-xs self-center">
             {visible.length} programme{visible.length !== 1 ? "s" : ""}
           </span>
         </div>
@@ -214,14 +214,14 @@ export default function ProgrammesPage() {
               {/* Content */}
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
+                  <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
                     {prog.tag}
                   </span>
                 </div>
                 <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[17px] leading-snug mb-3">
                   {prog.name}
                 </h3>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.6)] text-[13px] leading-relaxed flex-1 mb-4">
+                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-[13px] leading-relaxed flex-1 mb-4">
                   {prog.desc}
                 </p>
                 {/* Specs */}
@@ -229,14 +229,14 @@ export default function ProgrammesPage() {
                   <div className="pt-4 border-t border-white/[0.06] flex flex-col gap-1">
                     {prog.size && (
                       <div className="flex gap-2">
-                        <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1px] uppercase w-16 shrink-0">SIZE</span>
-                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.55)] text-[11px]">{prog.size}</span>
+                        <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">SIZE</span>
+                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[11px]">{prog.size}</span>
                       </div>
                     )}
                     {prog.material && (
                       <div className="flex gap-2">
-                        <span className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-[10px] tracking-[1px] uppercase w-16 shrink-0">MATERIAL</span>
-                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.55)] text-[11px]">{prog.material}</span>
+                        <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">MATERIAL</span>
+                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[11px]">{prog.material}</span>
                       </div>
                     )}
                   </div>
@@ -257,7 +257,7 @@ export default function ProgrammesPage() {
             <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[32px] leading-tight tracking-[-0.5px] mb-3">
               India's first Hypersonic Glide Vehicle.
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.65)] text-base leading-relaxed">
+            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base leading-relaxed">
               In 2025 SVAPL delivered airframes, motor casings and control surface panels for India's first
               Hypersonic Glide Vehicle — our most technically demanding programme to date.
             </p>
