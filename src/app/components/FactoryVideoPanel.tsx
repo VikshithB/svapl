@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
-// Hosted on Cloudinary (or any CDN) — keeps the 200MB+ source video out of git.
-// Override per-environment with VITE_FACTORY_VIDEO_URL; otherwise paste the
-// Cloudinary delivery URL below (e.g. https://res.cloudinary.com/<cloud>/video/upload/v123/svapl_preview.mp4).
+// Hosted on Vercel Blob (public store) — keeps the 200MB+ source video out of git.
+// Permanent public URL; override per-environment with VITE_FACTORY_VIDEO_URL.
 const videoSrc =
   import.meta.env.VITE_FACTORY_VIDEO_URL ??
-  "https://res.cloudinary.com/<YOUR_CLOUD_NAME>/video/upload/svapl_preview.mp4";
+  "https://cf3bqgzjqu3gwunq.public.blob.vercel-storage.com/Videos/SVAPL%20-%20Preview.mp4";
 
 export function FactoryVideoPanel() {
   const videoRef = useRef<HTMLVideoElement>(null);
