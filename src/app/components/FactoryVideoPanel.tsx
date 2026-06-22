@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import videoSrc from "@/imports/svapl_preview.mp4";
 
 export function FactoryVideoPanel() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -10,10 +11,24 @@ export function FactoryVideoPanel() {
     if (playing) {
       videoRef.current.pause();
     } else {
-      videoRef.current.play();
+      videoRef.current.play().catch(err => console.log(err));
     }
     setPlaying(!playing);
   };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = muted;
+    }
+  }, [muted]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((err) => {
+        console.log("Autoplay was blocked or failed:", err);
+      });
+    }
+  }, []);
 
   return (
     <section className="bg-[#050505] border-b border-white/[0.06] py-20 lg:py-28 relative overflow-hidden">
@@ -70,24 +85,16 @@ export function FactoryVideoPanel() {
               ref={videoRef}
               autoPlay
               loop
-              muted={muted}
+              muted
               playsInline
               className="absolute inset-0 w-full h-full object-cover brightness-75 contrast-110"
-              poster="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1400"
             >
-              {/* Pexels freely usable industrial video */}
+              {/* Real SVAPL plant footage */}
               <source
-                src="https://www.pexels.com/video/5940721/download/"
+                src={videoSrc}
                 type="video/mp4"
               />
-              {/* Fallback static image rendered via CSS if video fails */}
             </video>
-
-            {/* Fallback static frame poster always visible underneath video */}
-            <div
-              className="absolute inset-0 bg-cover bg-center pointer-events-none -z-0"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1400')" }}
-            />
 
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />

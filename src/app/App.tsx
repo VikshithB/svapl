@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
-import { TurbineCanvas } from "@/app/components/TurbineCanvas";
+import { CrewModuleCanvas } from "@/app/components/CrewModuleCanvas";
 import { motion, useScroll, useTransform } from "motion/react";
 
 import imgHeader from "@/imports/Desktop1/44363911e71cf9a03eb8eca1d986961f050713d9.png";
@@ -370,7 +370,7 @@ function HeroSection() {
             className="font-tech text-[11px] lg:text-[12px] tracking-[0.25em] text-blueprint mt-8 flex items-center gap-3 select-none"
           >
             <span className="w-1.5 h-1.5 bg-blueprint rounded-full animate-pulse shadow-[0_0_8px_#ff7700]" />
-            <span>SVAPL // SUB-MICRON TOLERANCE FOR GLOBAL ORBITAL SYSTEMS.</span>
+            <span>PRECISION FROM EARTH TO ORBIT</span>
           </motion.div>
         </div>
 
@@ -394,7 +394,7 @@ function HeroSection() {
                 hoveredWord ? "opacity-0 scale-95 blur-sm pointer-events-none" : "opacity-100 scale-100"
               }`}
             >
-              <TurbineCanvas />
+              <CrewModuleCanvas />
             </div>
 
             {/* Real component photo overlays */}

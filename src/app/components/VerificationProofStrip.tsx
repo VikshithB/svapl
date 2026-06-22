@@ -10,7 +10,7 @@ const STATS: StatItem[] = [
   { value: "25+ YRS", label: "FLIGHT-PROVEN HERITAGE", code: "ESTABLISHED IN 2000" },
   { value: "< 5µm", label: "MACHINING PRECISION", code: "SUB-MICRON METROLOGY" },
   { value: "1,20,000", label: "SQ.FT FACILITY FOOTPRINT", code: "UNIT I, II & III" },
-  { value: "CLASS 10K", label: "CLEANROOM HALLS", code: "ISO CLASS 7 ASSEMBLY" }
+  { value: "CLASS 8", label: "CLEAN ROOM", code: "ISO CLASS 7 ASSEMBLY" }
 ];
 
 export function VerificationProofStrip() {
