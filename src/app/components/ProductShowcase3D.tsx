@@ -3,67 +3,59 @@ import { ProductCanvas3D } from "./ProductCanvas3D";
 
 const PRODUCTS = [
   {
-    id: "impeller",
-    label: "01 // IMPELLER BLISK",
-    title: "INTEGRAL BLADED ROTOR IMPELLER",
-    desc: "MACHINED FROM A SINGLE SOLID BLOCK OF TITANIUM ALLOY USING SYNCHRONIZED 5-AXIS CNC MACHINING. GUARANTEES FLUID DYNAMIC EFFICIENCY AND ZERO BLADE JOINT FATIGUE UNDER HIGH VELOCITIES.",
+    id: "shroud",
+    label: "01 // LVM3 CORE BASE SHROUD",
+    title: "LVM3 CORE BASE SHROUD",
+    desc: "THIS ASSEMBLY COMBINES ADVANCED SHEET METAL FORMING WITH ISOGRID PANEL MACHINING, STRUCTURAL RIVETING THROUGH FIXTURE AND INTEGRATION, ROLLING OF BRACKETS.",
     specs: [
-      { key: "MATERIAL", val: "TITANIUM ALLOY (TI-6AL-4V)" },
-      { key: "TOLERANCE", val: "± 0.005 MM (5 MICRONS)" },
-      { key: "DIMENSIONS", val: "Ø 170 MM X 85 MM HEIGHT" },
-      { key: "APPLICATION", val: "TURBOPUMP PROPELLANT FEED SYSTEMS" },
-      { key: "PROGRAMME", val: "ISRO CRYOGENIC ENGINE PROGRAMME" },
-      { key: "SIMULATION", val: "FEA STRESS & DEVIATION: CONFORMING" }
+      { key: "PROGRAMME", val: "FOR ISRO" },
+      { key: "DIAMETER", val: "4200 MM" },
+      { key: "HEIGHT", val: "3300 MM" },
+      { key: "MATERIAL", val: "AA 7075, AA2014, 15CDV6" }
     ]
   },
   {
-    id: "casing",
-    label: "02 // MOTOR CASING",
-    title: "MARAGING STEEL ROCKET MOTOR CASING",
-    desc: "HIGH-PRESSURE PROPELLANT CONTAINMENT CASING CONSTRUCTED USING MARAGING STEEL M250. PRECISION WELDED AND HYDRAULICALLY TESTED TO STAND LAUNCH PROPULSION LOADS.",
+    id: "fin",
+    label: "02 // STABILIZER FIN ASSY.",
+    title: "STABILIZER FIN ASSEMBLY",
+    desc: "CONSTRUCTED FROM 108 COMPONENTS, THE COMPLETE FIN ASSEMBLY SHOWCASES COMPLEX MACHINING AND RIVETING OF SPECIALIZED MATERIALS LIKE TITANIUM GRADE 5, INCONEL, AND 13-8 MO.",
     specs: [
-      { key: "MATERIAL", val: "MARAGING STEEL M250" },
-      { key: "TOLERANCE", val: "± 0.05 MM CONCENTRICITY" },
-      { key: "DIMENSIONS", val: "Ø 740 MM X 2800 MM LENGTH" },
-      { key: "APPLICATION", val: "SOLID ROCKET MOTOR BOOSTER BODY" },
-      { key: "PROGRAMME", val: "DRDO & ISRO STRATEGIC MOTOR SYSTEMS" },
-      { key: "SIMULATION", val: "HYDRO-PROOF PRESSURE TEST: PASS // 120BAR" }
+      { key: "PROGRAMME", val: "FOR DRDO" },
+      { key: "HEIGHT", val: "500 MM" },
+      { key: "LENGTH", val: "800 MM LONG" },
+      { key: "MATERIAL", val: "TI. GRADE-V, INCONEL 13-8MO" }
     ]
   },
   {
-    id: "nozzle",
-    label: "03 // THRUST CHAMBER",
-    title: "CONVERGING-DIVERGING NOZZLE ASSEMBLY",
-    desc: "ROCKET THRUST CHAMBER LINER FEATURING INTEGRAL SPIRAL COOLANT CHANNELS. COMBINES COPPER ALLOY CORE WITH ELECTROFORMED STRENGTH CLADDING FOR THERMAL DISSIPATION.",
+    id: "rcs",
+    label: "03 // RCS & VTP",
+    title: "RCS & VTP ASSEMBLY",
+    desc: "PRODUCT IS AN INTEGRATION OF PROPELLENT TANKS WITH ADAPTORS, THRUSTERS AND PIPELINE ASSEMBLIES.",
     specs: [
-      { key: "MATERIAL", val: "COPPER ALLOY (CU-CR-ZR) + NI CLAD" },
-      { key: "TOLERANCE", val: "± 0.02 MM HELIX WALL BOUND" },
-      { key: "DIMENSIONS", val: "Ø 320 MM EXIT / Ø 48 MM THROAT" },
-      { key: "APPLICATION", val: "REGENERATIVE ENGINE CHAMBER" },
-      { key: "PROGRAMME", val: "ISRO VIKAS PROPULSION PLATFORMS" },
-      { key: "SIMULATION", val: "THERMAL STEADY-STATE GRADIENT: CONFORMING" }
+      { key: "PROGRAMME", val: "FOR DRDO" },
+      { key: "DIAMETER", val: "1500 MM" },
+      { key: "HEIGHT", val: "1000 MM" },
+      { key: "MATERIAL", val: "AL. ALLOY 2014, SS316L & SS308L GRAPHITE" }
     ]
   },
   {
-    id: "bracket",
-    label: "04 // SUPPORT BRACKET",
-    title: "AEROSTRUCTURE MACHINED RIB JOINT BRACKET",
-    desc: "HIGH-FATIGUE BRACKET MACHINED FROM AL2219. WEIGHT OPTIMIZED VIA STRENGTH-TO-MASS ALGORITHMS WHILE RETAINING FLIGHT-CRITICAL RIGIDITY RATINGS.",
+    id: "canister",
+    label: "04 // METAL CANISTER",
+    title: "METAL CANISTER",
+    desc: "SPECIALIZED MISSILE LAUNCH CANISTER UTILIZING WELDED SA516 AND 15CDV6 CONSTRUCTION. HYDRAULIC PRESSURE TESTING UP TO 10 BAR AND PNEUMATIC LEAK TESTING UP TO 0.3 BAR.",
     specs: [
-      { key: "MATERIAL", val: "ALUMINIUM ALLOY (AA2219)" },
-      { key: "TOLERANCE", val: "± 0.008 MM AXIAL SYMMETRY" },
-      { key: "DIMENSIONS", val: "220 MM X 150 MM X 95 MM" },
-      { key: "APPLICATION", val: "FLIGHT-CONTROL ACTUATION MOUNT" },
-      { key: "PROGRAMME", val: "HAL LIGHT COMBAT AIRCRAFT (LCA)" },
-      { key: "SIMULATION", val: "VIBRATION SPECTRA RESONANCE: OK" }
+      { key: "PROGRAMME", val: "FOR DRDO" },
+      { key: "DIAMETER", val: "1300 MM" },
+      { key: "LENGTH", val: "9000 MM" },
+      { key: "MATERIAL", val: "SA516, 15CDV6" }
     ]
   }
 ] as const;
 
 type ProductId = typeof PRODUCTS[number]["id"];
 
-export function ProductShowcase3D() {
-  const [activeTab, setActiveTab] = useState<ProductId>("impeller");
+export function ProductShowcase3D({ onViewAll }: { onViewAll?: () => void }) {
+  const [activeTab, setActiveTab] = useState<ProductId>("shroud");
   const product = PRODUCTS.find((p) => p.id === activeTab) || PRODUCTS[0];
 
   return (
@@ -119,6 +111,19 @@ export function ProductShowcase3D() {
                 );
               })}
             </div>
+
+            {/* View All button — below product list */}
+            {onViewAll && (
+              <button
+                onClick={onViewAll}
+                className="group mt-2 w-full flex items-center justify-between px-4 py-3 font-tech text-[10px] tracking-wider text-blueprint-dim uppercase border border-white/[0.06] hover:border-blueprint/30 hover:text-white hover:bg-[#0d0f12]/40 transition-all duration-300 focus:outline-none"
+              >
+                <span>(VIEW ALL PRODUCTS)</span>
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" className="group-hover:translate-x-0.5 transition-transform duration-300">
+                  <path d="M2 6H10M7 3L10 6L7 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
 
           {/* Center Column: Interactive 3D Canvas */}
@@ -157,6 +162,7 @@ export function ProductShowcase3D() {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

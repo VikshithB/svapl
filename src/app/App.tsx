@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { CrewModuleCanvas } from "@/app/components/CrewModuleCanvas";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from "motion/react";
 
 import imgHeader from "@/imports/Desktop1/44363911e71cf9a03eb8eca1d986961f050713d9.png";
 import imgLogo from "@/imports/Desktop1/1d148265799be8543f36d6a99d6999ef7e88dcf8.png";
@@ -14,6 +14,10 @@ import imgGradient from "@/imports/Desktop1/9afe6b08154c56e0015b47657502065fde19
 import imgHowWeBuild from "@/imports/Desktop1/aa1fb16ca114e1d2a4029b5fb4578aa416c99ce0.png";
 import svgPaths from "@/imports/Desktop1/svg-mzctct3m79";
 
+import adaniLogo from "@/imports/Desktop1/adani-logo.svg";
+import belLogo from "@/imports/Desktop1/bharat-electronics-logo.svg";
+import lntLogo from "@/imports/Desktop1/lnt-logo.svg";
+
 import AboutPage from "@/app/pages/AboutPage";
 import ProgrammesPage from "@/app/pages/ProgrammesPage";
 import ContactPage from "@/app/pages/ContactPage";
@@ -23,10 +27,11 @@ import WhatWeBuildPage from "@/app/pages/WhatWeBuildPage";
 import HowWeBuildPage from "@/app/pages/HowWeBuildPage";
 import { VerificationProofStrip } from "@/app/components/VerificationProofStrip";
 import { ProductShowcase3D } from "@/app/components/ProductShowcase3D";
+import { ProductsPage } from "@/app/pages/ProductsPage";
 import { FactoryVideoPanel } from "@/app/components/FactoryVideoPanel";
-import { CompletedProjectsGrid } from "@/app/components/CompletedProjectsGrid";
+// import { CompletedProjectsGrid } from "@/app/components/CompletedProjectsGrid";
 
-type Page = "home" | "about" | "what-we-build" | "how-we-build" | "programmes" | "newsroom" | "contact" | "careers";
+type Page = "home" | "about" | "what-we-build" | "how-we-build" | "programmes" | "newsroom" | "contact" | "careers" | "products";
 
 // Nav items: [label, page | null for scroll-to-section, sectionId?]
 type NavItem = { label: string; page?: Page; section?: string };
@@ -115,14 +120,7 @@ function HalLogo({ className }: { className?: string }) {
   );
 }
 
-// Economic Times logo
-function EtLogo({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 328.381 28.6668">
-      <path d={svgPaths.p2e7b3b00} fill="#C7C7C7" />
-    </svg>
-  );
-}
+
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 
@@ -473,43 +471,107 @@ function CapabilityTicker() {
 // ─── Client Logos ──────────────────────────────────────────────────────────────
 
 function ClientLogos() {
+  // Each logo keeps its previous sizing; new SVG marks are sized into the same
+  // visual band. Right margin (not flex gap) keeps the -50% marquee seamless.
+  const logos = [
+    // ISRO
+    <ImageWithFallback
+      key="isro"
+      src={imgIsro}
+      alt="Indian Space Research Organisation"
+      className="h-16 sm:h-20 lg:h-[160px] w-auto object-contain max-w-[200px] lg:max-w-[240px]"
+    />,
+    // HAL (photo)
+    <div key="hal-photo" className="relative h-16 sm:h-20 lg:h-[150px] w-32 sm:w-40 lg:w-[202px] overflow-hidden">
+      <ImageWithFallback
+        src={imgHal}
+        alt="Hindustan Aeronautics Limited"
+        className="absolute w-full object-contain"
+        style={{ top: "-17.48%", height: "134.96%" }}
+      />
+    </div>,
+    // HAL (SVG logo)
+    <HalLogo key="hal-svg" className="h-14 sm:h-[90px] lg:h-[114px] w-auto" />,
+    // Bharat Dynamics
+    <ImageWithFallback
+      key="bdl"
+      src={imgBdl}
+      alt="Bharat Dynamics Limited"
+      className="h-10 sm:h-14 lg:h-[83px] w-auto object-contain"
+    />,
+    // ISRO variant
+    <div key="isro-variant" className="relative h-16 sm:h-20 lg:h-[180px] w-32 sm:w-36 lg:w-[180px] overflow-hidden">
+      <ImageWithFallback
+        src={imgIsro9}
+        alt="ISRO"
+        className="absolute object-contain"
+        style={{ top: "20.52%", left: "21.5%", width: "59.01%", height: "58.97%" }}
+      />
+    </div>,
+    // L&T (square mark) — matched to HAL/ISRO band
+    <img
+      key="lnt"
+      src={lntLogo}
+      alt="Larsen & Toubro"
+      className="h-14 sm:h-20 lg:h-[120px] w-auto object-contain"
+    />,
+    // Adani (wordmark)
+    <img
+      key="adani"
+      src={adaniLogo}
+      alt="Adani"
+      className="h-12 sm:h-16 lg:h-[80px] w-auto object-contain"
+    />,
+    // Bharat Electronics (wordmark)
+    <img
+      key="bel"
+      src={belLogo}
+      alt="Bharat Electronics Limited"
+      className="h-12 sm:h-16 lg:h-[72px] w-auto object-contain"
+    />,
+  ];
+
+  // Marquee driven manually so hovering can ease the speed down smoothly
+  // (changing a framer `duration` mid-loop would jump). Travels 0 → -50%
+  // and wraps; the duplicated logo set makes the wrap seamless.
+  const BASE_SPEED = 0.0011; // % of track per ms (~45s per loop)
+  const SLOW_SPEED = 0.00028; // ~1/4 speed on hover
+  const x = useMotionValue(0);
+  const xPercent = useTransform(x, (v) => `${v}%`);
+  const hovered = useRef(false);
+  const speed = useRef(BASE_SPEED);
+
+  useAnimationFrame((_, delta) => {
+    const target = hovered.current ? SLOW_SPEED : BASE_SPEED;
+    speed.current += (target - speed.current) * 0.08; // ease toward target
+    let next = x.get() - speed.current * delta;
+    if (next <= -50) next += 50;
+    x.set(next);
+  });
+
   return (
-    <section className="bg-[#0a0a0a] py-8 lg:py-6">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-12">
-        <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-12 xl:gap-16 py-6">
-          {/* ISRO */}
-          <ImageWithFallback
-            src={imgIsro}
-            alt="Indian Space Research Organisation"
-            className="h-16 sm:h-20 lg:h-[160px] w-auto object-contain max-w-[200px] lg:max-w-[240px]"
-          />
-          {/* HAL (photo) */}
-          <div className="relative h-16 sm:h-20 lg:h-[150px] w-32 sm:w-40 lg:w-[202px] overflow-hidden">
-            <ImageWithFallback
-              src={imgHal}
-              alt="Hindustan Aeronautics Limited"
-              className="absolute w-full object-contain"
-              style={{ top: "-17.48%", height: "134.96%" }}
-            />
-          </div>
-          {/* HAL (SVG logo) */}
-          <HalLogo className="h-14 sm:h-[90px] lg:h-[114px] w-auto" />
-          {/* Bharat Dynamics */}
-          <ImageWithFallback
-            src={imgBdl}
-            alt="Bharat Dynamics Limited"
-            className="h-10 sm:h-14 lg:h-[83px] w-auto object-contain"
-          />
-          {/* ISRO variant */}
-          <div className="relative h-16 sm:h-20 lg:h-[180px] w-32 sm:w-36 lg:w-[180px] overflow-hidden">
-            <ImageWithFallback
-              src={imgIsro9}
-              alt="ISRO"
-              className="absolute object-contain"
-              style={{ top: "20.52%", left: "21.5%", width: "59.01%", height: "58.97%" }}
-            />
-          </div>
-        </div>
+    <section className="bg-[#0a0a0a] py-8 lg:py-6 overflow-hidden">
+      <div className="relative">
+        {/* Edge fade masks */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 sm:w-24 lg:w-40 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 sm:w-24 lg:w-40 bg-gradient-to-l from-[#0a0a0a] to-transparent" />
+
+        <motion.div
+          className="flex w-max items-center py-6"
+          style={{ x: xPercent }}
+          onMouseEnter={() => (hovered.current = true)}
+          onMouseLeave={() => (hovered.current = false)}
+        >
+          {[...logos, ...logos].map((logo, i) => (
+            <div
+              key={i}
+              className="shrink-0 flex items-center justify-center mr-12 sm:mr-16 lg:mr-24 transition-transform duration-300 ease-out hover:scale-110 hover:z-20"
+              aria-hidden={i >= logos.length}
+            >
+              {logo}
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
@@ -524,20 +586,20 @@ function WhatWeBuild() {
   });
 
   // Translate vertical scroll (0 to 1) to horizontal translation (0% to -66.66%)
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-66.666%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
 
   const items = [
     {
       id: "01",
-      title: "5-AXIS CNC MILLING",
+      title: "UPTO 6-AXIS CNC MILLING",
       image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
       alt: "Close-up of high-precision multi-axis milled aerospace titanium manifold showcasing sub-micron edge tolerances.",
       specs: [
-        "COMPATIBILITY: TITANIUM, INCONEL, AL718",
-        "ACCURACY: < 0.005MM (5 MICRONS)",
-        "VOLUMETRIC CAPACITY: 1200MM X 1000MM X 800MM",
+        "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
+        "ACCURACY: < 0.006MM (6 MICRONS)",
+        "VOLUMETRIC CAPACITY: 6000MM X 3500MM X 1400MM",
         "SPINDLE SPEED: 24,000 RPM / HIGH-TORQUE",
-        "CALIBRATION: LASER-MEASURED IN-SITU"
+        "CALIBRATION: 3D CMM, 3D ARM"
       ]
     },
     {
@@ -546,40 +608,49 @@ function WhatWeBuild() {
       image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
       alt: "Aerospace cylindrical rotor shaft being turned to tight tolerances under high-contrast lighting.",
       specs: [
-        "COMPATIBILITY: EXOTIC ALLOYS, SUPERALLOYS",
+        "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
         "ACCURACY: < 0.003MM (3 MICRONS)",
-        "SWING ENVELOPE: Ø550MM X 1500MM LENGTH",
+        "SWING ENVELOPE: Ø42000MM X 2500MM LENGTH",
         "SURFACE FINISH: RA 0.2 MICRONS",
-        "INSPECTION: AUTOMATED OPTICAL CMM"
+        "INSPECTION: UNIMASTER & LASER SCANNING"
       ]
     },
     {
       id: "03",
-      title: "AEROSPACE ASSEMBLY",
+      title: "AEROSPACE STRUCTURAL ASSEMBLY",
       image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1200&h=800",
       alt: "Cleanroom assembly of flight-critical structural brackets and aerostructure bulkheads.",
       specs: [
+        // "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
         "COMPATIBILITY: FLIGHT-CRITICAL AEROSTRUCTURES",
-        "CERTIFICATION: NADCAP, AS9100D COMPLIANT",
+        "CERTIFICATION: AS9100D COMPLIANT",
         "LOAD TOLERANCE: 450KN TESTING RATING",
-        "ENVIRONMENTS: CLASS-10K CLEAN ROOM HALL",
-        "NDT METHODS: ULTRASONIC, DYE PENETRANT"
+        "HANDLING CAPACITY: Ø42000MM X 4M LENGTH",
+        "ENVIRONMENTS: CLASS-10K CLEAN ROOM",
+        "NDT METHODS: ULTRASONIC, DYE PENETRANT, CONDUCTIVITY"
       ]
-    }
+    },
+    {
+      id: "04",
+      title: "WELDING & JOINING",
+      image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1200&h=800",
+      alt: "Certified welder performing TIG welding on flight-critical aerostructure components in a controlled environment.",
+      specs: [
+        // "MATERIALS: AA2219, INCONEL 718, M250 & More",
+        "COMPATIBILITY: AEROSPACE & DEFENCE MOTOR CASING",
+        "CERTIFICATION: AUTHORIZED BY ISRO & DRDO",
+        "ENVIRONMENTS: ISO 8 CLEAN ROOM",
+        "NDT METHODS: XRAY, ULTRASONIC, DYE PENETRANT, CONDUCTIVITY"
+      ]
+    },
   ];
 
   return (
-    <section id="what-we-build" ref={targetRef} className="relative h-[300vh] bg-[#050505] overflow-visible">
+    <section id="what-we-build" ref={targetRef} className="relative h-[400vh] bg-[#050505] overflow-visible">
       {/* Sticky viewport container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
         
-        {/* Absolute blueprint markers overlay */}
-        <div className="absolute top-12 left-10 font-tech text-[10px] text-blueprint/30 tracking-[0.3em] uppercase hidden md:block select-none pointer-events-none">
-          SYSTEM: ACC_TRANS // HORIZ_GALLERY // PAGE_2
-        </div>
-        <div className="absolute top-12 right-10 font-tech text-[10px] text-blueprint/30 tracking-[0.3em] uppercase hidden md:block select-none pointer-events-none">
-          COORDS: 02_CAPABILITIES
-        </div>
+
 
         {/* Hairline structural frame */}
         <div className="absolute left-6 md:left-10 top-0 bottom-0 w-[1px] bg-white/[0.03] pointer-events-none" />
@@ -588,7 +659,7 @@ function WhatWeBuild() {
         <div className="absolute left-0 right-0 bottom-20 h-[1px] bg-white/[0.03] pointer-events-none" />
 
         {/* Slide track */}
-        <motion.div style={{ x }} className="flex h-[80vh] w-[300vw]">
+        <motion.div style={{ x }} className="flex h-[80vh] w-[400vw]">
           {items.map((item) => (
             <div
               key={item.id}
@@ -779,19 +850,81 @@ function HowWeBuild() {
 
 // ─── News / Headlines ──────────────────────────────────────────────────────────
 
+const PRESS_IMAGES = [
+  {
+    url: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?auto=format&fit=crop&q=80&w=640&h=400",
+    caption: "AEROSTRUCTURE DELIVERY — ISRO",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=640&h=400",
+    caption: "PRECISION MACHINING FACILITY",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=640&h=400",
+    caption: "ROCKET MOTOR CASING WELD",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?auto=format&fit=crop&q=80&w=640&h=400",
+    caption: "FLIGHT HARDWARE INSPECTION",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?auto=format&fit=crop&q=80&w=640&h=400",
+    caption: "INTEGRATED SYSTEM DELIVERY",
+  },
+];
+
 function NewsSection() {
+  // Triplicate so the -33.333% loop is seamless at any viewport
+  const slides = [...PRESS_IMAGES, ...PRESS_IMAGES, ...PRESS_IMAGES];
+
   return (
-    <section className="bg-[#232323] py-16 sm:py-20 lg:py-24">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
-        <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-2xl sm:text-3xl lg:text-[32px] text-center capitalize tracking-[-0.76px] mb-12 lg:mb-14">
-          Leading on frontier headlines
+    <section className="bg-[#0a0a0a] border-t border-b border-white/[0.06] py-14 sm:py-18 lg:py-20 overflow-hidden">
+      <style>{`
+        @keyframes press-ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-33.333%); }
+        }
+        .animate-press-ticker {
+          animation: press-ticker 28s linear infinite;
+          will-change: transform;
+        }
+        .animate-press-ticker:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
+      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] mb-10">
+        <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-3">
+          PRESS & MEDIA // COVERAGE
+        </p>
+        <h2 className="font-sans font-bold text-white text-2xl lg:text-[32px] tracking-tight uppercase">
+          IN THE FIELD.
         </h2>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-4 lg:gap-6 border-t border-b border-white/10 py-6 lg:py-[24px]">
-          {[0, 1, 2].map((i) => (
-            <EtLogo
+      </div>
+
+      {/* Edge fade masks */}
+      <div className="relative">
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+
+        <div className="flex animate-press-ticker gap-4" style={{ width: "max-content" }}>
+          {slides.map((img, i) => (
+            <div
               key={i}
-              className="h-[28px] w-auto max-w-[280px] sm:max-w-none sm:flex-1"
-            />
+              className="relative flex-shrink-0 w-[480px] h-[320px] overflow-hidden border border-white/[0.06] group"
+            >
+              <img
+                src={img.url}
+                alt={img.caption}
+                className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-90 transition-all duration-500"
+                loading="lazy"
+              />
+              {/* Corner brackets */}
+              <div className="absolute top-2.5 left-2.5 w-2.5 h-2.5 border-t border-l border-blueprint/40 pointer-events-none" />
+              <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 border-t border-r border-blueprint/40 pointer-events-none" />
+              <div className="absolute bottom-2.5 left-2.5 w-2.5 h-2.5 border-b border-l border-blueprint/40 pointer-events-none" />
+              <div className="absolute bottom-2.5 right-2.5 w-2.5 h-2.5 border-b border-r border-blueprint/40 pointer-events-none" />
+            </div>
           ))}
         </div>
       </div>
@@ -802,11 +935,6 @@ function NewsSection() {
 // ─── Insights ──────────────────────────────────────────────────────────────────
 
 function InsightsSection() {
-  const [start, setStart] = useState(0);
-  const total = INSIGHTS.length;
-
-  const prev = () => setStart((s) => (s - 1 + total) % total);
-  const next = () => setStart((s) => (s + 1) % total);
 
   return (
     <section className="bg-[#0a0a0a] py-16 sm:py-20 lg:py-[110px]">
@@ -847,24 +975,6 @@ function InsightsSection() {
               </p>
             </article>
           ))}
-        </div>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={prev}
-            className="w-[38px] h-[38px] rounded-full border border-white/24 flex items-center justify-center text-white text-lg hover:border-white/60 transition-colors font-['Archivo',sans-serif]"
-            aria-label="Previous"
-          >
-            ‹
-          </button>
-          <button
-            onClick={next}
-            className="w-[38px] h-[38px] rounded-full border border-white/24 flex items-center justify-center text-white text-lg hover:border-white/60 transition-colors font-['Archivo',sans-serif]"
-            aria-label="Next"
-          >
-            ›
-          </button>
         </div>
       </div>
     </section>
@@ -991,15 +1101,26 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
             © 2026 SRI VENKATESWARA AEROSPACE PVT. LTD.
           </p>
           <div className="flex gap-6">
-            {["Terms", "Privacy", "Follow Us"].map((l) => (
               <a
-                key={l}
-                href="#"
+                href="mailto:contracts@svapl.in?subject=Terms%20%26%20Privacy%20Enquiry"
                 className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
               >
-                {l}
+                Terms
               </a>
-            ))}
+              <a
+                href="mailto:contracts@svapl.in?subject=Privacy%20Enquiry"
+                className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
+              >
+                Privacy
+              </a>
+              <a
+                href="https://www.linkedin.com/company/svapl"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
+              >
+                Follow Us
+              </a>
           </div>
         </div>
       </div>
@@ -1009,7 +1130,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
 // ─── Home page bundle ─────────────────────────────────────────────────────────
 
-function HomePage() {
+function HomePage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   return (
     <>
       <HeroSection />
@@ -1017,10 +1138,10 @@ function HomePage() {
       <ClientLogos />
       <VerificationProofStrip />
       <WhatWeBuild />
-      <ProductShowcase3D />
+      <ProductShowcase3D onViewAll={() => onNavigate("products")} />
       <FactoryVideoPanel />
       <HowWeBuild />
-      <CompletedProjectsGrid />
+      {/* <CompletedProjectsGrid /> */}
       <NewsSection />
       <InsightsSection />
     </>
@@ -1047,7 +1168,8 @@ export default function App() {
   return (
     <div className="bg-[#0a0a0a] min-h-screen">
       <NavBar onNavigate={navigate} currentPage={page} />
-      {page === "home"           && <HomePage />}
+      {page === "home"           && <HomePage onNavigate={navigate} />}
+      {page === "products"       && <ProductsPage onBack={() => navigate("home")} />}
       {page === "about"          && <AboutPage />}
       {page === "what-we-build"  && <WhatWeBuildPage />}
       {page === "how-we-build"   && <HowWeBuildPage />}

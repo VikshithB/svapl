@@ -32,5 +32,21 @@ export default defineConfig({
   },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
-  assetsInclude: ['**/*.svg', '**/*.csv'],
+  assetsInclude: ['**/*.svg', '**/*.csv', '**/*.obj'],
+
+  build: {
+    // Raise warning threshold since LVM3 textures are intentionally large static assets
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Three.js and its examples into one async chunk
+          'vendor-three': ['three'],
+          // Framer/Motion into its own chunk
+          'vendor-motion': ['motion/react'],
+        },
+      },
+    },
+  },
 })
+

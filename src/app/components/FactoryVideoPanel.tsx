@@ -16,7 +16,7 @@ export function FactoryVideoPanel() {
     if (playing) {
       videoRef.current.pause();
     } else {
-      videoRef.current.play().catch(err => console.log(err));
+      videoRef.current.play().catch(() => { /* play interrupted */ });
     }
     setPlaying(!playing);
   };
@@ -30,7 +30,7 @@ export function FactoryVideoPanel() {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.play().catch((err) => {
-        console.log("Autoplay was blocked or failed:", err);
+        console.warn("Autoplay was blocked or failed:", err);
       });
     }
   }, []);
@@ -179,24 +179,6 @@ export function FactoryVideoPanel() {
             </div>
           </div>
 
-          {/* Bottom telemetry bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/[0.06] border-t border-white/[0.06] bg-[#0a0a0a]">
-            {[
-              { label: "ACTIVE MACHINES", val: "18 UNITS" },
-              { label: "SHOP TEMP", val: "22°C CONTROLLED" },
-              { label: "CLEANROOM CLASS", val: "ISO CLASS 7" },
-              { label: "SHIFT STATUS", val: "3-SHIFT / 24H OPS" },
-            ].map((m) => (
-              <div key={m.label} className="px-5 py-4 flex flex-col gap-1">
-                <span className="font-tech text-[8px] tracking-widest text-blueprint-dim uppercase">
-                  {m.label}
-                </span>
-                <span className="font-tech text-[11px] tracking-wider text-white font-semibold uppercase">
-                  {m.val}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

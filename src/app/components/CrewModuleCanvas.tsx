@@ -604,22 +604,22 @@ export function CrewModuleCanvas() {
       window.removeEventListener("mouseup", onMouseUp);
       canvas.removeEventListener("touchstart", onTouchStart);
       canvas.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onMouseUp);
+      canvas.removeEventListener("touchend", onMouseUp);
       cancelAnimationFrame(animationId);
     };
   }, []);
 
   return (
     <div className="relative w-full h-full min-h-[400px] flex items-center justify-center overflow-hidden">
-      {/* Blueprint metadata labels */}
-      <div className="absolute top-8 right-8 font-tech text-[10px] tracking-wider text-blueprint-dim select-none pointer-events-none flex flex-col gap-1 text-right">
+      {/* Blueprint metadata labels — extreme corners, small text */}
+      <div className="absolute top-2 right-2 font-tech text-[7px] tracking-wider text-blueprint-dim select-none pointer-events-none flex flex-col gap-0.5 text-right leading-tight">
         <span>MISSION: GAGANYAAN // ORBITAL</span>
         <span>SCALE: 1:12.5 (3D GEODESIC GRID)</span>
         <span className="text-blueprint">STATUS: DYNAMIC MODEL ACTIVE</span>
         <span>STRUCTURE: DOUBLE-WALLED CABIN</span>
       </div>
 
-      <div className="absolute bottom-8 left-8 font-tech text-[10px] tracking-wider text-blueprint-dim select-none pointer-events-none flex flex-col gap-1">
+      <div className="absolute bottom-2 left-2 font-tech text-[7px] tracking-wider text-blueprint-dim select-none pointer-events-none flex flex-col gap-0.5 leading-tight">
         <span>HARDWARE: CRITICAL // CREWED</span>
         <span>SYS.MONITOR // ONLINE</span>
         <span ref={rotYRef} className="text-blueprint">ROT-Y: 0.000RAD</span>

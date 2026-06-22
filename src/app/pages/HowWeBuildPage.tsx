@@ -379,6 +379,21 @@ function MachineMatrix() {
           </h2>
         </div>
 
+        {/* Shop floor telemetry strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/[0.06] border border-white/[0.06] bg-[#0d0f12]/40 mb-10">
+          {[
+            { label: "ACTIVE MACHINES", val: "18 UNITS" },
+            { label: "SHOP TEMP",       val: "22°C CONTROLLED" },
+            { label: "CLEANROOM CLASS", val: "ISO CLASS 7" },
+            { label: "SHIFT STATUS",    val: "3-SHIFT / 24H OPS" },
+          ].map((m) => (
+            <div key={m.label} className="px-5 py-4 flex flex-col gap-1">
+              <span className="font-tech text-[8px] tracking-widest text-blueprint-dim uppercase">{m.label}</span>
+              <span className="font-tech text-[11px] tracking-wider text-white font-semibold uppercase">{m.val}</span>
+            </div>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
           <div className="md:col-span-4 md:sticky md:top-28 flex flex-col gap-1 select-none">
             <span className="font-tech text-[9px] text-blueprint-dim tracking-widest uppercase mb-4">
@@ -814,6 +829,9 @@ export default function HowWeBuildPage() {
         </div>
       </section>
 
+      {/* ── Machine Matrix Dashboard ── */}
+      <MachineMatrix />
+
       {/* ── Process steps ── */}
       <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">MANUFACTURING SEQUENCE</p>
@@ -860,9 +878,6 @@ export default function HowWeBuildPage() {
           ))}
         </div>
       </section>
-
-      {/* ── Machine Matrix Dashboard ── */}
-      <MachineMatrix />
 
       {/* ── Inspection & NDT ── */}
       <section className="py-16 lg:py-20 border-t border-rule">

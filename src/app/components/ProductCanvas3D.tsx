@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { LVM3ModelViewer } from "./LVM3ModelViewer";
 
 interface Point3D {
   x: number;
@@ -15,10 +16,18 @@ interface Point2D {
 }
 
 interface ProductCanvas3DProps {
-  modelName: "impeller" | "casing" | "nozzle" | "bracket";
+  modelName: "shroud" | "fin" | "rcs" | "canister";
 }
 
+// Wrapper: conditionally renders the 3D viewer or the 2D wireframe canvas.
+// Split into two components to satisfy React's Rules of Hooks
+// (hooks must not be called after a conditional return).
 export function ProductCanvas3D({ modelName }: ProductCanvas3DProps) {
+  if (modelName === "shroud") return <LVM3ModelViewer />;
+  return <WireframeCanvas modelName={modelName} />;
+}
+
+function WireframeCanvas({ modelName }: ProductCanvas3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0 });
@@ -113,242 +122,251 @@ export function ProductCanvas3D({ modelName }: ProductCanvas3DProps) {
         }
       };
 
-      if (model === "impeller") {
-        // 1. Core axle hub
-        const hub1 = addCircle(20, -50, 12, "axle");
-        const hub2 = addCircle(20, 50, 12, "axle");
-        connectCircles(hub1, hub2, 12);
+      if (model === "shroud") {
+        // LVM3 Core Base Shroud — tapered cylinder (Ø4200mm, H3300mm) with
+        // isogrid panel stiffening, top & bottom attachment flanges.
+        const seg = 18;
+        const zLevels = [-44, -30, -16, 0, 16, 30, 44];
+        const radii   = [ 66,  63,  61, 58, 56, 54, 52]; // slight taper bottom→top
 
-        // 2. Base flange disk
-        const base1 = addCircle(85, -20, 24, "shroud");
-        const base2 = addCircle(85, -10, 24, "shroud");
-        connectCircles(base1, base2, 24);
-
-        // 3. Twisted Blades
-        const bladeCount = 12;
-        const spanSteps = 6;
-        for (let b = 0; b < bladeCount; b++) {
-          const baseAngle = (b / bladeCount) * Math.PI * 2;
-          const bladeIndices: number[] = [];
-
-          for (let s = 0; s < spanSteps; s++) {
-            const t = s / (spanSteps - 1);
-            const r = 20 + t * (85 - 20);
-            const angle = baseAngle + t * 0.45; // Twist factor
-            const z = -20 * (1 - t) + 30 * t;    // Slope height
-
-            const idx = vertices.length;
-            vertices.push({
-              x: Math.cos(angle) * r,
-              y: Math.sin(angle) * r,
-              z,
-              type: "blade",
-            });
-            bladeIndices.push(idx);
-
-            if (s > 0) {
-              edges.push([bladeIndices[s - 1], idx]);
-            }
-          }
-          // Connect root of blade to hub
-          const hubIdx = hub1 + Math.round((baseAngle / (Math.PI * 2)) * 12) % 12;
-          edges.push([hubIdx, bladeIndices[0]]);
-        }
-      } else if (model === "casing") {
-        // Rocket Motor Case Cylinder
-        const segments = 16;
-        const ringCount = 8;
-        const ringSpacing = 24;
-        const ringIndices: number[] = [];
-
-        // Cylinder rings
-        for (let r = 0; r < ringCount; r++) {
-          const z = -84 + r * ringSpacing;
-          const idx = addCircle(42, z, segments, "casing_body");
-          ringIndices.push(idx);
+        const rings: number[] = [];
+        for (let ri = 0; ri < zLevels.length; ri++) {
+          rings.push(addCircle(radii[ri], zLevels[ri], seg, "skin"));
         }
 
-        // Connect cylinder longitudinal lines
-        for (let r = 0; r < ringCount - 1; r++) {
-          const start1 = ringIndices[r];
-          const start2 = ringIndices[r + 1];
-          for (let i = 0; i < segments; i++) {
-            edges.push([start1 + i, start1 + ((i + 1) % segments)]);
-            edges.push([start1 + i, start2 + i]);
-          }
-        }
-        // Last ring circle connection
-        const lastStart = ringIndices[ringCount - 1];
-        for (let i = 0; i < segments; i++) {
-          edges.push([lastStart + i, lastStart + ((i + 1) % segments)]);
+        // Circumferential rings
+        for (let ri = 0; ri < rings.length; ri++) {
+          for (let i = 0; i < seg; i++)
+            edges.push([rings[ri] + i, rings[ri] + ((i + 1) % seg)]);
         }
 
-        // Domed end caps (Hemispherical outlines)
-        const capSteps = 3;
-        const capRad = 42;
-        
-        // Left Cap (z < -84)
-        let prevLeftCircle = ringIndices[0];
-        for (let c = 1; c <= capSteps; c++) {
-          const t = c / capSteps; // 0 to 1
-          const z = -84 - Math.sin(t * Math.PI / 2) * 20;
-          const r = Math.cos(t * Math.PI / 2) * capRad;
-          
-          if (r > 2) {
-            const nextLeft = addCircle(r, z, segments, "dome");
-            for (let i = 0; i < segments; i++) {
-              edges.push([nextLeft + i, nextLeft + ((i + 1) % segments)]);
-              edges.push([prevLeftCircle + i, nextLeft + i]);
-            }
-            prevLeftCircle = nextLeft;
+        // Vertical longerons every 3 segments (6 total)
+        for (let i = 0; i < seg; i += 3) {
+          for (let ri = 0; ri < rings.length - 1; ri++)
+            edges.push([rings[ri] + i, rings[ri + 1] + i]);
+        }
+
+        // Isogrid diagonals — forward & back between consecutive rings
+        for (let ri = 0; ri < rings.length - 1; ri++) {
+          for (let i = 0; i < seg; i++) {
+            edges.push([rings[ri] + i, rings[ri + 1] + ((i + 1) % seg)]);
+            if (i % 2 === 0)
+              edges.push([rings[ri] + i, rings[ri + 1] + ((i + seg - 1) % seg)]);
           }
         }
 
-        // Right Cap (z > 84)
-        let prevRightCircle = ringIndices[ringCount - 1];
-        for (let c = 1; c <= capSteps; c++) {
-          const t = c / capSteps;
-          const z = 84 + Math.sin(t * Math.PI / 2) * 20;
-          const r = Math.cos(t * Math.PI / 2) * capRad;
-          
-          if (r > 2) {
-            const nextRight = addCircle(r, z, segments, "dome");
-            for (let i = 0; i < segments; i++) {
-              edges.push([nextRight + i, nextRight + ((i + 1) % segments)]);
-              edges.push([prevRightCircle + i, nextRight + i]);
-            }
-            prevRightCircle = nextRight;
-          }
+        // Bottom attachment flange (wider lip)
+        const botFlange = addCircle(78, -44, seg, "flange");
+        for (let i = 0; i < seg; i++) {
+          edges.push([botFlange + i, botFlange + ((i + 1) % seg)]);
+          if (i % 3 === 0) edges.push([botFlange + i, rings[0] + i]);
         }
 
-        // Reinforcing Flanges
-        const flange1 = addCircle(52, -50, segments, "flange");
-        const flange2 = addCircle(52, 50, segments, "flange");
-        for (let i = 0; i < segments; i++) {
-          edges.push([flange1 + i, flange1 + ((i + 1) % segments)]);
-          edges.push([flange2 + i, flange2 + ((i + 1) % segments)]);
-        }
-      } else if (model === "nozzle") {
-        // Cryogenic Nozzle - Converging / Diverging shape
-        const segments = 16;
-        const steps = 12;
-        const ringIndices: number[] = [];
-
-        for (let s = 0; s < steps; s++) {
-          const t = s / (steps - 1); // 0 to 1
-          const z = -80 + t * 160;    // -80 to +80
-          
-          // Nozzle radius equation (throat at z = -20)
-          // Combustor entrance is wide, narrows down to throat, expands widely at exit
-          const zNorm = (z + 20) / 80; // throat at z=-20 -> zNorm = 0
-          let r = 24 + zNorm * zNorm * 38;
-          if (z < -20) {
-            // Converging side (steeper curve)
-            r = 24 + Math.pow((z + 20) / 60, 2) * 32;
-          }
-          
-          const idx = addCircle(r, z, segments, "nozzle_contour");
-          ringIndices.push(idx);
+        // Top attachment flange
+        const topFlange = addCircle(60, 44, seg, "flange");
+        for (let i = 0; i < seg; i++) {
+          edges.push([topFlange + i, topFlange + ((i + 1) % seg)]);
+          if (i % 3 === 0) edges.push([topFlange + i, rings[rings.length - 1] + i]);
         }
 
-        // Connect contour rings
-        for (let s = 0; s < steps - 1; s++) {
-          const start1 = ringIndices[s];
-          const start2 = ringIndices[s + 1];
-          for (let i = 0; i < segments; i++) {
-            edges.push([start1 + i, start1 + ((i + 1) % segments)]);
-            edges.push([start1 + i, start2 + i]);
-          }
-        }
-        const lastStart = ringIndices[steps - 1];
-        for (let i = 0; i < segments; i++) {
-          edges.push([lastStart + i, lastStart + ((i + 1) % segments)]);
-        }
+      } else if (model === "fin") {
+        // Stabilizer Fin Assembly — swept trapezoidal fin (H500, L800mm).
+        // Spans in Y; chord in X; thickness ±Z.
+        // Root (y=-42): chord x∈[-44,38]. Tip (y=44): chord x∈[-8,22], swept LE.
+        const th = 7; // half-thickness
 
-        // Coolant pipes wraps (spiral helical tubes around throat)
-        const helixCoils = 4;
-        const helixPoints = 48;
-        const helixIndices: number[] = [];
-        for (let h = 0; h < helixPoints; h++) {
-          const t = h / (helixPoints - 1);
-          const z = -45 + t * 75; // coil region
-          const theta = t * Math.PI * 2 * helixCoils;
-          
-          const zNorm = (z + 20) / 80;
-          const r = (24 + zNorm * zNorm * 38) + 2.5; // Slightly offset outside contour
-
-          const idx = vertices.length;
-          vertices.push({
-            x: Math.cos(theta) * r,
-            y: Math.sin(theta) * r,
-            z,
-            type: "helix",
-          });
-          helixIndices.push(idx);
-          if (h > 0) {
-            edges.push([helixIndices[h - 1], idx]);
-          }
-        }
-      } else if (model === "bracket") {
-        // Machined Aerostructure Bracket base + upright structure
-        // Base plate corners
-        const baseStart = vertices.length;
-        // z = -30 to 30, x = -60 to 60, y = 15 to 30
-        const pts = [
-          { x: -60, y: 15, z: -30 }, { x: 60, y: 15, z: -30 },
-          { x: 60, y: 15, z: 30 }, { x: -60, y: 15, z: 30 },
-          { x: -60, y: 30, z: -30 }, { x: 60, y: 30, z: -30 },
-          { x: 60, y: 30, z: 30 }, { x: -60, y: 30, z: 30 }
+        // Root & tip section corners
+        const rootPts = [
+          { x: -44, y: -42, z: -th }, { x: 38, y: -42, z: -th },
+          { x: 38, y: -42, z:  th }, { x: -44, y: -42, z:  th },
         ];
-        pts.forEach(p => vertices.push({ ...p, type: "base_plate" }));
-
-        // Plate edges
-        edges.push([baseStart, baseStart + 1], [baseStart + 1, baseStart + 2], [baseStart + 2, baseStart + 3], [baseStart + 3, baseStart]);
-        edges.push([baseStart + 4, baseStart + 5], [baseStart + 5, baseStart + 6], [baseStart + 6, baseStart + 7], [baseStart + 7, baseStart + 4]);
-        edges.push([baseStart, baseStart + 4], [baseStart + 1, baseStart + 5], [baseStart + 2, baseStart + 6], [baseStart + 3, baseStart + 7]);
-
-        // Upright ribs (triangle bracket ear in the center)
-        const earStart = vertices.length;
-        const earPts = [
-          { x: -16, y: 15, z: -15 }, { x: 16, y: 15, z: -15 },
-          { x: 16, y: 15, z: 15 }, { x: -16, y: 15, z: 15 },
-          { x: -16, y: -45, z: -15 }, { x: 16, y: -45, z: -15 },
-          { x: 16, y: -45, z: 15 }, { x: -16, y: -45, z: 15 }
+        const tipPts = [
+          { x: -8, y: 44, z: -th }, { x: 22, y: 44, z: -th },
+          { x: 22, y: 44, z:  th }, { x:  -8, y: 44, z:  th },
         ];
-        earPts.forEach(p => vertices.push({ ...p, type: "upright" }));
-        edges.push([earStart, earStart + 1], [earStart + 1, earStart + 2], [earStart + 2, earStart + 3], [earStart + 3, earStart]);
-        edges.push([earStart + 4, earStart + 5], [earStart + 5, earStart + 6], [earStart + 6, earStart + 7], [earStart + 7, earStart + 4]);
-        edges.push([earStart, earStart + 4], [earStart + 1, earStart + 5], [earStart + 2, earStart + 6], [earStart + 3, earStart + 7]);
+        const rootStart = vertices.length;
+        rootPts.forEach(p => vertices.push({ ...p, type: "fin_skin" }));
+        const tipStart = vertices.length;
+        tipPts.forEach(p => vertices.push({ ...p, type: "fin_skin" }));
 
-        // Circular mounting hole inside the upright ear (extruded along z-axis from -15 to 15)
-        const holeSegments = 8;
-        const holeY = -15;
-        const holeRadius = 10;
-        
-        const holeIdx1 = addCircle(holeRadius, -15, holeSegments, "hole_contour");
-        // Re-map vertices positions for standard coordinate alignment
-        for (let i = 0; i < holeSegments; i++) {
-          const idx = holeIdx1 + i;
-          const theta = (i / holeSegments) * Math.PI * 2;
-          vertices[idx].x = Math.cos(theta) * holeRadius;
-          vertices[idx].y = holeY + Math.sin(theta) * holeRadius;
-          vertices[idx].z = -15.1;
+        for (let i = 0; i < 4; i++) {
+          edges.push([rootStart + i, rootStart + (i + 1) % 4]);
+          edges.push([tipStart + i, tipStart + (i + 1) % 4]);
+          edges.push([rootStart + i, tipStart + i]);
         }
 
-        const holeIdx2 = addCircle(holeRadius, 15, holeSegments, "hole_contour");
-        for (let i = 0; i < holeSegments; i++) {
-          const idx = holeIdx2 + i;
-          const theta = (i / holeSegments) * Math.PI * 2;
-          vertices[idx].x = Math.cos(theta) * holeRadius;
-          vertices[idx].y = holeY + Math.sin(theta) * holeRadius;
-          vertices[idx].z = 15.1;
+        // 4 internal spars running spanwise
+        const sparXFracs = [0.08, 0.32, 0.58, 0.84];
+        for (const frac of sparXFracs) {
+          const rx = -44 + frac * 82;
+          const tx = -8  + frac * 30;
+          const s0 = vertices.length;
+          vertices.push({ x: rx, y: -42, z: -th + 1, type: "spar" });
+          vertices.push({ x: rx, y: -42, z:  th - 1, type: "spar" });
+          vertices.push({ x: tx, y:  44, z: -th + 1, type: "spar" });
+          vertices.push({ x: tx, y:  44, z:  th - 1, type: "spar" });
+          edges.push([s0, s0+2], [s0+1, s0+3], [s0, s0+1], [s0+2, s0+3]);
         }
 
-        // Connect hole circles
-        for (let i = 0; i < holeSegments; i++) {
-          edges.push([holeIdx1 + i, holeIdx1 + ((i + 1) % holeSegments)]);
-          edges.push([holeIdx2 + i, holeIdx2 + ((i + 1) % holeSegments)]);
-          edges.push([holeIdx1 + i, holeIdx2 + i]);
+        // 3 internal ribs at span fractions
+        for (const yFrac of [0.25, 0.55, 0.80]) {
+          const ry = -42 + yFrac * 86;
+          const le = -44 + yFrac * 36;
+          const te =  38 - yFrac * 16;
+          const r0 = vertices.length;
+          [
+            { x: le, y: ry, z: -th }, { x: te, y: ry, z: -th },
+            { x: te, y: ry, z:  th }, { x: le, y: ry, z:  th },
+          ].forEach(p => vertices.push({ ...p, type: "rib" }));
+          for (let i = 0; i < 4; i++) edges.push([r0 + i, r0 + (i + 1) % 4]);
+        }
+
+        // Root mounting lugs (3 tabs below the root chord)
+        for (const lx of [-28, -2, 22]) {
+          const l0 = vertices.length;
+          [
+            { x: lx-5, y:-42, z:-12 }, { x: lx+5, y:-42, z:-12 },
+            { x: lx+5, y:-58, z:-12 }, { x: lx-5, y:-58, z:-12 },
+            { x: lx-5, y:-42, z: 12 }, { x: lx+5, y:-42, z: 12 },
+            { x: lx+5, y:-58, z: 12 }, { x: lx-5, y:-58, z: 12 },
+          ].forEach(p => vertices.push({ ...p, type: "lug" }));
+          edges.push(
+            [l0,l0+1],[l0+1,l0+2],[l0+2,l0+3],[l0+3,l0],
+            [l0+4,l0+5],[l0+5,l0+6],[l0+6,l0+7],[l0+7,l0+4],
+            [l0,l0+4],[l0+1,l0+5],[l0+2,l0+6],[l0+3,l0+7],
+          );
+        }
+
+      } else if (model === "rcs") {
+        // RCS & VTP — circular ring frame viewed face-on (Ø1500, H1000mm).
+        // Outer ring, inner hub, 8 radial spokes, 3 propellant tanks, 4 thrusters.
+        const outerR = 68;
+        const seg16 = 16;
+        const seg8  = 8;
+
+        // Outer structural ring (double, front & back face)
+        const or1 = addCircle(outerR,  7, seg16, "outer_ring");
+        const or2 = addCircle(outerR, -7, seg16, "outer_ring");
+        for (let i = 0; i < seg16; i++) {
+          edges.push([or1+i, or1+((i+1)%seg16)]);
+          edges.push([or2+i, or2+((i+1)%seg16)]);
+          edges.push([or1+i, or2+i]);
+        }
+
+        // Inner manifold hub ring
+        const hub1 = addCircle(20, 7, seg8, "hub");
+        const hub2 = addCircle(20,-7, seg8, "hub");
+        for (let i = 0; i < seg8; i++) {
+          edges.push([hub1+i, hub1+((i+1)%seg8)]);
+          edges.push([hub2+i, hub2+((i+1)%seg8)]);
+          edges.push([hub1+i, hub2+i]);
+        }
+
+        // 8 radial spokes (hub → outer ring)
+        for (let s = 0; s < 8; s++) {
+          const oi = or1 + (s * 2);        // every 2nd outer pt (16/8 = 2)
+          const hi = hub1 + s;
+          // Mid-span pipe joint node
+          const ang = (s / 8) * Math.PI * 2;
+          const m1 = vertices.length;
+          vertices.push({ x: Math.cos(ang)*44, y: Math.sin(ang)*44, z:  7, type: "spoke" });
+          const m2 = vertices.length;
+          vertices.push({ x: Math.cos(ang)*44, y: Math.sin(ang)*44, z: -7, type: "spoke" });
+          edges.push([hi, m1], [hub2+s, m2], [m1, oi], [m2, or2+(s*2)], [m1, m2]);
+        }
+
+        // 3 propellant tanks at 120° spacing (offset 30°)
+        for (let t = 0; t < 3; t++) {
+          const ang = (t / 3) * Math.PI * 2 + Math.PI / 6;
+          const tx = Math.cos(ang) * 44;
+          const ty = Math.sin(ang) * 44;
+          const tRing1 = addCircle(10, 14, 8, "tank");
+          const tRing2 = addCircle(10,-14, 8, "tank");
+          for (let i = 0; i < 8; i++) {
+            const a2 = (i / 8) * Math.PI * 2;
+            vertices[tRing1+i].x = tx + Math.cos(a2)*10;
+            vertices[tRing1+i].y = ty + Math.sin(a2)*10;
+            vertices[tRing2+i].x = tx + Math.cos(a2)*10;
+            vertices[tRing2+i].y = ty + Math.sin(a2)*10;
+            edges.push([tRing1+i, tRing1+((i+1)%8)]);
+            edges.push([tRing2+i, tRing2+((i+1)%8)]);
+            edges.push([tRing1+i, tRing2+i]);
+          }
+        }
+
+        // 4 RCS thrusters at cardinal positions, pointing radially outward
+        for (let t = 0; t < 4; t++) {
+          const ang = (t / 4) * Math.PI * 2;
+          const perp = ang + Math.PI / 2;
+          const bx = Math.cos(ang) * outerR;
+          const by = Math.sin(ang) * outerR;
+          const ex = Math.cos(ang) * (outerR + 20);
+          const ey = Math.sin(ang) * (outerR + 20);
+          const t0 = vertices.length;
+          vertices.push({ x: bx, y: by, z: 0, type: "thruster" });
+          vertices.push({ x: ex, y: ey, z: 0, type: "thruster" });
+          vertices.push({ x: ex + Math.cos(perp)*9, y: ey + Math.sin(perp)*9, z: 0, type: "thruster" });
+          vertices.push({ x: ex - Math.cos(perp)*9, y: ey - Math.sin(perp)*9, z: 0, type: "thruster" });
+          edges.push([t0, t0+1], [t0+1, t0+2], [t0+1, t0+3]);
+        }
+
+      } else if (model === "canister") {
+        // Metal Canister — extremely elongated cylinder (Ø1300, L9000mm → ~7:1).
+        // Body rings, 4 longerons, domed end caps, stiffening collars, external lugs.
+        const seg = 12;
+        const R = 18;
+        const L = 150;
+        const nRings = 10;
+
+        const rings: number[] = [];
+        for (let ri = 0; ri < nRings; ri++) {
+          const z = -L/2 + ri * (L / (nRings - 1));
+          const ring = addCircle(R, z, seg, "body");
+          rings.push(ring);
+          for (let i = 0; i < seg; i++)
+            edges.push([ring+i, ring+((i+1)%seg)]);
+        }
+
+        // 4 longerons (at 0°, 90°, 180°, 270°)
+        for (const pos of [0, 3, 6, 9]) {
+          for (let ri = 0; ri < nRings - 1; ri++)
+            edges.push([rings[ri]+pos, rings[ri+1]+pos]);
+        }
+
+        // Domed end caps — 3 shrinking rings each side
+        const capSteps = [0.82, 0.50, 0.22];
+        let prevL = rings[0], prevR = rings[nRings-1];
+        capSteps.forEach((frac, ci) => {
+          const dz = 6 + ci * 4;
+          const cL = addCircle(R * frac, -L/2 - dz, seg, "dome");
+          const cR = addCircle(R * frac,  L/2 + dz, seg, "dome");
+          for (let i = 0; i < seg; i++) {
+            edges.push([cL+i, cL+((i+1)%seg)], [prevL+i, cL+i]);
+            edges.push([cR+i, cR+((i+1)%seg)], [prevR+i, cR+i]);
+          }
+          prevL = cL; prevR = cR;
+        });
+
+        // Stiffening collars near each end
+        const collar1 = addCircle(R + 5, -L/2 + 12, seg, "flange");
+        const collar2 = addCircle(R + 5,  L/2 - 12, seg, "flange");
+        for (let i = 0; i < seg; i++) {
+          edges.push([collar1+i, collar1+((i+1)%seg)]);
+          edges.push([collar2+i, collar2+((i+1)%seg)]);
+        }
+
+        // 3 external attachment lugs distributed along the length
+        for (let l = 0; l < 3; l++) {
+          const lz = -40 + l * 40;
+          const ang = (l / 3) * Math.PI * 2;
+          const lx = Math.cos(ang) * (R + 7);
+          const ly = Math.sin(ang) * (R + 7);
+          const l0 = vertices.length;
+          vertices.push({ x: lx, y: ly, z: lz - 5, type: "lug" });
+          vertices.push({ x: lx, y: ly, z: lz + 5, type: "lug" });
+          const nearRing = rings[Math.round(l * (nRings-1) / 2)];
+          const nearSeg = Math.round((ang / (Math.PI * 2)) * seg) % seg;
+          edges.push([l0, l0+1], [l0, nearRing + nearSeg], [l0+1, nearRing + nearSeg]);
         }
       }
 
@@ -440,15 +458,32 @@ export function ProductCanvas3D({ modelName }: ProductCanvas3DProps) {
         let lineWidth = 1;
 
         // Custom styling by node type
-        if (pA.type === "axle" || pB.type === "axle") {
-          strokeColor = `rgba(69, 162, 158, ${alpha * 0.8})`; // Silver-green for shaft core
-          lineWidth = 0.8;
-        } else if (pA.type === "helix") {
-          strokeColor = `rgba(69, 162, 158, ${alpha * 0.95})`; // Coolant pipes
+        const ta = pA.type ?? "";
+        const tb = pB.type ?? "";
+        if (ta === "flange" || tb === "flange") {
+          strokeColor = `rgba(255, 119, 0, ${alpha * 1.35})`;
+          lineWidth = 1.4;
+        } else if (ta === "spar" || tb === "spar" || ta === "hub" || tb === "hub") {
+          strokeColor = `rgba(69, 162, 158, ${alpha * 0.95})`;
           lineWidth = 1.0;
-        } else if (pA.type === "hole_contour") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 1.3})`;
-          lineWidth = 1.25;
+        } else if (ta === "rib" || tb === "rib") {
+          strokeColor = `rgba(69, 162, 158, ${alpha * 0.75})`;
+          lineWidth = 0.8;
+        } else if (ta === "thruster" || tb === "thruster") {
+          strokeColor = `rgba(255, 119, 0, ${alpha * 1.4})`;
+          lineWidth = 1.5;
+        } else if (ta === "tank" || tb === "tank") {
+          strokeColor = `rgba(69, 162, 158, ${alpha * 0.9})`;
+          lineWidth = 0.9;
+        } else if (ta === "spoke" || tb === "spoke") {
+          strokeColor = `rgba(255, 119, 0, ${alpha * 0.7})`;
+          lineWidth = 0.7;
+        } else if (ta === "lug" || tb === "lug") {
+          strokeColor = `rgba(255, 119, 0, ${alpha * 1.2})`;
+          lineWidth = 1.2;
+        } else if (ta === "dome" || tb === "dome") {
+          strokeColor = `rgba(255, 119, 0, ${alpha * 0.65})`;
+          lineWidth = 0.7;
         }
 
         ctx.strokeStyle = strokeColor;

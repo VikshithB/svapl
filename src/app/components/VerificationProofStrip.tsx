@@ -10,7 +10,7 @@ const STATS: StatItem[] = [
   { value: "25+ YRS", label: "FLIGHT-PROVEN HERITAGE", code: "ESTABLISHED IN 2000" },
   { value: "< 5µm", label: "MACHINING PRECISION", code: "SUB-MICRON METROLOGY" },
   { value: "1,20,000", label: "SQ.FT FACILITY FOOTPRINT", code: "UNIT I, II & III" },
-  { value: "CLASS 8", label: "CLEAN ROOM", code: "ISO CLASS 7 ASSEMBLY" }
+  { value: "ISO 8", label: "CLEAN ROOM", code: "WELDING FACILITY" }
 ];
 
 export function VerificationProofStrip() {
@@ -31,13 +31,16 @@ export function VerificationProofStrip() {
               <span className="text-blueprint text-[9px] tracking-[0.2em] font-semibold">
                 SYS_PROOF_0{idx + 1}
               </span>
-              <span className="font-sans font-bold text-white text-2xl lg:text-[28px] tracking-tight uppercase mt-1">
+              {/* normal-case (not uppercase): CSS uppercase maps the micro sign
+                  µ → Μ (Greek capital Mu), making "5µm" read as "5MM". Values are
+                  already authored in uppercase, so nothing else changes. */}
+              <span className="font-sans font-bold text-white text-2xl lg:text-[28px] tracking-tight normal-case mt-1">
                 {s.value}
               </span>
               <span className="text-white/80 text-[9px] tracking-[0.15em] uppercase mt-0.5">
                 {s.label}
               </span>
-              <span className="text-blueprint-dim text-[8px] tracking-[0.1em] uppercase mt-0.5 opacity-60">
+              <span className="text-blueprint-dim text-[9px] tracking-[0.1em] uppercase mt-0.5 opacity-60">
                 {s.code}
               </span>
             </div>

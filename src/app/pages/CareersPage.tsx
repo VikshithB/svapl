@@ -175,7 +175,7 @@ export default function CareersPage() {
                       </div>
                     </div>
                     <a
-                      href="mailto:contracts@svapl.in?subject=Application: {pos.title}"
+                      href={`mailto:contracts@svapl.in?subject=Application%3A%20${encodeURIComponent(pos.title)}`}
                       className="shrink-0 bg-white text-black font-['Space_Grotesk',sans-serif] font-bold text-sm px-6 py-3 rounded-[4px] hover:bg-safety transition-colors text-center"
                     >
                       Apply via email
