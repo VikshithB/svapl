@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import videoSrc from "@/imports/svapl_preview.mp4";
+
+// Hosted on Cloudinary (or any CDN) — keeps the 200MB+ source video out of git.
+// Override per-environment with VITE_FACTORY_VIDEO_URL; otherwise paste the
+// Cloudinary delivery URL below (e.g. https://res.cloudinary.com/<cloud>/video/upload/v123/svapl_preview.mp4).
+const videoSrc =
+  import.meta.env.VITE_FACTORY_VIDEO_URL ??
+  "https://res.cloudinary.com/<YOUR_CLOUD_NAME>/video/upload/svapl_preview.mp4";
 
 export function FactoryVideoPanel() {
   const videoRef = useRef<HTMLVideoElement>(null);

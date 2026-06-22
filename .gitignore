@@ -41,3 +41,8 @@ coverage/
 .agents/
 .claude/
 skills-lock.json
+
+# Large media — host on Cloudinary / CDN, reference by URL instead of committing
+*.mp4
+*.mov
+*.webm
