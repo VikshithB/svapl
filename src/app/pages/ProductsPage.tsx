@@ -163,7 +163,9 @@ export function ProductsPage({ onBack }: { onBack: () => void }) {
   const handleFilter = (f: Programme) => {
     setFilter(f);
     const next = f === "ALL" ? PRODUCTS : PRODUCTS.filter(p => p.programme === f);
-    if (!next.find(p => p.id === activeId)) setActiveId(next[0]?.id ?? "");
+    if (next.length > 0 && !next.find(p => p.id === activeId)) {
+      setActiveId(next[0].id);
+    }
   };
 
   return (

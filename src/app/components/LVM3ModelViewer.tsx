@@ -25,6 +25,11 @@ export function LVM3ModelViewer() {
     let disposed = false;
     let renderer: THREE.WebGLRenderer | null = null;
 
+    // Track GPU resources for proper cleanup on unmount
+    let envTexture: THREE.Texture | null = null;
+    let mat: THREE.MeshStandardMaterial | null = null;
+    const loadedTextures: THREE.Texture[] = [];
+
     const w = mount.clientWidth || 400;
     const h = mount.clientHeight || 400;
 
@@ -42,28 +47,24 @@ export function LVM3ModelViewer() {
     camera.position.set(0, 1.5, 5.5);
 
     // Studio lighting — RoomEnvironment provides soft wrap-around IBL
-    // that reads PBR metalness/roughness maps correctly
     const pmrem = new THREE.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    envTexture = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = envTexture;
     pmrem.dispose();
 
-    // Key light: large soft box upper-left-front (warm neutral)
     const key = new THREE.DirectionalLight(0xfff5e8, 3.5);
     key.position.set(-3, 6, 5);
     scene.add(key);
 
-    // Fill light: opposite side, cooler, about 1/3 key intensity
     const fillL = new THREE.DirectionalLight(0xd0e8ff, 1.1);
     fillL.position.set(5, 2, 3);
     scene.add(fillL);
 
-    // Rim / hair light: behind-above, separates model from background
     const rimL = new THREE.DirectionalLight(0xffffff, 1.8);
     rimL.position.set(0, 8, -6);
     scene.add(rimL);
 
-    // Ground bounce: faint warm uplight simulates studio floor reflection
     const bounce = new THREE.DirectionalLight(0xffe8c0, 0.3);
     bounce.position.set(0, -4, 2);
     scene.add(bounce);
@@ -78,9 +79,11 @@ export function LVM3ModelViewer() {
     controls.maxDistance = 18;
     controls.target.set(0, 0, 0);
 
-    // Pause auto-rotate while user interacts
-    renderer.domElement.addEventListener("pointerdown", () => { controls.autoRotate = false; });
-    renderer.domElement.addEventListener("pointerup",   () => { controls.autoRotate = true; });
+    // Pause auto-rotate while user interacts; store refs so listeners can be removed
+    const onPointerDown = () => { controls.autoRotate = false; };
+    const onPointerUp   = () => { controls.autoRotate = true; };
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointerup",   onPointerUp);
 
     const tl = new THREE.TextureLoader();
 
@@ -90,12 +93,20 @@ export function LVM3ModelViewer() {
       tl.loadAsync(roughnessUrl),
       tl.loadAsync(metallicUrl),
     ]).then(([diffuse, normal, roughness, metallic]) => {
-      diffuse.colorSpace = THREE.SRGBColorSpace;
+      // Guard: component may have unmounted while textures were fetching
+      if (disposed) {
+        [diffuse, normal, roughness, metallic].forEach(t => t.dispose());
+        return;
+      }
+
+      diffuse.colorSpace   = THREE.SRGBColorSpace;
       roughness.colorSpace = THREE.NoColorSpace;
       metallic.colorSpace  = THREE.NoColorSpace;
       normal.colorSpace    = THREE.NoColorSpace;
 
-      const mat = new THREE.MeshStandardMaterial({
+      loadedTextures.push(diffuse, normal, roughness, metallic);
+
+      mat = new THREE.MeshStandardMaterial({
         map:          diffuse,
         normalMap:    normal,
         roughnessMap: roughness,
@@ -110,8 +121,7 @@ export function LVM3ModelViewer() {
         (obj) => {
           if (disposed) return;
 
-          // Center and fit to a fixed world-unit size
-          const box  = new THREE.Box3().setFromObject(obj);
+          const box    = new THREE.Box3().setFromObject(obj);
           const center = box.getCenter(new THREE.Vector3());
           const size   = box.getSize(new THREE.Vector3());
           const scale  = 3.2 / Math.max(size.x, size.y, size.z);
@@ -120,7 +130,7 @@ export function LVM3ModelViewer() {
           obj.position.copy(center.negate().multiplyScalar(scale));
 
           obj.traverse((c) => {
-            if ((c as THREE.Mesh).isMesh) (c as THREE.Mesh).material = mat;
+            if ((c as THREE.Mesh).isMesh) (c as THREE.Mesh).material = mat!;
           });
 
           scene.add(obj);
@@ -129,11 +139,10 @@ export function LVM3ModelViewer() {
         (ev) => {
           if (ev.total > 0) setPct(Math.round((ev.loaded / ev.total) * 100));
         },
-        () => setErr(true),
+        () => { if (!disposed) setErr(true); },
       );
-    }).catch(() => setErr(true));
+    }).catch(() => { if (!disposed) setErr(true); });
 
-    // Resize observer keeps aspect correct on layout changes
     const ro = new ResizeObserver(() => {
       if (!renderer || !mount) return;
       const rw = mount.clientWidth;
@@ -155,7 +164,18 @@ export function LVM3ModelViewer() {
       disposed = true;
       cancelAnimationFrame(rafId);
       ro.disconnect();
+
+      // Remove named listeners before disposal
+      renderer?.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer?.domElement.removeEventListener("pointerup",   onPointerUp);
+
       controls.dispose();
+
+      // Dispose all GPU-side resources to prevent VRAM leaks on unmount
+      loadedTextures.forEach(t => t.dispose());
+      mat?.dispose();
+      envTexture?.dispose();
+
       renderer?.dispose();
       renderer?.domElement.remove();
     };
@@ -167,13 +187,11 @@ export function LVM3ModelViewer() {
       className="relative w-full aspect-square bg-[#050505] border border-white/[0.06] overflow-hidden"
       style={{ cursor: done ? "grab" : "default" }}
     >
-      {/* Blueprint corner brackets */}
       <div className="absolute top-2.5 left-2.5  w-2.5 h-2.5 border-t border-l border-blueprint/40 pointer-events-none z-10" />
       <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 border-t border-r border-blueprint/40 pointer-events-none z-10" />
       <div className="absolute bottom-2.5 left-2.5  w-2.5 h-2.5 border-b border-l border-blueprint/40 pointer-events-none z-10" />
       <div className="absolute bottom-2.5 right-2.5 w-2.5 h-2.5 border-b border-r border-blueprint/40 pointer-events-none z-10" />
 
-      {/* HUD labels (only once loaded) */}
       {done && (
         <>
           <div className="absolute top-3.5 left-3.5 bg-black/70 border border-white/[0.06] px-2 py-0.5 font-tech text-[8px] text-blueprint tracking-wider z-10 pointer-events-none">
@@ -185,7 +203,6 @@ export function LVM3ModelViewer() {
         </>
       )}
 
-      {/* Loading overlay */}
       {!done && !err && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#050505]/90 z-20 pointer-events-none">
           <div className="font-tech text-[9px] text-blueprint tracking-[0.25em] uppercase">
@@ -196,14 +213,12 @@ export function LVM3ModelViewer() {
               className="absolute top-0 left-0 h-full bg-blueprint transition-all duration-300"
               style={{ width: `${pct}%` }}
             />
-            {/* Animated shimmer on the bar */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
           </div>
           <div className="font-tech text-[8px] text-blueprint-dim tracking-[0.2em]">{pct}%</div>
         </div>
       )}
 
-      {/* Error state */}
       {err && (
         <div className="absolute inset-0 flex items-center justify-center bg-[#050505]/90 z-20 pointer-events-none">
           <span className="font-tech text-[9px] text-red-400/70 tracking-widest uppercase">

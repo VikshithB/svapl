@@ -32,7 +32,9 @@ export default defineConfig({
   },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
-  assetsInclude: ['**/*.svg', '**/*.csv', '**/*.obj'],
+  // .obj is intentionally excluded — LVM3ModelViewer uses explicit ?url imports,
+  // which work without assetsInclude and avoid a duplicate Vite pipeline pass.
+  assetsInclude: ['**/*.svg', '**/*.csv'],
 
   build: {
     // Raise warning threshold since LVM3 textures are intentionally large static assets

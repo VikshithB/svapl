@@ -132,10 +132,10 @@ export default function WhatWeBuildPage() {
       <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24 border-b border-rule">
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">WHAT WE BUILD</p>
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-          <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-2xl">
+          <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-2xl">
             Five decades of critical hardware. One roof.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-sm leading-relaxed shrink-0">
+          <p className="font-body text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-sm leading-relaxed shrink-0">
             From aerostructures to defence motor casings — mission-critical manufacturing under AS9100D quality management.
           </p>
         </div>
@@ -149,7 +149,7 @@ export default function WhatWeBuildPage() {
             <button
               key={c.id}
               onClick={() => setActive(c.id)}
-              className={`whitespace-nowrap font-['Space_Grotesk',sans-serif] font-bold text-sm px-5 py-2.5 rounded-[4px] transition-all duration-200 shrink-0 ${
+              className={`whitespace-nowrap font-sans font-bold text-sm px-5 py-2.5 rounded-[4px] transition-all duration-200 shrink-0 ${
                 active === c.id
                   ? "bg-blueprint text-black"
                   : "text-blueprint-dim hover:text-white border border-rule"
@@ -173,7 +173,7 @@ export default function WhatWeBuildPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute top-5 left-5">
-              <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] border border-white/20 px-2 py-[3px] rounded-[3px]">
+              <span className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] border border-white/20 px-2 py-[3px] rounded-[3px]">
                 {cap.tag}
               </span>
             </div>
@@ -182,10 +182,10 @@ export default function WhatWeBuildPage() {
           {/* Right: content */}
           <div className="flex flex-col gap-8">
             <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[30px] leading-snug tracking-[-0.5px] mb-4">
+              <h2 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[30px] leading-snug tracking-[-0.5px] mb-4">
                 {cap.headline}
               </h2>
-              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-sm lg:text-base leading-relaxed">
+              <p className="font-body text-[rgba(234,242,251,0.82)] text-sm lg:text-base leading-relaxed">
                 {cap.desc}
               </p>
             </div>
@@ -194,18 +194,18 @@ export default function WhatWeBuildPage() {
             <div className="grid grid-cols-2 gap-px bg-white/10">
               {cap.specs.map((s) => (
                 <div key={s.label} className="bg-[#0a0a0a] p-4">
-                  <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[9px] tracking-[1.5px] uppercase mb-1">{s.label}</p>
-                  <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-sm">{s.value}</p>
+                  <p className="font-sans text-blueprint-dim text-[9px] tracking-[1.5px] uppercase mb-1">{s.label}</p>
+                  <p className="font-sans font-bold text-[#eaf2fb] text-sm">{s.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Materials */}
             <div>
-              <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">MATERIALS</p>
+              <p className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">MATERIALS</p>
               <div className="flex flex-wrap gap-2">
                 {cap.materials.map((m) => (
-                  <span key={m} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.82)] font-['Archivo',sans-serif] text-xs px-3 py-1.5 rounded-[3px]">
+                  <span key={m} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.82)] font-body text-xs px-3 py-1.5 rounded-[3px]">
                     {m}
                   </span>
                 ))}
@@ -214,12 +214,12 @@ export default function WhatWeBuildPage() {
 
             {/* Key products */}
             <div>
-              <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY PRODUCTS DELIVERED</p>
+              <p className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY PRODUCTS DELIVERED</p>
               <ul className="flex flex-col gap-2">
                 {cap.products.map((p) => (
                   <li key={p} className="flex items-start gap-2">
                     <span className="text-blueprint mt-[3px] text-xs shrink-0">—</span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-xs leading-relaxed">{p}</span>
+                    <span className="font-body text-[rgba(234,242,251,0.82)] text-xs leading-relaxed">{p}</span>
                   </li>
                 ))}
               </ul>
@@ -245,8 +245,8 @@ export default function WhatWeBuildPage() {
               { label: "NDT", spec: "RT, UT, DP, TT; X-ray 350 kVA; 3D CMM 600 × 600 × 500 mm" },
             ].map((item) => (
               <div key={item.label} className="bg-panel p-6">
-                <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[15px] mb-2">{item.label}</p>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[13px] leading-relaxed">{item.spec}</p>
+                <p className="font-sans font-bold text-[#eaf2fb] text-[15px] mb-2">{item.label}</p>
+                <p className="font-body text-[rgba(234,242,251,0.78)] text-[13px] leading-relaxed">{item.spec}</p>
               </div>
             ))}
           </div>
@@ -257,18 +257,18 @@ export default function WhatWeBuildPage() {
       <section className="py-16 lg:py-20 border-t border-rule">
         <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-2">
+            <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-2">
               Have a programme requirement?
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base max-w-lg">
+            <p className="font-body text-[rgba(234,242,251,0.82)] text-base max-w-lg">
               Share your drawing package or specification. Our engineering team will assess feasibility and provide a first-response within 5 working days.
             </p>
           </div>
           <div className="flex gap-4 flex-wrap shrink-0">
-            <button className="bg-white text-black font-['Space_Grotesk',sans-serif] font-bold text-sm px-8 py-4 rounded-[4px] hover:bg-safety hover:text-white transition-colors">
+            <button className="bg-white text-black font-sans font-bold text-sm px-8 py-4 rounded-[4px] hover:bg-safety hover:text-white transition-colors">
               Request Strategic Briefing
             </button>
-            <button className="border border-white/30 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm px-6 py-4 rounded-[4px] hover:bg-white/5 transition-colors">
+            <button className="border border-white/30 text-[#eaf2fb] font-body font-semibold text-sm px-6 py-4 rounded-[4px] hover:bg-white/5 transition-colors">
               View Programmes
             </button>
           </div>

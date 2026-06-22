@@ -84,10 +84,10 @@ export default function CareersPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/50 to-[#0a0a0a]" />
         <div className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">CAREERS</p>
-          <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
+          <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
             Build the hardware that builds India's future.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
+          <p className="font-body text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
             Join a team that has been at the heart of India's ISRO and DRDO programmes for 25 years.
             We are expanding for the next generation of defence and space work — and we hire for depth.
           </p>
@@ -102,8 +102,8 @@ export default function CareersPage() {
             {VALUES.map((v) => (
               <div key={v.label}>
                 <div className="w-8 h-px bg-blueprint mb-4" />
-                <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[16px] mb-2">{v.label}</h3>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-sm leading-relaxed">{v.desc}</p>
+                <h3 className="font-sans font-bold text-[#eaf2fb] text-[16px] mb-2">{v.label}</h3>
+                <p className="font-body text-[rgba(234,242,251,0.82)] text-sm leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -115,7 +115,7 @@ export default function CareersPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
             <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-2">OPEN POSITIONS</p>
-            <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-3xl lg:text-[38px] leading-tight tracking-[-0.8px]">
+            <h2 className="font-sans font-bold text-[#eaf2fb] text-3xl lg:text-[38px] leading-tight tracking-[-0.8px]">
               We&apos;re hiring.
             </h2>
           </div>
@@ -125,7 +125,7 @@ export default function CareersPage() {
               <button
                 key={d}
                 onClick={() => setDept(d)}
-                className={`font-['Space_Grotesk',sans-serif] font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
+                className={`font-sans font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
                   dept === d ? "bg-blueprint text-black" : "border border-rule text-blueprint-dim hover:text-white"
                 }`}
               >
@@ -141,20 +141,22 @@ export default function CareersPage() {
               {/* Row header */}
               <button
                 className="w-full text-left p-6 lg:p-8 flex flex-col sm:flex-row sm:items-center gap-4 group hover:bg-[#141414] transition-colors"
+                aria-expanded={open === pos.title}
+                aria-controls={`career-${pos.title}`}
                 onClick={() => setOpen(open === pos.title ? null : pos.title)}
               >
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-1">
-                    <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
+                    <span className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
                       {pos.dept}
                     </span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.72)] text-xs">{pos.exp} exp.</span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.72)] text-xs">{pos.location}</span>
+                    <span className="font-body text-[rgba(234,242,251,0.72)] text-xs">{pos.exp} exp.</span>
+                    <span className="font-body text-[rgba(234,242,251,0.72)] text-xs">{pos.location}</span>
                   </div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-lg">{pos.title}</h3>
+                  <h3 className="font-sans font-bold text-[#eaf2fb] text-lg">{pos.title}</h3>
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
-                  <span className="font-['Archivo',sans-serif] text-blueprint-dim text-xs border border-rule px-3 py-1 rounded-full">{pos.type}</span>
+                  <span className="font-body text-blueprint-dim text-xs border border-rule px-3 py-1 rounded-full">{pos.type}</span>
                   <span className={`text-blueprint text-lg transition-transform ${open === pos.title ? "rotate-45" : ""}`}>+</span>
                 </div>
               </button>
@@ -164,11 +166,11 @@ export default function CareersPage() {
                 <div className="px-6 lg:px-8 pb-8 border-t border-white/[0.06]">
                   <div className="pt-6 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-start">
                     <div>
-                      <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-sm leading-relaxed mb-6">{pos.desc}</p>
-                      <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY SKILLS</p>
+                      <p className="font-body text-[rgba(234,242,251,0.85)] text-sm leading-relaxed mb-6">{pos.desc}</p>
+                      <p className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] uppercase mb-3">KEY SKILLS</p>
                       <div className="flex flex-wrap gap-2">
                         {pos.skills.map((s) => (
-                          <span key={s} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.88)] font-['Archivo',sans-serif] text-xs px-3 py-1 rounded-[3px]">
+                          <span key={s} className="bg-white/[0.04] border border-rule text-[rgba(234,242,251,0.88)] font-body text-xs px-3 py-1 rounded-[3px]">
                             {s}
                           </span>
                         ))}
@@ -176,7 +178,7 @@ export default function CareersPage() {
                     </div>
                     <a
                       href={`mailto:contracts@svapl.in?subject=Application%3A%20${encodeURIComponent(pos.title)}`}
-                      className="shrink-0 bg-white text-black font-['Space_Grotesk',sans-serif] font-bold text-sm px-6 py-3 rounded-[4px] hover:bg-safety transition-colors text-center"
+                      className="shrink-0 bg-white text-black font-sans font-bold text-sm px-6 py-3 rounded-[4px] hover:bg-safety transition-colors text-center"
                     >
                       Apply via email
                     </a>
@@ -189,7 +191,7 @@ export default function CareersPage() {
 
         {visible.length === 0 && (
           <div className="py-16 text-center border border-rule rounded-[4px]">
-            <p className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-sm">No open positions in this department currently.</p>
+            <p className="font-sans text-blueprint-dim text-sm">No open positions in this department currently.</p>
           </div>
         )}
       </section>
@@ -198,17 +200,17 @@ export default function CareersPage() {
       <section className="bg-panel border-t border-rule py-16">
         <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[30px] tracking-[-0.5px] mb-2">
+            <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[30px] tracking-[-0.5px] mb-2">
               Don&apos;t see the right role?
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base max-w-md">
+            <p className="font-body text-[rgba(234,242,251,0.82)] text-base max-w-md">
               Send us your CV with a note on your specialisation. We review all applications — especially from
               aerospace welders, precision machinists and NDT inspectors.
             </p>
           </div>
           <a
             href="mailto:contracts@svapl.in?subject=General Application — SVAPL"
-            className="shrink-0 border border-white/30 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm px-8 py-4 rounded-[4px] hover:bg-white/5 transition-colors"
+            className="shrink-0 border border-white/30 text-[#eaf2fb] font-body font-semibold text-sm px-8 py-4 rounded-[4px] hover:bg-white/5 transition-colors"
           >
             Send general application
           </a>

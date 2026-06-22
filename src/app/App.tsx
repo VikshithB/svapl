@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Component, type ReactNode, type ErrorInfo } from "react";
 import { Menu, X } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { CrewModuleCanvas } from "@/app/components/CrewModuleCanvas";
@@ -149,7 +149,7 @@ function NavBar({ onNavigate, currentPage }: { onNavigate: (page: Page, section?
     >
       <div className="flex items-center justify-between px-6 sm:px-10 lg:px-20 h-20">
         {/* Logo */}
-        <button onClick={() => handleNav("home")} className="relative group focus:outline-none">
+        <button onClick={() => handleNav("home")} aria-label="SVAPL — go to homepage" className="relative group focus:outline-none">
           <ImageWithFallback
             src={imgLogo}
             alt="SVAPL"
@@ -279,7 +279,7 @@ function HeroSection() {
       opacity: 1,
       transition: {
         duration: 1.2,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
@@ -292,7 +292,7 @@ function HeroSection() {
       transition: {
         delay: 0.9,
         duration: 1.0,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
@@ -305,7 +305,7 @@ function HeroSection() {
       transition: {
         delay: 0.5,
         duration: 1.6,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
@@ -457,7 +457,7 @@ function CapabilityTicker() {
         {doubled.map((item, i) => (
           <span
             key={i}
-            className="font-['Space_Grotesk',sans-serif] text-white inline-flex items-center text-xs sm:text-sm tracking-[2.16px]"
+            className="font-sans text-white inline-flex items-center text-xs sm:text-sm tracking-[2.16px]"
           >
             <span className="px-5 sm:px-8">{item}</span>
             <span className="text-white opacity-50 text-base">/</span>
@@ -564,7 +564,7 @@ function ClientLogos() {
         >
           {[...logos, ...logos].map((logo, i) => (
             <div
-              key={i}
+              key={`logo-${i < logos.length ? "a" : "b"}-${i % logos.length}`}
               className="shrink-0 flex items-center justify-center mr-12 sm:mr-16 lg:mr-24 transition-transform duration-300 ease-out hover:scale-110 hover:z-20"
               aria-hidden={i >= logos.length}
             >
@@ -741,10 +741,10 @@ function HowWeBuild() {
 
         {/* Section header */}
         <div className="mb-10 lg:mb-[54px]">
-          <p className="font-['Space_Grotesk',sans-serif] text-[#f70] text-xs font-bold tracking-[2.64px] uppercase mb-4">
+          <p className="font-sans text-[#f70] text-xs font-bold tracking-[2.64px] uppercase mb-4">
             HOW WE BUILD
           </p>
-          <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-3xl sm:text-4xl lg:text-[46px] leading-tight tracking-[-1.15px]">
+          <h2 className="font-sans font-bold text-[#eaf2fb] text-3xl sm:text-4xl lg:text-[46px] leading-tight tracking-[-1.15px]">
             Hardware that has to work
             <br />
             the first time.
@@ -771,7 +771,7 @@ function HowWeBuild() {
               {/* Top shadow for text legibility */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/10 to-transparent" />
               <div className="absolute top-8 left-8 right-8 z-10">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[22px] sm:text-[28px] lg:text-[28px] xl:text-[32px] leading-[1.25] tracking-[-0.5px]">
+                <h3 className="font-sans font-bold text-[#eaf2fb] text-[22px] sm:text-[28px] lg:text-[28px] xl:text-[32px] leading-[1.25] tracking-[-0.5px]">
                   Proven processes for<br />
                   flight &amp; defence,<br />
                   engineered to clear every<br />
@@ -784,20 +784,20 @@ function HowWeBuild() {
             <div className="flex flex-row flex-[3] border-t border-white/20 divide-x divide-white/20">
               {/* Special-Process Welding */}
               <div className="flex-1 p-6 lg:p-7 flex flex-col justify-end min-h-[160px]">
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
+                <h4 className="font-sans font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   Special-Process Welding
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
+                <p className="font-body text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
                   TIG and electron-beam welding by certified operators, NADCAP accredited
                   for special processes.
                 </p>
               </div>
               {/* Sheet-Metal Fabrication */}
               <div className="flex-1 p-6 lg:p-7 flex flex-col justify-end min-h-[160px]">
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
+                <h4 className="font-sans font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   Sheet-Metal Fabrication
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
+                <p className="font-body text-[rgba(234,242,251,0.85)] text-[13px] leading-[1.5]">
                   Forming, rolling and large-format fabrication of structural assemblies
                   up to 6 metres.
                 </p>
@@ -811,10 +811,10 @@ function HowWeBuild() {
 
             {/* Dark text card — 5-Axis */}
             <div className="flex-[3] p-6 lg:p-8 flex flex-col justify-start border-b border-white/20">
-              <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[18px] lg:text-[20px] xl:text-[22px] mb-3 leading-snug tracking-[-0.2px]">
+              <h4 className="font-sans font-bold text-white text-[18px] lg:text-[20px] xl:text-[22px] mb-3 leading-snug tracking-[-0.2px]">
                 5-Axis Precision Machining
               </h4>
-              <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.88)] text-[13px] lg:text-sm leading-relaxed max-w-[340px]">
+              <p className="font-body text-[rgba(234,242,251,0.88)] text-[13px] lg:text-sm leading-relaxed max-w-[340px]">
                 Complex geometries in titanium, aluminium and exotic alloys, held
                 to ±5µm across the full envelope — ideal for flight-critical hardware.
               </p>
@@ -830,10 +830,10 @@ function HowWeBuild() {
               {/* Bottom gradient for text */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/75" />
               <div className="absolute bottom-7 left-7 right-7 z-10 text-left">
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
+                <h4 className="font-sans font-bold text-white text-[16px] lg:text-[18px] mb-2 leading-snug">
                   NDT &amp; Testing
                 </h4>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.9)] text-[13px] leading-[1.5]">
+                <p className="font-body text-[rgba(234,242,251,0.9)] text-[13px] leading-[1.5]">
                   Non-destructive testing, CMM metrology and full dimensional
                   verification on every shipment.
                 </p>
@@ -941,16 +941,16 @@ function InsightsSection() {
       <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-10 lg:mb-[38px]">
-          <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-3xl sm:text-4xl lg:text-[42px] leading-tight tracking-[-1.05px] mb-4">
+          <h2 className="font-sans font-bold text-[#eaf2fb] text-3xl sm:text-4xl lg:text-[42px] leading-tight tracking-[-1.05px] mb-4">
             Learn <span className="text-[#f70]">More</span>
             <br />
             From SVAPL
           </h2>
-          <p className="font-['Archivo',sans-serif] text-[#a6a6a6] text-base leading-relaxed max-w-md mb-5">
+          <p className="font-body text-[#a6a6a6] text-base leading-relaxed max-w-md mb-5">
             Insights and updates from our engineering and programme teams on
             manufacturing for flight and defence.
           </p>
-          <button className="bg-gradient-to-b from-white from-[21.5%] to-[#f70] to-[201%] text-black font-['Space_Grotesk',sans-serif] font-bold text-base px-12 py-3 rounded-[4px] hover:opacity-90 transition-opacity">
+          <button className="bg-gradient-to-b from-white from-[21.5%] to-[#f70] to-[201%] text-black font-sans font-bold text-base px-12 py-3 rounded-[4px] hover:opacity-90 transition-opacity">
             Insights
           </button>
         </div>
@@ -964,13 +964,13 @@ function InsightsSection() {
                 i > 0 ? "border-l border-white/10" : ""
               }`}
             >
-              <p className="font-['Space_Grotesk',sans-serif] text-[#a6a6a6] text-xs tracking-[1.44px]">
+              <p className="font-sans text-[#a6a6a6] text-xs tracking-[1.44px]">
                 {item.date}
               </p>
-              <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[18px] leading-[1.25] pt-1">
+              <h3 className="font-sans font-bold text-white text-[18px] leading-[1.25] pt-1">
                 {item.title}
               </h3>
-              <p className="font-['Archivo',sans-serif] text-[#a6a6a6] text-[14px] leading-[1.55]">
+              <p className="font-body text-[#a6a6a6] text-[14px] leading-[1.55]">
                 {item.desc}
               </p>
             </article>
@@ -1008,16 +1008,16 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
         {/* Top: brand + CTA */}
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-8 pb-12 sm:pb-16 lg:pb-[70px]">
           <div>
-            <p className="font-['Space_Grotesk',sans-serif] font-bold text-white text-[36px] lg:text-[40px] tracking-[1.6px] leading-none mb-4">
+            <p className="font-sans font-bold text-white text-[36px] lg:text-[40px] tracking-[1.6px] leading-none mb-4">
               SVAPL
             </p>
-            <p className="font-['Archivo',sans-serif] text-blueprint-dim text-lg lg:text-xl leading-[1.4] max-w-[400px]">
+            <p className="font-body text-blueprint-dim text-lg lg:text-xl leading-[1.4] max-w-[400px]">
               Mission-critical manufacturing for aerospace &amp; defence.
             </p>
           </div>
           <button
             onClick={() => onNavigate("contact")}
-            className="bg-white text-black font-['Archivo',sans-serif] font-semibold text-sm lg:text-[15px] px-6 py-4 rounded-[8px] hover:bg-[#f70] hover:text-white transition-colors whitespace-nowrap shrink-0"
+            className="bg-white text-black font-body font-semibold text-sm lg:text-[15px] px-6 py-4 rounded-[8px] hover:bg-[#f70] hover:text-white transition-colors whitespace-nowrap shrink-0"
           >
             Become a Supplier Partner
           </button>
@@ -1027,13 +1027,13 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
         <div className="relative border-t border-b border-white/[0.13] py-10 sm:py-12 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10">
           {/* Capabilities */}
           <div>
-            <p className="font-['Space_Grotesk',sans-serif] text-white text-xs tracking-[1.92px] uppercase mb-5">Capabilities</p>
+            <p className="font-sans text-white text-xs tracking-[1.92px] uppercase mb-5">Capabilities</p>
             <ul className="flex flex-col gap-3">
               {caps.map(([label, page, section]) => (
                 <li key={label}>
                   <button
                     onClick={() => onNavigate(page || "home", section)}
-                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-body text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {label}
                   </button>
@@ -1044,13 +1044,13 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
           {/* Company */}
           <div>
-            <p className="font-['Space_Grotesk',sans-serif] text-white text-xs tracking-[1.92px] uppercase mb-5">Company</p>
+            <p className="font-sans text-white text-xs tracking-[1.92px] uppercase mb-5">Company</p>
             <ul className="flex flex-col gap-3">
               {company.map(([label, page]) => (
                 <li key={label}>
                   <button
                     onClick={() => onNavigate(page)}
-                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-body text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {label}
                   </button>
@@ -1061,13 +1061,13 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
           {/* Programmes */}
           <div>
-            <p className="font-['Space_Grotesk',sans-serif] text-white text-xs tracking-[1.92px] uppercase mb-5">Programmes</p>
+            <p className="font-sans text-white text-xs tracking-[1.92px] uppercase mb-5">Programmes</p>
             <ul className="flex flex-col gap-3">
               {["ISRO", "DRDO", "HAL", "All Programmes"].map((l) => (
                 <li key={l}>
                   <button
                     onClick={() => onNavigate("programmes")}
-                    className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
+                    className="font-body text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors text-left"
                   >
                     {l}
                   </button>
@@ -1078,16 +1078,16 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
           {/* Contact */}
           <div>
-            <p className="font-['Space_Grotesk',sans-serif] text-white text-xs tracking-[1.92px] uppercase mb-5">Contact</p>
+            <p className="font-sans text-white text-xs tracking-[1.92px] uppercase mb-5">Contact</p>
             <ul className="flex flex-col gap-3">
               {contactInfo.map(({ label, href }) => (
                 <li key={label}>
                   {href ? (
-                    <a href={href} className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors">
+                    <a href={href} className="font-body text-blueprint-dim text-[15px] leading-normal hover:text-white transition-colors">
                       {label}
                     </a>
                   ) : (
-                    <span className="font-['Archivo',sans-serif] text-blueprint-dim text-[15px] leading-normal">{label}</span>
+                    <span className="font-body text-blueprint-dim text-[15px] leading-normal">{label}</span>
                   )}
                 </li>
               ))}
@@ -1097,19 +1097,19 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-6 gap-4">
-          <p className="font-['Space_Grotesk',sans-serif] text-white text-xs tracking-[0.48px]">
+          <p className="font-sans text-white text-xs tracking-[0.48px]">
             © 2026 SRI VENKATESWARA AEROSPACE PVT. LTD.
           </p>
           <div className="flex gap-6">
               <a
                 href="mailto:contracts@svapl.in?subject=Terms%20%26%20Privacy%20Enquiry"
-                className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
+                className="font-body text-white text-[13px] hover:text-[#f70] transition-colors"
               >
                 Terms
               </a>
               <a
                 href="mailto:contracts@svapl.in?subject=Privacy%20Enquiry"
-                className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
+                className="font-body text-white text-[13px] hover:text-[#f70] transition-colors"
               >
                 Privacy
               </a>
@@ -1117,7 +1117,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
                 href="https://www.linkedin.com/company/svapl"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-['Archivo',sans-serif] text-white text-[13px] hover:text-[#f70] transition-colors"
+                className="font-body text-white text-[13px] hover:text-[#f70] transition-colors"
               >
                 Follow Us
               </a>
@@ -1148,6 +1148,33 @@ function HomePage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   );
 }
 
+// ─── Error Boundary ────────────────────────────────────────────────────────────
+
+class PageErrorBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+  state = { crashed: false };
+  static getDerivedStateFromError() { return { crashed: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    // Surface to console only — no user data leaked
+    console.error("[SVAPL] Page render error:", error.message, info.componentStack?.slice(0, 200));
+  }
+  render() {
+    if (this.state.crashed) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 bg-[#050505]">
+          <div className="font-tech text-[9px] text-blueprint tracking-[0.25em] uppercase">SYS_ERR // PAGE LOAD FAILED</div>
+          <button
+            onClick={() => this.setState({ crashed: false })}
+            className="font-tech text-[9px] tracking-widest text-blueprint-dim uppercase border border-white/[0.08] px-5 py-2 hover:border-blueprint/30 hover:text-white transition-all"
+          >
+            RETRY
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // ─── Root ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -1168,15 +1195,17 @@ export default function App() {
   return (
     <div className="bg-[#0a0a0a] min-h-screen">
       <NavBar onNavigate={navigate} currentPage={page} />
-      {page === "home"           && <HomePage onNavigate={navigate} />}
-      {page === "products"       && <ProductsPage onBack={() => navigate("home")} />}
-      {page === "about"          && <AboutPage />}
-      {page === "what-we-build"  && <WhatWeBuildPage />}
-      {page === "how-we-build"   && <HowWeBuildPage />}
-      {page === "programmes"     && <ProgrammesPage />}
-      {page === "newsroom"   && <NewsroomPage />}
-      {page === "contact"    && <ContactPage />}
-      {page === "careers"    && <CareersPage />}
+      <PageErrorBoundary>
+        {page === "home"          && <HomePage onNavigate={navigate} />}
+        {page === "products"      && <ProductsPage onBack={() => navigate("home")} />}
+        {page === "about"         && <AboutPage />}
+        {page === "what-we-build" && <WhatWeBuildPage />}
+        {page === "how-we-build"  && <HowWeBuildPage />}
+        {page === "programmes"    && <ProgrammesPage />}
+        {page === "newsroom"      && <NewsroomPage />}
+        {page === "contact"       && <ContactPage />}
+        {page === "careers"       && <CareersPage />}
+      </PageErrorBoundary>
       <Footer onNavigate={navigate} />
     </div>
   );

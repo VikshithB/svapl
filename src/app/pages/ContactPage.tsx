@@ -521,7 +521,7 @@ export default function ContactPage() {
               <span className="font-tech text-blueprint text-[10px] tracking-[2.5px] uppercase font-bold block mb-1">
                 [ RFQ PORTAL & PROJECT INQUIRY ]
               </span>
-              <p className="font-['Space_Grotesk',sans-serif] font-bold text-white text-lg sm:text-xl uppercase">
+              <p className="font-sans font-bold text-white text-lg sm:text-xl uppercase">
                 Submit Specifications to Engineering
               </p>
             </div>

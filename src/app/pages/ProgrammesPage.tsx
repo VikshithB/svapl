@@ -157,10 +157,10 @@ export default function ProgrammesPage() {
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">
             PROGRAMMES
           </p>
-          <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
+          <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
             25 years of trusted delivery to India's most critical programmes.
           </h1>
-          <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
+          <p className="font-body text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-xl leading-relaxed">
             From PSLV and LVM3 to Agni and Pralay — every structure, motor casing and integrated assembly
             built to print, certified and delivered flight-ready.
           </p>
@@ -178,7 +178,7 @@ export default function ProgrammesPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`font-['Space_Grotesk',sans-serif] font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
+              className={`font-sans font-bold text-xs px-4 py-2 rounded-[4px] transition-all ${
                 filter === f
                   ? "bg-blueprint text-black"
                   : "text-blueprint-dim hover:text-white"
@@ -187,7 +187,7 @@ export default function ProgrammesPage() {
               {f}
             </button>
           ))}
-          <span className="ml-auto font-['Archivo',sans-serif] text-blueprint-dim text-xs self-center">
+          <span className="ml-auto font-body text-blueprint-dim text-xs self-center">
             {visible.length} programme{visible.length !== 1 ? "s" : ""}
           </span>
         </div>
@@ -207,21 +207,21 @@ export default function ProgrammesPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent" />
                 {/* Client badge */}
-                <div className={`absolute top-4 left-4 border text-xs font-['Space_Grotesk',sans-serif] font-bold px-2 py-[3px] rounded-[3px] tracking-wide ${CLIENT_COLORS[prog.client]}`}>
+                <div className={`absolute top-4 left-4 border text-xs font-sans font-bold px-2 py-[3px] rounded-[3px] tracking-wide ${CLIENT_COLORS[prog.client]}`}>
                   {prog.client}
                 </div>
               </div>
               {/* Content */}
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
+                  <span className="font-sans text-blueprint-dim text-[10px] tracking-[1.5px] uppercase border border-rule px-2 py-[2px] rounded-[3px]">
                     {prog.tag}
                   </span>
                 </div>
-                <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-[17px] leading-snug mb-3">
+                <h3 className="font-sans font-bold text-[#eaf2fb] text-[17px] leading-snug mb-3">
                   {prog.name}
                 </h3>
-                <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-[13px] leading-relaxed flex-1 mb-4">
+                <p className="font-body text-[rgba(234,242,251,0.82)] text-[13px] leading-relaxed flex-1 mb-4">
                   {prog.desc}
                 </p>
                 {/* Specs */}
@@ -229,14 +229,14 @@ export default function ProgrammesPage() {
                   <div className="pt-4 border-t border-white/[0.06] flex flex-col gap-1">
                     {prog.size && (
                       <div className="flex gap-2">
-                        <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">SIZE</span>
-                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[11px]">{prog.size}</span>
+                        <span className="font-sans text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">SIZE</span>
+                        <span className="font-body text-[rgba(234,242,251,0.78)] text-[11px]">{prog.size}</span>
                       </div>
                     )}
                     {prog.material && (
                       <div className="flex gap-2">
-                        <span className="font-['Space_Grotesk',sans-serif] text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">MATERIAL</span>
-                        <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.78)] text-[11px]">{prog.material}</span>
+                        <span className="font-sans text-blueprint-dim text-[10px] tracking-[1px] uppercase w-16 shrink-0">MATERIAL</span>
+                        <span className="font-body text-[rgba(234,242,251,0.78)] text-[11px]">{prog.material}</span>
                       </div>
                     )}
                   </div>
@@ -254,15 +254,15 @@ export default function ProgrammesPage() {
         <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
           <div className="max-w-xl">
             <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-3">2025 MILESTONE</p>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[32px] leading-tight tracking-[-0.5px] mb-3">
+            <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] leading-tight tracking-[-0.5px] mb-3">
               India's first Hypersonic Glide Vehicle.
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base leading-relaxed">
+            <p className="font-body text-[rgba(234,242,251,0.82)] text-base leading-relaxed">
               In 2025 SVAPL delivered airframes, motor casings and control surface panels for India's first
               Hypersonic Glide Vehicle — our most technically demanding programme to date.
             </p>
           </div>
-          <button className="shrink-0 border border-white/30 text-[#eaf2fb] font-['Archivo',sans-serif] font-semibold text-sm px-8 py-4 rounded-[4px] hover:bg-white/5 transition-colors">
+          <button className="shrink-0 border border-white/30 text-[#eaf2fb] font-body font-semibold text-sm px-8 py-4 rounded-[4px] hover:bg-white/5 transition-colors">
             Request Strategic Briefing
           </button>
         </div>

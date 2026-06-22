@@ -842,19 +842,19 @@ export default function HowWeBuildPage() {
                 className="w-full flex items-center gap-6 p-6 lg:p-7 text-left group hover:bg-[#141414] transition-colors"
                 onClick={() => setOpenStep(openStep === s.step ? null : s.step)}
               >
-                <span className="font-['Space_Grotesk',sans-serif] font-bold text-blueprint text-xs tracking-[2px] w-6 shrink-0">{s.step}</span>
-                <span className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-base lg:text-[17px] flex-1">{s.title}</span>
+                <span className="font-sans font-bold text-blueprint text-xs tracking-[2px] w-6 shrink-0">{s.step}</span>
+                <span className="font-sans font-bold text-[#eaf2fb] text-base lg:text-[17px] flex-1">{s.title}</span>
                 <span className={`text-blueprint text-lg transition-transform shrink-0 ${openStep === s.step ? "rotate-45" : ""}`}>+</span>
               </button>
               {openStep === s.step && (
                 <div className="px-6 lg:px-7 pb-7 border-t border-white/[0.06] pt-5 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   <div className="lg:col-span-8 flex flex-col gap-4 text-left">
-                    <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.85)] text-sm lg:text-base leading-relaxed">
+                    <p className="font-body text-[rgba(234,242,251,0.85)] text-sm lg:text-base leading-relaxed">
                       {s.desc}
                     </p>
                     <div className="flex items-start gap-2 border-t border-white/[0.04] pt-3">
                       <span className="text-blueprint text-xs mt-[3px] shrink-0">—</span>
-                      <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.75)] text-xs leading-relaxed uppercase tracking-wider">
+                      <p className="font-body text-[rgba(234,242,251,0.75)] text-xs leading-relaxed uppercase tracking-wider">
                         {s.detail}
                       </p>
                     </div>
@@ -885,14 +885,14 @@ export default function HowWeBuildPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-4">INSPECTION FACILITIES</p>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[34px] leading-tight tracking-[-0.6px] mb-8">
+              <h2 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[34px] leading-tight tracking-[-0.6px] mb-8">
                 Full dimensional verification on every shipment.
               </h2>
               <div className="flex flex-col gap-px bg-white/10">
                 {INSPECTION.map((item) => (
                   <div key={item.name} className="bg-[#0a0a0a] p-4 flex items-start justify-between gap-4">
-                    <span className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-sm">{item.name}</span>
-                    <span className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.75)] text-xs text-right shrink-0">{item.spec}</span>
+                    <span className="font-sans font-bold text-[#eaf2fb] text-sm">{item.name}</span>
+                    <span className="font-body text-[rgba(234,242,251,0.75)] text-xs text-right shrink-0">{item.spec}</span>
                   </div>
                 ))}
               </div>
@@ -901,7 +901,7 @@ export default function HowWeBuildPage() {
             {/* Special facilities */}
             <div>
               <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-4">SPECIAL FACILITIES</p>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[34px] leading-tight tracking-[-0.6px] mb-8">
+              <h2 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[34px] leading-tight tracking-[-0.6px] mb-8">
                 Capabilities that few private shops offer.
               </h2>
               <div className="flex flex-col gap-5">
@@ -934,10 +934,10 @@ export default function HowWeBuildPage() {
                 ].map((f) => (
                   <div key={f.title} className="border border-rule rounded-[6px] p-5">
                     <div className="flex items-start justify-between gap-4 mb-2">
-                      <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-sm">{f.title}</p>
-                      <span className="font-['Archivo',sans-serif] text-blueprint text-[10px] tracking-[1px] whitespace-nowrap shrink-0">{f.spec}</span>
+                      <p className="font-sans font-bold text-[#eaf2fb] text-sm">{f.title}</p>
+                      <span className="font-body text-blueprint text-[10px] tracking-[1px] whitespace-nowrap shrink-0">{f.spec}</span>
                     </div>
-                    <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.75)] text-xs leading-relaxed">{f.desc}</p>
+                    <p className="font-body text-[rgba(234,242,251,0.75)] text-xs leading-relaxed">{f.desc}</p>
                   </div>
                 ))}
               </div>
@@ -961,8 +961,8 @@ export default function HowWeBuildPage() {
               { count: "17", label: "Admin & Support" },
             ].map((m) => (
               <div key={m.label} className="bg-[#0a0a0a] p-8">
-                <p className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-4xl lg:text-5xl mb-2">{m.count}</p>
-                <p className="font-['Archivo',sans-serif] text-blueprint-dim text-xs tracking-wide uppercase">{m.label}</p>
+                <p className="font-sans font-bold text-[#eaf2fb] text-4xl lg:text-5xl mb-2">{m.count}</p>
+                <p className="font-body text-blueprint-dim text-xs tracking-wide uppercase">{m.label}</p>
               </div>
             ))}
           </div>
@@ -973,14 +973,14 @@ export default function HowWeBuildPage() {
       <section className="bg-panel border-t border-rule py-16 lg:py-20">
         <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div className="max-w-xl">
-            <h3 className="font-['Space_Grotesk',sans-serif] font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-3">
+            <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-3">
               Ready to qualify SVAPL as a supplier?
             </h3>
-            <p className="font-['Archivo',sans-serif] text-[rgba(234,242,251,0.82)] text-base leading-relaxed">
+            <p className="font-body text-[rgba(234,242,251,0.82)] text-base leading-relaxed">
               We welcome customer audits. Send us your supplier qualification questionnaire and our quality team will respond within 5 working days.
             </p>
           </div>
-          <button className="shrink-0 bg-white text-black font-['Space_Grotesk',sans-serif] font-bold text-sm px-8 py-4 rounded-[4px] hover:bg-safety hover:text-white transition-colors">
+          <button className="shrink-0 bg-white text-black font-sans font-bold text-sm px-8 py-4 rounded-[4px] hover:bg-safety hover:text-white transition-colors">
             Request Strategic Briefing
           </button>
         </div>

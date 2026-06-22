@@ -129,57 +129,54 @@
 
   body {
     @apply bg-background text-foreground;
-  }
-
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
-
-  html {
+    font-family: var(--font-body);
     font-size: var(--font-size);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  /* WCAG: headings use display font; text-wrap: balance prevents widows */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    text-wrap: balance;
+    line-height: 1.2;
   }
 
-  h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+  h1 { font-size: var(--text-2xl); font-weight: 700; }
+  h2 { font-size: var(--text-xl);  font-weight: 700; }
+  h3 { font-size: var(--text-lg);  font-weight: 600; }
+  h4 { font-size: var(--text-base); font-weight: 600; }
 
-  h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  p {
+    line-height: 1.65;
   }
 
   label {
+    font-family: var(--font-sans);
     font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
+    font-weight: 500;
     line-height: 1.5;
   }
 
   button {
+    font-family: var(--font-sans);
     font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
+    font-weight: 500;
     line-height: 1.5;
   }
 
-  input {
+  input, textarea, select {
+    font-family: var(--font-body);
     font-size: var(--text-base);
-    font-weight: var(--font-weight-normal);
+    font-weight: 400;
     line-height: 1.5;
+  }
+
+  html {
+    font-size: var(--font-size);
+    /* WCAG dark-mode: instruct browser scrollbar, inputs, selects to use dark variant */
+    color-scheme: dark;
   }
 }
 
@@ -204,6 +201,15 @@
    the whole accent can be re-themed from one place.
    ════════════════════════════════════════════════════════════════════ */
 @theme {
+  /* ── Font families ─────────────────────────────────────────────────
+     Registers Tailwind utilities: font-sans, font-body, font-mono.
+     Use font-sans for headings/UI, font-body for long-form prose,
+     font-mono is consumed by the .font-tech helper below.           */
+  --font-sans:  "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body:  "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:  "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+
+  /* ── Brand colours ─────────────────────────────────────────────── */
   --color-ink: #050505;           /* base background */
   --color-panel: #0D0F12;         /* neutral panel */
   --color-blueprint: #ff7700;     /* glowing orange accent */
@@ -222,8 +228,9 @@
   background-size: 34px 34px;
 }
 
-/* Mono utility face for engineering data */
+/* Mono utility face for engineering data — tnum keeps digits grid-aligned */
 .font-tech {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
 }

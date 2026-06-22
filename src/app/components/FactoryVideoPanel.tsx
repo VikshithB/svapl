@@ -8,17 +8,18 @@ const videoSrc =
 
 export function FactoryVideoPanel() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(true);
+  // Start false — sync to actual video state after autoplay attempt resolves
+  const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (playing) {
       videoRef.current.pause();
+      setPlaying(false);
     } else {
-      videoRef.current.play().catch(() => { /* play interrupted */ });
+      videoRef.current.play().then(() => setPlaying(true)).catch(() => { /* blocked */ });
     }
-    setPlaying(!playing);
   };
 
   useEffect(() => {
@@ -28,11 +29,12 @@ export function FactoryVideoPanel() {
   }, [muted]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch((err) => {
-        console.warn("Autoplay was blocked or failed:", err);
-      });
-    }
+    const video = videoRef.current;
+    if (!video) return;
+    // Sync playing state to actual playback outcome so icon is always correct
+    video.play()
+      .then(() => setPlaying(true))
+      .catch(() => setPlaying(false));
   }, []);
 
   return (
