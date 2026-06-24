@@ -153,7 +153,7 @@ function NavBar({ onNavigate, currentPage }: { onNavigate: (page: Page, section?
           <ImageWithFallback
             src={imgLogo}
             alt="SVAPL"
-            className="h-10 lg:h-11 w-auto object-contain [filter:brightness(0)_invert(1)] transition-transform duration-500 group-hover:scale-[1.03]"
+            className="h-14 lg:h-16 w-auto object-contain [filter:brightness(0)_invert(1)] transition-transform duration-500 group-hover:scale-[1.03]"
           />
           {/* Blueprint subtle corner indicators */}
           <div className="absolute -top-1.5 -left-1.5 w-1.5 h-1.5 border-t border-l border-blueprint/30 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -1179,6 +1179,22 @@ class PageErrorBoundary extends Component<{ children: ReactNode }, { crashed: bo
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
+
+  const PAGE_TITLES: Record<Page, string> = {
+    home:           "SVAPL — Precision Aerospace & Defence Manufacturing",
+    about:          "About Us | SVAPL",
+    "what-we-build":"Capabilities | SVAPL",
+    "how-we-build": "Infrastructure | SVAPL",
+    programmes:     "Programmes | SVAPL",
+    newsroom:       "Newsroom | SVAPL",
+    contact:        "Connect | SVAPL",
+    careers:        "Careers | SVAPL",
+    products:       "Products | SVAPL",
+  };
+
+  useEffect(() => {
+    document.title = PAGE_TITLES[page];
+  }, [page]);
 
   const navigate = (target: Page, sectionId?: string) => {
     setPage(target);
