@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 
-// Hosted on Vercel Blob (public store) — keeps the 200MB+ source video out of git.
-// Permanent public URL; override per-environment with VITE_FACTORY_VIDEO_URL.
 const videoSrc =
   import.meta.env.VITE_FACTORY_VIDEO_URL ??
-  "https://cf3bqgzjqu3gwunq.public.blob.vercel-storage.com/Videos/SVAPL%20-%20Preview.mp4";
+  "https://svapl-content.s3.ap-south-1.amazonaws.com/Videos/SVAPL+-+Preview.mp4";
 
 export function FactoryVideoPanel() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Start false — sync to actual video state after autoplay attempt resolves
+  const sectionRef = useRef<HTMLElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
+  // Track whether user manually paused so scroll-in doesn't override it
+  const userPaused = useRef(false);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (playing) {
       videoRef.current.pause();
       setPlaying(false);
+      userPaused.current = true;
     } else {
-      videoRef.current.play().then(() => setPlaying(true)).catch(() => { /* blocked */ });
+      videoRef.current.play().then(() => { setPlaying(true); userPaused.current = false; }).catch(() => {});
     }
   };
 
@@ -30,15 +31,39 @@ export function FactoryVideoPanel() {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    // Sync playing state to actual playback outcome so icon is always correct
-    video.play()
-      .then(() => setPlaying(true))
-      .catch(() => setPlaying(false));
+    const section = sectionRef.current;
+    if (!video || !section) return;
+
+    const tryPlay = () => {
+      if (userPaused.current) return;
+      video.muted = false;
+      video.play()
+        .then(() => setPlaying(true))
+        .catch(() => {
+          video.muted = true;
+          setMuted(true);
+          video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+        });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          tryPlay();
+        } else {
+          video.pause();
+          setPlaying(false);
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section className="bg-[#050505] border-b border-white/[0.06] py-20 lg:py-28 relative overflow-hidden">
+    <section ref={sectionRef} className="bg-[#050505] border-b border-white/[0.06] py-20 lg:py-28 relative overflow-hidden">
       {/* Vertical side lines */}
       <div className="absolute left-6 md:left-10 top-0 bottom-0 w-[1px] bg-white/[0.025] pointer-events-none" />
       <div className="absolute right-6 md:right-10 top-0 bottom-0 w-[1px] bg-white/[0.025] pointer-events-none" />
@@ -87,12 +112,11 @@ export function FactoryVideoPanel() {
           </div>
 
           {/* Video area */}
-          <div className="relative aspect-video bg-[#080808] group">
+          <div className="relative aspect-video bg-[#080808] group cursor-pointer" onClick={togglePlay}>
             <video
               ref={videoRef}
               autoPlay
               loop
-              muted
               playsInline
               className="absolute inset-0 w-full h-full object-cover brightness-75 contrast-110"
             >
@@ -130,7 +154,7 @@ export function FactoryVideoPanel() {
             {/* Bottom right technical data */}
             <div className="absolute bottom-6 right-6 flex flex-col items-end gap-1.5 z-20 pointer-events-none">
               <div className="bg-black/70 border border-white/[0.08] px-3 py-1 font-tech text-[9px] text-blueprint-dim tracking-wider">
-                FACILITY: UNIT-II // MAHESHWARAM, HYD
+                FACILITY: UNIT-II // SHAMSHABAD, HYD
               </div>
               <div className="bg-black/70 border border-white/[0.08] px-3 py-1 font-tech text-[9px] text-verified tracking-wider">
                 ACTIVE MACHINE COUNT: 18 // STATUS: OPERATIONAL

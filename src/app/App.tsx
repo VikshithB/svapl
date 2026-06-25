@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef, Component, type ReactNode, type ErrorInfo } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, Component, type ReactNode, type ErrorInfo } from "react";
 import { Menu, X } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { CrewModuleCanvas } from "@/app/components/CrewModuleCanvas";
 import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from "motion/react";
+import { PreLoader } from "@/app/components/PreLoader";
+import { IMAGES } from "@/config/images";
 
 import imgHeader from "@/imports/Desktop1/44363911e71cf9a03eb8eca1d986961f050713d9.png";
 import imgLogo from "@/imports/Desktop1/1d148265799be8543f36d6a99d6999ef7e88dcf8.png";
@@ -26,9 +28,13 @@ import CareersPage from "@/app/pages/CareersPage";
 import WhatWeBuildPage from "@/app/pages/WhatWeBuildPage";
 import HowWeBuildPage from "@/app/pages/HowWeBuildPage";
 import { VerificationProofStrip } from "@/app/components/VerificationProofStrip";
-import { ProductShowcase3D } from "@/app/components/ProductShowcase3D";
 import { ProductsPage } from "@/app/pages/ProductsPage";
 import { FactoryVideoPanel } from "@/app/components/FactoryVideoPanel";
+
+// Lazy-load the Three.js viewer so it never blocks the initial paint
+const ProductShowcase3D = lazy(() =>
+  import("@/app/components/ProductShowcase3D").then(m => ({ default: m.ProductShowcase3D }))
+);
 // import { CompletedProjectsGrid } from "@/app/components/CompletedProjectsGrid";
 
 type Page = "home" | "about" | "what-we-build" | "how-we-build" | "programmes" | "newsroom" | "contact" | "careers" | "products";
@@ -55,27 +61,27 @@ const CAPABILITIES = [
 const CATEGORY_DATA = [
   {
     label: "Aerostructures",
-    image: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    image: IMAGES.home.capabilityGrid.aerostructures,
     desc: "Fuselage panels, wing ribs, bulkheads and fully integrated structural assemblies — built to print and delivered flight-ready.",
   },
   {
     label: "Precision Components",
-    image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    image: IMAGES.home.capabilityGrid.precisionComponents,
     desc: "Complex geometries in titanium, aluminium and exotic alloys, held to ±5µm across the full envelope — ideal for flight-critical hardware.",
   },
   {
     label: "Welded Structures",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    image: IMAGES.home.capabilityGrid.weldedStructures,
     desc: "TIG and electron-beam welding by certified operators, NADCAP accredited for special processes on titanium and high-strength alloys.",
   },
   {
     label: "Integrated Assemblies",
-    image: "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    image: IMAGES.home.capabilityGrid.integratedAssemblies,
     desc: "Full mechanical integration with wiring harness routing, hydraulic lines, and functional test before shipment — system-ready, not just fabricated.",
   },
   {
     label: "Defence Systems",
-    image: "https://images.unsplash.com/photo-1515272751348-25380c6c1f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    image: IMAGES.home.capabilityGrid.defenceSystems,
     desc: "Structural and mechanical subsystems for ground, naval and airborne defence programmes, qualified to DRDO and MoD standards.",
   },
 ];
@@ -147,7 +153,7 @@ function NavBar({ onNavigate, currentPage }: { onNavigate: (page: Page, section?
         scrolled ? "bg-[#050505]/90 backdrop-blur-md border-b border-white/[0.04]" : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="flex items-center justify-between px-6 sm:px-10 lg:px-20 h-20">
+      <div className="flex items-center justify-between px-6 sm:px-10 lg:px-20 h-20 max-w-[1440px] mx-auto">
         {/* Logo */}
         <button onClick={() => handleNav("home")} aria-label="SVAPL — go to homepage" className="relative group focus:outline-none">
           <ImageWithFallback
@@ -245,17 +251,17 @@ function HeroSection() {
 
   const HOVER_IMAGES = {
     precision: {
-      src: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600",
+      src: IMAGES.home.hero.precision,
       label: "TITANIUM ROTOR IMPELLER // 5-AXIS MILLING",
       coords: "X: 384.29 // Y: 104.58 // Z: -12.39"
     },
     aerospace: {
-      src: "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&q=80&w=600",
+      src: IMAGES.home.hero.aerospace,
       label: "ROCKET MOTOR CASE INTEGRATION",
       coords: "ALT: 120KM // ORBITAL DEPLOYMENT"
     },
     manufacturing: {
-      src: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600",
+      src: IMAGES.home.hero.manufacturing,
       label: "CNC HEAVY MULTI-AXIS MILLING STATION",
       coords: "FEED: 1200MM/MIN // SPINDLE: 18K RPM"
     }
@@ -592,7 +598,7 @@ function WhatWeBuild() {
     {
       id: "01",
       title: "UPTO 6-AXIS CNC MILLING",
-      image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
+      image: IMAGES.home.capabilityCards.cncMilling,
       alt: "Close-up of high-precision multi-axis milled aerospace titanium manifold showcasing sub-micron edge tolerances.",
       specs: [
         "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
@@ -605,7 +611,7 @@ function WhatWeBuild() {
     {
       id: "02",
       title: "PRECISION TURNING",
-      image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=crop&q=80&w=1200&h=800",
+      image: IMAGES.home.capabilityCards.precisionTurning,
       alt: "Aerospace cylindrical rotor shaft being turned to tight tolerances under high-contrast lighting.",
       specs: [
         "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
@@ -618,7 +624,7 @@ function WhatWeBuild() {
     {
       id: "03",
       title: "AEROSPACE STRUCTURAL ASSEMBLY",
-      image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1200&h=800",
+      image: IMAGES.home.capabilityCards.structuralAssembly,
       alt: "Cleanroom assembly of flight-critical structural brackets and aerostructure bulkheads.",
       specs: [
         // "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
@@ -633,7 +639,7 @@ function WhatWeBuild() {
     {
       id: "04",
       title: "WELDING & JOINING",
-      image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1200&h=800",
+      image: IMAGES.home.capabilityCards.weldingJoining,
       alt: "Certified welder performing TIG welding on flight-critical aerostructure components in a controlled environment.",
       specs: [
         // "MATERIALS: AA2219, INCONEL 718, M250 & More",
@@ -737,7 +743,7 @@ function WhatWeBuild() {
 function HowWeBuild() {
   return (
     <section id="how-we-build" className="bg-[#0a0a0a] py-16 sm:py-20 lg:py-[120px]">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
 
         {/* Section header */}
         <div className="mb-10 lg:mb-[54px]">
@@ -823,7 +829,7 @@ function HowWeBuild() {
             {/* CNC photo with NDT & Testing overlay */}
             <div className="relative flex-[5] min-h-[280px] lg:min-h-0 overflow-hidden">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                src={IMAGES.home.howWeBuild.ndtTesting}
                 alt="5-axis CNC precision machining"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -851,26 +857,11 @@ function HowWeBuild() {
 // ─── News / Headlines ──────────────────────────────────────────────────────────
 
 const PRESS_IMAGES = [
-  {
-    url: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?auto=format&fit=crop&q=80&w=640&h=400",
-    caption: "AEROSTRUCTURE DELIVERY — ISRO",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=640&h=400",
-    caption: "PRECISION MACHINING FACILITY",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=640&h=400",
-    caption: "ROCKET MOTOR CASING WELD",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?auto=format&fit=crop&q=80&w=640&h=400",
-    caption: "FLIGHT HARDWARE INSPECTION",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?auto=format&fit=crop&q=80&w=640&h=400",
-    caption: "INTEGRATED SYSTEM DELIVERY",
-  },
+  { url: IMAGES.home.news.aerostructureDelivery, caption: "AEROSTRUCTURE DELIVERY — ISRO" },
+  { url: IMAGES.home.news.precisionFacility,     caption: "PRECISION MACHINING FACILITY" },
+  { url: IMAGES.home.news.rocketMotorWeld,       caption: "ROCKET MOTOR CASING WELD" },
+  { url: IMAGES.home.news.flightHardware,        caption: "FLIGHT HARDWARE INSPECTION" },
+  { url: IMAGES.home.news.integratedSystem,      caption: "INTEGRATED SYSTEM DELIVERY" },
 ];
 
 function NewsSection() {
@@ -893,7 +884,7 @@ function NewsSection() {
         }
       `}</style>
 
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] mb-10">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] mb-10">
         <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-3">
           PRESS & MEDIA // COVERAGE
         </p>
@@ -938,7 +929,7 @@ function InsightsSection() {
 
   return (
     <section className="bg-[#0a0a0a] py-16 sm:py-20 lg:py-[110px]">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-10 lg:mb-[38px]">
           <h2 className="font-sans font-bold text-[#eaf2fb] text-3xl sm:text-4xl lg:text-[42px] leading-tight tracking-[-1.05px] mb-4">
@@ -1004,7 +995,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 
   return (
     <footer className="bg-[#0a0a0a]">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-16 sm:pt-20 lg:pt-[90px] pb-10">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-16 sm:pt-20 lg:pt-[90px] pb-10">
         {/* Top: brand + CTA */}
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-8 pb-12 sm:pb-16 lg:pb-[70px]">
           <div>
@@ -1138,7 +1129,9 @@ function HomePage({ onNavigate }: { onNavigate: (page: Page) => void }) {
       <ClientLogos />
       <VerificationProofStrip />
       <WhatWeBuild />
-      <ProductShowcase3D onViewAll={() => onNavigate("products")} />
+      <Suspense fallback={<div className="h-screen bg-[#050505]" />}>
+        <ProductShowcase3D onViewAll={() => onNavigate("products")} />
+      </Suspense>
       <FactoryVideoPanel />
       <HowWeBuild />
       {/* <CompletedProjectsGrid /> */}
@@ -1179,6 +1172,7 @@ class PageErrorBoundary extends Component<{ children: ReactNode }, { crashed: bo
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
+  const [preloaderDone, setPreloaderDone] = useState(false);
 
   const PAGE_TITLES: Record<Page, string> = {
     home:           "SVAPL — Precision Aerospace & Defence Manufacturing",
@@ -1210,19 +1204,25 @@ export default function App() {
 
   return (
     <div className="bg-[#0a0a0a] min-h-screen">
+      {/* Fullscreen preloader — renders above everything until assets are ready */}
+      {!preloaderDone && <PreLoader onComplete={() => setPreloaderDone(true)} />}
+
+      {/* Site renders beneath the preloader so Three.js can init during load */}
       <NavBar onNavigate={navigate} currentPage={page} />
-      <PageErrorBoundary>
-        {page === "home"          && <HomePage onNavigate={navigate} />}
-        {page === "products"      && <ProductsPage onBack={() => navigate("home")} />}
-        {page === "about"         && <AboutPage />}
-        {page === "what-we-build" && <WhatWeBuildPage />}
-        {page === "how-we-build"  && <HowWeBuildPage />}
-        {page === "programmes"    && <ProgrammesPage />}
-        {page === "newsroom"      && <NewsroomPage />}
-        {page === "contact"       && <ContactPage />}
-        {page === "careers"       && <CareersPage />}
-      </PageErrorBoundary>
-      <Footer onNavigate={navigate} />
+      <div className="max-w-[1440px] mx-auto">
+        <PageErrorBoundary>
+          {page === "home"          && <HomePage onNavigate={navigate} />}
+          {page === "products"      && <ProductsPage onBack={() => navigate("home")} />}
+          {page === "about"         && <AboutPage />}
+          {page === "what-we-build" && <WhatWeBuildPage />}
+          {page === "how-we-build"  && <HowWeBuildPage />}
+          {page === "programmes"    && <ProgrammesPage />}
+          {page === "newsroom"      && <NewsroomPage />}
+          {page === "contact"       && <ContactPage />}
+          {page === "careers"       && <CareersPage />}
+        </PageErrorBoundary>
+        <Footer onNavigate={navigate} />
+      </div>
     </div>
   );
 }

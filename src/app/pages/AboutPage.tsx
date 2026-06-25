@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { IMAGES } from "@/config/images";
 
 const STATS = [
   { value: "25+", label: "Years in Service" },
@@ -10,61 +11,17 @@ const STATS = [
 ];
 
 const TIMELINE = [
-  { 
-    year: "2000", 
-    text: "Established Unit-I with 10,000 sq.ft shop floor under the leadership of C.S.N. Reddy.", 
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2002", 
-    text: "First aerostructure RCS delivered to ISRO. Agni-1 & 2 rocket motor casings delivered to DRDO.", 
-    image: "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2004", 
-    text: "First industry to develop the L40 structure for GSLV — successfully delivered to ISRO.", 
-    image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2008", 
-    text: "First private sector company to integrate RCS & VTP and deliver to DRDO.", 
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2010", 
-    text: "Became lead vendor for PSLV & GSLV auxiliary separation systems. Sagarika series airframes delivered.", 
-    image: "https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2012", 
-    text: "Established Unit-II with 70,000 sq.ft — dedicated to DRDO & ISRO programmes.", 
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2014", 
-    text: "First Hyderabad-based industry to produce Maraging Steel M250 rocket motor casings Ø740mm for DRDO. Over 100 casings delivered to date.", 
-    image: "https://images.unsplash.com/photo-1535813547-99c456a41d4a?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2019", 
-    text: "Airframes, control surfaces and motor casings for Pralay (DRDO) delivered. First unmanned crew module structure to ISRO. LVM3 Core Base Shroud completed.", 
-    image: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2023", 
-    text: "First metal canister manufacturing facility for DRDO established. PSOXL motor case successfully tested — 90 casings delivered.", 
-    image: "https://images.unsplash.com/photo-1618979284981-670a5543b333?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2025", 
-    text: "Airframes, motor casings and control surface panels delivered for India's first Hypersonic Glide Vehicle.", 
-    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    year: "2026", 
-    text: "Unit-III established — 45,000 sq.ft dedicated to global defence manufacturing requirements.", 
-    image: "https://images.unsplash.com/photo-1716643863806-989dd76ae093?auto=format&fit=crop&q=80&w=600" 
-  },
+  { year: "2000", image: IMAGES.about.timeline.y2000, text: "Established Unit-I with 10,000 sq.ft shop floor under the leadership of C.S.N. Reddy." },
+  { year: "2002", image: IMAGES.about.timeline.y2002, text: "First aerostructure RCS delivered to ISRO. Agni-1 & 2 rocket motor casings delivered to DRDO." },
+  { year: "2004", image: IMAGES.about.timeline.y2004, text: "First industry to develop the L40 structure for GSLV — successfully delivered to ISRO." },
+  { year: "2008", image: IMAGES.about.timeline.y2008, text: "First private sector company to integrate RCS & VTP and deliver to DRDO." },
+  { year: "2010", image: IMAGES.about.timeline.y2010, text: "Became lead vendor for PSLV & GSLV auxiliary separation systems. Sagarika series airframes delivered." },
+  { year: "2012", image: IMAGES.about.timeline.y2012, text: "Established Unit-II with 70,000 sq.ft — dedicated to DRDO & ISRO programmes." },
+  { year: "2014", image: IMAGES.about.timeline.y2014, text: "First Hyderabad-based industry to produce Maraging Steel M250 rocket motor casings Ø740mm for DRDO. Over 100 casings delivered to date." },
+  { year: "2019", image: IMAGES.about.timeline.y2019, text: "Airframes, control surfaces and motor casings for Pralay (DRDO) delivered. First unmanned crew module structure to ISRO. LVM3 Core Base Shroud completed." },
+  { year: "2023", image: IMAGES.about.timeline.y2023, text: "First metal canister manufacturing facility for DRDO established. PSOXL motor case successfully tested — 90 casings delivered." },
+  { year: "2025", image: IMAGES.about.timeline.y2025, text: "Airframes, motor casings and control surface panels delivered for India's first Hypersonic Glide Vehicle." },
+  { year: "2026", image: IMAGES.about.timeline.y2026, text: "Unit-III established — 45,000 sq.ft dedicated to global defence manufacturing requirements." },
 ];
 
 const PLANTS = [
@@ -73,21 +30,21 @@ const PLANTS = [
     area: "60,000 SQ.FT",
     plot: "20,370 SQ.YARDS",
     highlights: ["6 shop floor bays", "Crane capacity up to 20T", "Clean room 5,000 sq.ft", "Hydro & pneumatic test rigs"],
-    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+    image: IMAGES.about.facilities.unitI,
   },
   {
     name: "Unit II",
     area: "45,000 SQ.FT",
     plot: "14,800 SQ.YARDS",
     highlights: ["DRDO & ISRO dedicated", "Crane capacity 10T × 3", "Auto TIG ISO 8 clean room", "CMM & NDT facility"],
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
+    image: IMAGES.about.facilities.unitII,
   },
   {
     name: "Unit III",
     area: "45,000 SQ.FT",
     plot: "3 ACRES",
     highlights: ["Global defence focus", "9.5m bay height", "Expanded welding facility", "Commissioned 2026"],
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=800",
+    image: IMAGES.about.facilities.unitIII,
   },
 ];
 
@@ -316,7 +273,7 @@ export default function AboutPage() {
           ABOUT SVAPL // COMPANY PROFILE
         </p>
         <h1 className="font-sans font-bold text-white text-4xl sm:text-5xl lg:text-[72px] leading-[0.95] tracking-[-0.04em] uppercase max-w-4xl mb-8">
-          BUILDING<br />HARDWARE THAT<br />CANNOT FAIL.
+          ENGINEERING MISSION<br />CRITICAL HARDWARE FOR<br />AEROSPACE & DEFENSE.
         </h1>
         <p className="font-tech text-xs tracking-wider text-blueprint-dim leading-relaxed uppercase border-l-2 border-blueprint/30 pl-4 py-1 max-w-2xl text-left">
           "ESTABLISHED IN 2000 IN HYDERABAD, SVAPL HAS BECOME ONE OF INDIA'S MOST TRUSTED CONTRACTORS OF MISSION-CRITICAL STRUCTURES, MOTOR CASINGS, AND INTEGRATED ASSEMBLIES FOR FRONTIER SPACE AND DEFENCE PLATFORMS."
@@ -351,11 +308,11 @@ export default function AboutPage() {
           <div className="text-left">
             <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">OUR STORY // FOUNDATION GENESIS</p>
             <h2 className="font-sans font-bold text-[#eaf2fb] text-3xl lg:text-[38px] leading-tight tracking-[-1px] mb-6">
-              FROM PRECISION WORKSHOPS TO DEFENCE FRONT LINES.
+              POWERING INDIA'S AEROSPACE & DEFENSE AMBITIONS SINCE 2000.
             </h2>
             <div className="space-y-5 font-tech text-xs sm:text-[13px] uppercase tracking-wider text-[rgba(234,242,251,0.85)] leading-relaxed">
               <p>
-                Founded in Hyderabad's Maheshwaram industrial corridor, SVAPL began with a focus on precision
+                Founded in Hyderabad's Shamshabad industrial corridor, SVAPL began with a focus on precision
                 welding and machining for India's strategic programmes. Our first delivery — a Reaction Control
                 Structure for ISRO — set the standard we have held ever since.
               </p>
@@ -373,7 +330,7 @@ export default function AboutPage() {
           </div>
           <div className="relative aspect-[16/11] w-full rounded-[2px] border border-white/[0.08] overflow-hidden group select-none">
             <img
-              src="https://images.unsplash.com/photo-1716643863806-989dd76ae093?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+              src={IMAGES.about.story}
               alt="SVAPL manufacturing facility"
               className="absolute inset-0 w-full h-full object-cover grayscale brightness-[0.7] group-hover:grayscale-0 group-hover:brightness-[0.9] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             />

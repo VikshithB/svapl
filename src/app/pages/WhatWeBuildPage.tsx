@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { IMAGES } from "@/config/images";
 
 /* ─── Content from SVAPL brochure + PPT ─── */
 
@@ -8,8 +9,8 @@ const CAPABILITIES = [
     id: "aerostructures",
     label: "Aerostructures",
     tag: "ISRO · DRDO · HAL",
-    image: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
-    headline: "Structural assemblies built to print, delivered flight-ready.",
+    image: IMAGES.whatWeBuild.aerostructures,
+    headline: "Flight-Ready Aerostructures, From Concept to Delivery.",
     desc: "SVAPL fabricates the primary structural elements of India's launch vehicles — fuselage panels, wing ribs, bulkheads, base shrouds, inter-tank structures and nose cones. Every assembly integrates aluminium alloy skins, machined rings and 15CDV6 frames through precision riveting, jo-bolt and shear-bolt fastening, checked by laser metrology.",
     specs: [
       { label: "Max diameter", value: "Ø 4,200 mm" },
@@ -29,9 +30,9 @@ const CAPABILITIES = [
   },
   {
     id: "precision-machining",
-    label: "Precision Machining",
+    label: "Precision Components",
     tag: "ISRO · DRDO",
-    image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: IMAGES.whatWeBuild.precisionMachining,
     headline: "±5 µm across a 1.2 m envelope. Every time.",
     desc: "Our machine shop operates 11 CNC milling centres (5-axis, 4-axis, 3-axis), 4 CNC plano mills, 4 CNC vertical turning lathes up to Ø5400 mm and 4 horizontal borers. We machine titanium, Inconel, aluminium alloys, maraging steel and exotic alloys. Thermal control protocols, custom fixturing and closed-loop CMM verification deliver repeatable accuracy on every shipment.",
     specs: [
@@ -51,9 +52,9 @@ const CAPABILITIES = [
   },
   {
     id: "welded-structures",
-    label: "Welded Structures",
+    label: "Strucutural Fabrication",
     tag: "ISRO · DRDO",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: IMAGES.whatWeBuild.weldedStructures,
     headline: "NADCAP-accredited welding of the most demanding alloys in service.",
     desc: "Our 4,000 sq.ft ISO Class 8 clean room houses a CNC auto-TIG station with full humidity control — mandatory for welding aluminium alloys and maraging steels. We are an approved vendor for TIG and electron-beam welding of MDN250, Inconel 718, AA2219, AA65032, 15CDV6, 15-5PH, 17-4PH, SS304/316 and Ti6Al4V. All welders are operator-qualified per NADCAP special process requirements. Every weld joint is subject to RT, UT or DP inspection before release.",
     specs: [
@@ -74,9 +75,9 @@ const CAPABILITIES = [
   },
   {
     id: "integrated-assemblies",
-    label: "Integrated Assemblies",
+    label: "Assembly & Integration",
     tag: "ISRO · DRDO",
-    image: "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: IMAGES.whatWeBuild.integratedAssemblies,
     headline: "From individual parts to flight-certified systems.",
     desc: "SVAPL integrates complex multi-material, multi-process assemblies — routing hydraulic lines, mounting thrusters, routing harnesses and running functional test sequences — all under our own roof. Our 5,000 sq.ft dedicated clean room supports precision assembly of propulsion subsystems and actuator packages. Every integration plan is customer-approved; every assembly ships with a full first-article inspection record.",
     specs: [
@@ -97,9 +98,9 @@ const CAPABILITIES = [
   },
   {
     id: "defence-systems",
-    label: "Defence Systems",
+    label: "Strategic Defence Systems",
     tag: "DRDO · ASL · RCI",
-    image: "https://images.unsplash.com/photo-1515272751348-25380c6c1f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: IMAGES.whatWeBuild.defenceSystems,
     headline: "From ballistic missile motor cases to launch canisters.",
     desc: "SVAPL operates India's first private-sector metallic canister manufacturing facility — commissioned in 2023 for DRDO's strategic programmes. We manufacture motor casings in maraging steel M250 (the most demanding material in the Indian defence supply chain), fabricate airframe structures in 15CDV6 and tungsten, and build stabiliser fin assemblies in Titanium Grade V, Inconel 718 and 13-8MO. In 2025 we delivered India's first Hypersonic Glide Vehicle airframes.",
     specs: [
@@ -133,10 +134,10 @@ export default function WhatWeBuildPage() {
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">WHAT WE BUILD</p>
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-2xl">
-            Five decades of critical hardware. One roof.
+            From Aerostructures to Defence Systems, Built Under One Roof.
           </h1>
           <p className="font-body text-[rgba(234,242,251,0.82)] text-base lg:text-lg max-w-sm leading-relaxed shrink-0">
-            From aerostructures to defence motor casings — mission-critical manufacturing under AS9100D quality management.
+            Intergrated manufacturing capabilities spanning aersostructures, propulsion hardware, precision machining, welded assemblies and defence systems. All delivered undern AS91100D - certified quality processes.
           </p>
         </div>
       </section>

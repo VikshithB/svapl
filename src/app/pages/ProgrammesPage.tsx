@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IMAGES } from "@/config/images";
 
 type Client = "ALL" | "ISRO" | "DRDO" | "HAL";
 
@@ -20,7 +21,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 2860 × 2600 mm",
     material: "Al Alloy 2014, 15CDV6, SS",
     desc: "Full structural assembly integrating aluminium alloy skins, machined rings and 15CDV6 frames — delivered across 130+ units to VSSC.",
-    image: "https://images.unsplash.com/photo-1614642240262-a452c2c11724?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.pslvBaseShroud,
   },
   {
     client: "ISRO",
@@ -29,7 +30,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 2160 × 2000–3800 mm",
     material: "Al Alloy 2014, 15CDV6, AISI 304",
     desc: "Inter-tank structures, strapon nose cones and base shrouds for L40 liquid stages. First private company to develop these in 2004.",
-    image: "https://images.unsplash.com/photo-1515272751348-25380c6c1f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.gslvStrapon,
   },
   {
     client: "ISRO",
@@ -38,7 +39,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 3000 × 1500 mm",
     material: "Al Alloy 2014, 15CDV6",
     desc: "Combines advanced sheet metal forming with isogrid panel machining, structural riveting, fixture integration and bracket rolling.",
-    image: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.lvm3BaseShroud,
   },
   {
     client: "ISRO",
@@ -47,7 +48,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 3.1 m",
     material: "15CDV6, Al Alloy",
     desc: "First unmanned crew module structure delivered in 2019–2020. Critical milestone in India's human spaceflight programme.",
-    image: "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.gaganyaanCrew,
   },
   {
     client: "ISRO",
@@ -56,7 +57,7 @@ const PROGRAMMES: Programme[] = [
     size: "56-component assembly",
     material: "15CDV6, Inconel 718, 15-5PH",
     desc: "High-precision actuator systems engineered to 15–25 micron tolerances, integrating 56 individual components for GSLV Mk III L110 stage.",
-    image: "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.l110Actuator,
   },
   {
     client: "ISRO",
@@ -65,7 +66,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 1000 × 12600 mm",
     material: "15CDV6",
     desc: "Full segment motor casing successfully tested and delivered — 90 motor casings to date for PSLV solid stages.",
-    image: "https://images.unsplash.com/photo-1598302936625-6075fbd98dd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.psoxlMotorCase,
   },
   {
     client: "DRDO",
@@ -74,7 +75,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 1500 × 1000 mm",
     material: "15CDV6, MDN250",
     desc: "Motor casings for Agni-1, 2, 3, 4 and 5 ballistic missiles. One of the original programmes that established SVAPL's defence credentials.",
-    image: "https://images.unsplash.com/photo-1710750266544-d5b41e6847aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.drdo.agniMotorCasings,
   },
   {
     client: "DRDO",
@@ -83,7 +84,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 740 × 3200 mm",
     material: "15CDV6, Tungsten",
     desc: "Complete airframe structure, motor casings, control surface panels and stabiliser fins for India's tactical ballistic missile — delivered 2019.",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.drdo.pralayAirframe,
   },
   {
     client: "DRDO",
@@ -92,7 +93,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 800 × 1500 mm",
     material: "Maraging Steel M250",
     desc: "Flowform tube welding, precision machining, RT/DP inspection and proof pressure testing up to 210 Bar for submarine-launched ballistic missiles.",
-    image: "https://images.unsplash.com/photo-1515272751348-25380c6c1f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.isro.gslvStrapon,
   },
   {
     client: "DRDO",
@@ -101,7 +102,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 1300–1400 × 8500–9000 mm",
     material: "SA516, 15CDV6",
     desc: "Specialised missile launch canister — welded SA516 and 15CDV6 construction. Hydraulic pressure testing to 10 Bar, pneumatic to 0.3 Bar. First facility of its kind in Hyderabad.",
-    image: "https://images.unsplash.com/photo-1455165814004-1126a7199f9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.drdo.metalCanisterA1,
   },
   {
     client: "DRDO",
@@ -110,7 +111,7 @@ const PROGRAMMES: Programme[] = [
     size: "Ø 170 × 1650 mm",
     material: "Al Alloy 2014, SS304, SS420",
     desc: "40+ airframes delivered for India's beyond-visual-range air-to-air missile. Complex machining, riveting and integration of multi-material sections.",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.drdo.astraAirframe,
   },
   {
     client: "DRDO",
@@ -119,7 +120,7 @@ const PROGRAMMES: Programme[] = [
     size: "500 mm × 800 mm",
     material: "Ti Grade V, Inconel, 13-8MO",
     desc: "108-component fin assembly showcasing complex machining and riveting of Titanium Grade 5, Inconel and 13-8MO for hypersonic and tactical programmes.",
-    image: "https://images.unsplash.com/photo-1666634157070-6fd830fb5672?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.drdo.stabilizerFin,
   },
   {
     client: "HAL",
@@ -128,7 +129,7 @@ const PROGRAMMES: Programme[] = [
     size: "Up to 1140 × 326 × 300 mm",
     material: "Maraging Steel",
     desc: "Precision-machined legs and struts in Maraging Steel for HAL helicopter programmes — Bangalore facility.",
-    image: "https://images.unsplash.com/photo-1585916788784-64aa099fec1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: IMAGES.programmes.hal.maragingSteel,
   },
 ];
 
@@ -148,7 +149,7 @@ export default function ProgrammesPage() {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1614642240262-a452c2c11724?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
+          src={IMAGES.programmes.hero}
           alt="Rocket launch"
           className="absolute inset-0 w-full h-full object-cover opacity-20"
         />

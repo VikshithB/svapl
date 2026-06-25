@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IMAGES } from "@/config/images";
 
 const POSITIONS = [
   {
@@ -77,7 +78,7 @@ export default function CareersPage() {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
+          src={IMAGES.careers.hero}
           alt="Engineering team"
           className="absolute inset-0 w-full h-full object-cover opacity-15"
         />

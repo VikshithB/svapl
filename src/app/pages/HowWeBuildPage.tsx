@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MetrologySimulator } from "@/app/components/MetrologySimulator";
+import { IMAGES } from "@/config/images";
 
 /* ─── Content from SVAPL PPT + brochure ─── */
 
@@ -10,70 +11,70 @@ const PROCESS_STEPS = [
     title: "Raw Material Receipt & Verification",
     desc: "Incoming raw materials — aluminium alloys, 15CDV6, maraging steel, titanium billet and forgings — are received, tagged and tested for mechanical and chemical compliance against customer-approved material certificates. Traceability is established from first log entry through to final dispatch.",
     detail: "Destructive and non-destructive sample testing, heat number traceability, storage zoning by material class.",
-    image: "https://images.unsplash.com/photo-1535813547-99c456a41d4a?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.rawMaterial
   },
   {
     step: "02",
     title: "Manufacturing Process & QA Plan",
     desc: "For every new component, SVAPL generates a Manufacturing Process Sheet and Quality Assurance Plan with defined inspection hold points. These documents are reviewed and signed off by the customer before shop-floor release.",
     detail: "Customer DDP review, process FMEA, first-article inspection plan, tooling design approval.",
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.qaPlanning
   },
   {
     step: "03",
     title: "Tooling & Fixturing",
     desc: "Critical tooling, jigs and fixtures are designed and manufactured in-house using CATIA V5. All tooling is dimensionally verified by CMM before first-piece production. We maintain a tooling library for repeat programmes, reducing qualification cycles.",
     detail: "In-house tooling design, CMM-verified fixtures, dedicated tooling stores.",
-    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.tooling
   },
   {
     step: "04",
     title: "Fabrication",
     desc: "Sheet metal forming, plate bending (up to 40 mm), ring rolling and large-format fabrication operations produce primary structural skins, frames and stiffeners. Weld assemblies are performed in our ISO 8 clean room with full humidity control for the most sensitive alloys.",
     detail: "Plate bending up to 40 mm, ring rolling up to Ø 5,000 mm, clean-room TIG welding, hydro/pneumatic proof.",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.fabrication
   },
   {
     step: "05",
     title: "CNC Machining",
     desc: "Components move to our machine shop: 11 CNC milling centres (5-axis, 4-axis, 3-axis), 4 plano mills, 4 CNC vertical turning lathes (up to Ø 5,400 mm) and 4 horizontal borers. Inter-operation inspection is performed at defined stages using CMM and 3D measuring arm.",
     detail: "In-process CMM checks, toolpath verification, fixture re-qualification after every tool change on tight-tolerance features.",
-    image: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.cncMachining
   },
   {
     step: "06",
     title: "Assembly & Integration",
     desc: "Structural assembly — riveting, jo-bolt and shear-bolt fastening — is performed in jig, with assembly sequence verified by approved traveller. Functional integration (hydraulic lines, thrusters, harness routing) is carried out in our 5,000 sq.ft clean room with customer hold-point sign-offs.",
     detail: "Jig-based assembly, approved sequence traveller, customer surveillance at IPIs.",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.assembly
   },
   {
     step: "07",
     title: "NDT & Dimensional Inspection",
     desc: "Every weld joint undergoes radiographic or ultrasonic testing. Structural assemblies are inspected by CMM (600 × 600 × 500 mm), 3D arm (A6-2500, reach 2.5 m) or laser tracker. Dimensional reports are issued before release.",
     detail: "RT (X-ray 350 kVA), UT, DP, TT; CMM report, laser-tracker dimensional certificate.",
-    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.ndtInspection
   },
   {
     step: "08",
     title: "Pressure Testing",
     desc: "Pressure-carrying structures — motor cases, nozzles, propellant tanks, canisters — are proof-tested on our dedicated hydro and pneumatic rigs: hydro up to 700 ATA, pneumatic up to 150 ATA. Strain gauge monitoring is available for critical tests.",
     detail: "Hydro rig: 700 ATA. Pneumatic rig: 150 ATA. Strain gauge equipment, cycle fatigue testing.",
-    image: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.pressureTesting
   },
   {
     step: "09",
     title: "Non-Conformance Review & Disposition",
     desc: "Any non-conformance identified during inspection is documented, raised with the customer for disposition (use-as-is, rework, scrap) and resolved before the part progresses. A root-cause corrective action is raised for systemic issues.",
     detail: "Customer NCR format, RCCA log, Pareto trend review in monthly QRB.",
-    image: "https://images.unsplash.com/photo-158109187062b-46cc785a869a?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.nonConformance
   },
   {
     step: "10",
     title: "Packing, Quality Docs & Dispatch",
     desc: "Finished assemblies are preserved and packed per customer specification, accompanied by a full quality dossier: material certs, inspection records, NDT films/reports, pressure test certs, dimensional reports and any customer-specific data packages.",
     detail: "Full traceability pack, preservation per customer spec, export-compliant packaging for ITAR/EAR-controlled items.",
-    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=500"
+    image: IMAGES.howWeBuild.process.packingDispatch
   }
 ];
 
@@ -94,7 +95,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "MAZAK INTEGREX i-200",
     category: "milling",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.assembly,
     specs: [
       { label: "ENVELOPE SIZE", value: "Ø 658 mm × 1016 mm" },
       { label: "AXIS TRAVEL", value: "X: 615 // Y: 250 // Z: 1077" },
@@ -111,7 +112,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "DECKEL MAHO DMU 80 P",
     category: "milling",
-    image: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.pressureTesting,
     specs: [
       { label: "ENVELOPE SIZE", value: "800 mm × 800 mm × 800 mm" },
       { label: "AXIS TRAVEL", value: "X: 800 // Y: 800 // Z: 800" },
@@ -128,7 +129,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "HAAS VF-6/50",
     category: "milling",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.machines.haasVf6,
     specs: [
       { label: "ENVELOPE SIZE", value: "1626 mm × 813 mm × 762 mm" },
       { label: "AXIS TRAVEL", value: "X: 1626 // Y: 813 // Z: 762" },
@@ -145,7 +146,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "TOSHIBA VTL Ø5400",
     category: "turning",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.fabrication,
     specs: [
       { label: "ENVELOPE SIZE", value: "Ø 5,400 mm × 3,200 mm" },
       { label: "AXIS TRAVEL", value: "X: 3,000 // Z: 1,800" },
@@ -162,7 +163,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "PUMA 400L",
     category: "turning",
-    image: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.machines.puma400l,
     specs: [
       { label: "ENVELOPE SIZE", value: "Ø 550 mm × 2,028 mm" },
       { label: "AXIS TRAVEL", value: "X: 362 // Z: 2,150" },
@@ -179,7 +180,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "DOOSAN VTL V8300",
     category: "turning",
-    image: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.cncMachining,
     specs: [
       { label: "ENVELOPE SIZE", value: "Ø 830 mm × 780 mm" },
       { label: "AXIS TRAVEL", value: "X: 490 // Z: 780" },
@@ -196,7 +197,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "HEXAGON GLOBAL CMM",
     category: "metrology",
-    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.ndtInspection,
     specs: [
       { label: "MEASURING VOLUME", value: "600 mm × 600 mm × 500 mm" },
       { label: "VOLUMETRIC ERROR", value: "MPEE = 1.5 + L/333 µm" },
@@ -213,7 +214,7 @@ const MACHINE_DATA: Machine[] = [
   {
     name: "TRIMOS MEASURING ARM",
     category: "metrology",
-    image: "https://images.unsplash.com/photo-158109187062b-46cc785a869a?auto=format&fit=crop&q=80&w=500",
+    image: IMAGES.howWeBuild.process.nonConformance,
     specs: [
       { label: "MEASURING REACH", value: "2,500 mm (Radial Sphere)" },
       { label: "SINGLE POINT REPEATABILITY", value: "< 0.015 mm" },

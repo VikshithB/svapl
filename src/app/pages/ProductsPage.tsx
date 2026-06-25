@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IMAGES } from "@/config/images";
 
 type Programme = "ALL" | "ISRO" | "DRDO" | "HSFC";
 
@@ -13,12 +14,12 @@ interface Product {
 }
 
 const I = {
-  shell: "https://images.unsplash.com/photo-1674897537555-dd6fbf72b4eb?auto=format&fit=crop&q=80&w=900",
-  fin:   "https://images.unsplash.com/photo-1515272751348-25380c6c1f9c?auto=format&fit=crop&q=80&w=900",
-  weld:  "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=900",
-  prec:  "https://images.unsplash.com/photo-1740209475472-aa7d280f7452?auto=format&fit=crop&q=80&w=900",
-  assy:  "https://images.unsplash.com/photo-1585347890782-6e1ddd365053?auto=format&fit=crop&q=80&w=900",
-  fac:   "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=900",
+  shell: IMAGES.products.shell,
+  fin:   IMAGES.products.fin,
+  weld:  IMAGES.products.weld,
+  prec:  IMAGES.products.precision,
+  assy:  IMAGES.products.assembly,
+  fac:   IMAGES.products.facility,
 };
 
 const PRODUCTS: Product[] = [
