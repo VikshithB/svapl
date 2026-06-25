@@ -268,7 +268,7 @@ export default function AboutPage() {
     <div className="bg-[#050505] pt-24">
 
       {/* ── Page Hero ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24 border-b border-white/[0.06]">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24 border-b border-white/[0.06]">
         <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">
           ABOUT SVAPL // COMPANY PROFILE
         </p>
@@ -282,7 +282,7 @@ export default function AboutPage() {
 
       {/* ── Stats Strip ── */}
       <section className="bg-[#050505] border-b border-white/[0.06] py-1">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 lg:divide-x divide-white/[0.06] border-l border-r border-white/[0.06] bg-[#0d0f12]/10">
             {STATS.map((s, i) => (
               <div key={s.label} className="px-6 py-8 flex flex-col gap-1.5 text-left font-tech relative group hover:bg-[#0d0f12]/20 transition-colors">
@@ -303,7 +303,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Our Story ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28 border-b border-white/[0.06]">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28 border-b border-white/[0.06]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="text-left">
             <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">OUR STORY // FOUNDATION GENESIS</p>
@@ -347,7 +347,7 @@ export default function AboutPage() {
 
       {/* ── Timeline Section ── */}
       <section className="bg-[#050505] py-20 lg:py-28 border-b border-white/[0.06]">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="mb-16 text-left">
             <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">OUR JOURNEY // CHRONOLOGICAL LOG</p>
             <h2 className="font-sans font-bold text-white text-3xl lg:text-[42px] leading-tight tracking-[-1px]">
@@ -415,7 +415,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Facility Showcase Section ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28 border-b border-white/[0.06]">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28 border-b border-white/[0.06]">
         <div className="mb-16 text-left">
           <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">INFRASTRUCTURE // PHYSICAL NODES</p>
           <h2 className="font-sans font-bold text-white text-3xl lg:text-[42px] leading-tight tracking-[-1px]">
@@ -427,7 +427,7 @@ export default function AboutPage() {
 
       {/* ── Certifications Section ── */}
       <section className="bg-[#050505] py-20 border-b border-white/[0.06]">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="mb-16 text-left">
             <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">QUALITY ASSURANCE // COMPLIANCE CODES</p>
             <h2 className="font-sans font-bold text-white text-3xl lg:text-[42px] leading-tight tracking-[-1px]">
@@ -457,7 +457,7 @@ export default function AboutPage() {
 
       {/* ── Clientele Section ── */}
       <section className="py-20 bg-[#050505]">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="mb-12 text-left">
             <span className="font-tech text-blueprint-dim text-[10px] tracking-[2px] uppercase block">
               APPROVED SUPPLY CHAINS // CLIENTELE DIRECTORY

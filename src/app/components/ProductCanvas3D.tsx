@@ -377,7 +377,23 @@ function WireframeCanvas({ modelName }: ProductCanvas3DProps) {
     const vertices = geom.vertices;
     const edges = geom.edges;
 
-    const render = () => {
+    // Pause when scrolled out of view
+    let visible = true;
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { threshold: 0.1 }
+    );
+    io.observe(canvas);
+
+    // 30fps cap
+    let lastTime = 0;
+    const FRAME_MS = 1000 / 30;
+
+    const render = (now: number) => {
+      animationId = requestAnimationFrame(render);
+      if (!visible || now - lastTime < FRAME_MS) return;
+      lastTime = now;
+
       ctx.clearRect(0, 0, width, height);
 
       // Auto rotation when not dragging
@@ -500,14 +516,14 @@ function WireframeCanvas({ modelName }: ProductCanvas3DProps) {
       ctx.font = "8px monospace";
       ctx.fillText(`ROT-X: ${rx.toFixed(2)}RAD // ROT-Y: ${ry.toFixed(2)}RAD`, centerX - 90, height - 15);
 
-      animationId = requestAnimationFrame(render);
     };
 
-    render();
+    requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationId);
+      io.disconnect();
     };
   }, [modelName]);
 

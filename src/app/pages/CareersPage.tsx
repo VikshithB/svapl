@@ -83,7 +83,7 @@ export default function CareersPage() {
           className="absolute inset-0 w-full h-full object-cover opacity-15"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/50 to-[#0a0a0a]" />
-        <div className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28">
+        <div className="relative max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">CAREERS</p>
           <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-3xl mb-6">
             Build the hardware that builds India's future.
@@ -97,7 +97,7 @@ export default function CareersPage() {
 
       {/* ── Values ── */}
       <section className="bg-panel border-t border-rule py-16 lg:py-20">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">HOW WE WORK</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {VALUES.map((v) => (
@@ -112,7 +112,7 @@ export default function CareersPage() {
       </section>
 
       {/* ── Open positions ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
             <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-2">OPEN POSITIONS</p>
@@ -199,7 +199,7 @@ export default function CareersPage() {
 
       {/* ── General application CTA ── */}
       <section className="bg-panel border-t border-rule py-16">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div>
             <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[30px] tracking-[-0.5px] mb-2">
               Don&apos;t see the right role?

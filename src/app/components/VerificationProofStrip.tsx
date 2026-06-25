@@ -18,8 +18,8 @@ export function VerificationProofStrip() {
     <section className="bg-[#050505] border-b border-white/[0.06] py-1 relative">
       <div className="absolute inset-0 bg-[#0d0f12]/5 pointer-events-none" />
       
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-y divide-white/[0.06] md:divide-y-0 lg:divide-x border-l border-r border-white/[0.06] bg-[#0d0f12]/10">
+      <div className="px-[100px]">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-y divide-white/[0.06] md:divide-y-0 lg:divide-x border-l border-r border-white/[0.06] bg-[#0d0f12]/10">
           {STATS.map((s, idx) => (
             <div
               key={s.label}
@@ -45,7 +45,7 @@ export function VerificationProofStrip() {
               </span>
             </div>
           ))}
-        </div>
+      </div>
       </div>
     </section>
   );

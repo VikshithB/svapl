@@ -33,8 +33,8 @@ export function LVM3ModelViewer() {
     const w = mount.clientWidth || 400;
     const h = mount.clientHeight || 400;
 
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
     renderer.setSize(w, h);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -153,17 +153,32 @@ export function LVM3ModelViewer() {
     });
     ro.observe(mount);
 
-    const animate = () => {
+    // Pause rendering when section scrolls out of view
+    let visible = true;
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { threshold: 0.1 }
+    );
+    io.observe(mount);
+
+    // 30fps cap — halves GPU load vs 60fps
+    let lastTime = 0;
+    const FRAME_MS = 1000 / 30;
+
+    const animate = (now: number) => {
       rafId = requestAnimationFrame(animate);
+      if (!visible || now - lastTime < FRAME_MS) return;
+      lastTime = now;
       controls.update();
       renderer!.render(scene, camera);
     };
-    animate();
+    requestAnimationFrame(animate);
 
     return () => {
       disposed = true;
       cancelAnimationFrame(rafId);
       ro.disconnect();
+      io.disconnect();
 
       // Remove named listeners before disposal
       renderer?.domElement.removeEventListener("pointerdown", onPointerDown);

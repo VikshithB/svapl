@@ -669,7 +669,7 @@ function WhatWeBuild() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="relative w-screen h-full flex items-center justify-between px-6 sm:px-16 md:px-24 lg:px-32 xl:px-40 select-none overflow-hidden"
+              className="relative w-screen h-full flex items-center justify-center select-none overflow-hidden"
             >
               {/* Massive background number outline */}
               <div className="absolute left-10 md:left-24 top-1/2 -translate-y-1/2 font-sans font-black text-[22vw] text-white/[0.015] leading-none tracking-tighter select-none pointer-events-none font-bold">
@@ -677,6 +677,7 @@ function WhatWeBuild() {
               </div>
 
               {/* Grid content structure */}
+              <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[44px]">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center w-full relative z-10">
                 {/* Title and image block */}
                 <div className="col-span-12 md:col-span-8 flex flex-col gap-6 md:gap-8">
@@ -728,7 +729,7 @@ function WhatWeBuild() {
                   </div>
                 </div>
               </div>
-              
+              </div>{/* end max-w-[1440px] wrapper */}
             </div>
           ))}
         </motion.div>
@@ -1209,20 +1210,18 @@ export default function App() {
 
       {/* Site renders beneath the preloader so Three.js can init during load */}
       <NavBar onNavigate={navigate} currentPage={page} />
-      <div className="max-w-[1440px] mx-auto">
-        <PageErrorBoundary>
-          {page === "home"          && <HomePage onNavigate={navigate} />}
-          {page === "products"      && <ProductsPage onBack={() => navigate("home")} />}
-          {page === "about"         && <AboutPage />}
-          {page === "what-we-build" && <WhatWeBuildPage />}
-          {page === "how-we-build"  && <HowWeBuildPage />}
-          {page === "programmes"    && <ProgrammesPage />}
-          {page === "newsroom"      && <NewsroomPage />}
-          {page === "contact"       && <ContactPage />}
-          {page === "careers"       && <CareersPage />}
-        </PageErrorBoundary>
-        <Footer onNavigate={navigate} />
-      </div>
+      <PageErrorBoundary>
+        {page === "home"          && <HomePage onNavigate={navigate} />}
+        {page === "products"      && <ProductsPage onBack={() => navigate("home")} />}
+        {page === "about"         && <AboutPage />}
+        {page === "what-we-build" && <WhatWeBuildPage />}
+        {page === "how-we-build"  && <HowWeBuildPage />}
+        {page === "programmes"    && <ProgrammesPage />}
+        {page === "newsroom"      && <NewsroomPage />}
+        {page === "contact"       && <ContactPage />}
+        {page === "careers"       && <CareersPage />}
+      </PageErrorBoundary>
+      <Footer onNavigate={navigate} />
     </div>
   );
 }

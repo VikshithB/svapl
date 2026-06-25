@@ -73,7 +73,7 @@ export default function NewsroomPage() {
     <div className="bg-[#0a0a0a] pt-24">
 
       {/* ── Page header ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-14 pb-10">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-14 pb-10">
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-4">NEWSROOM</p>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[52px] leading-[1.05] tracking-[-2px]">
@@ -87,7 +87,7 @@ export default function NewsroomPage() {
 
       {/* ── Featured article ── */}
       {featured && (tag === "All" || tag === featured.tag) && (
-        <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-12">
+        <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] border border-rule overflow-hidden rounded-[4px] group cursor-pointer">
             {/* Image */}
             <div className="relative h-[300px] lg:h-[460px] overflow-hidden">
@@ -123,7 +123,7 @@ export default function NewsroomPage() {
       )}
 
       {/* ── Filter ── */}
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-8">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-8">
         <div className="flex flex-wrap gap-2">
           {TAGS.map((t) => (
             <button
@@ -142,7 +142,7 @@ export default function NewsroomPage() {
       </div>
 
       {/* ── Article grid ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-20">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
           {rest.map((a) => (
             <article key={a.title} className="bg-[#0a0a0a] flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">

@@ -400,7 +400,7 @@ export default function ContactPage() {
       <div className="absolute left-0 right-0 top-20 h-[1px] bg-white/[0.03] pointer-events-none" />
 
       {/* ── Page header ── */}
-      <section className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-16 pb-12 border-b border-white/[0.05]">
+      <section className="relative max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pt-16 pb-12 border-b border-white/[0.05]">
         <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">
           CONTACT SECURE PORTAL
         </p>
@@ -413,7 +413,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── Main Two Column Grid ── */}
-      <section className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24">
+      <section className="relative max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
           {/* Left Column: Secure System Specifications and Address */}

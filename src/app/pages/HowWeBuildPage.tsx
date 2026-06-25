@@ -370,7 +370,7 @@ function MachineMatrix() {
 
   return (
     <section className="bg-[#050505] border-t border-rule py-20">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         <div className="mb-12">
           <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">
             PRODUCTION SYSTEM // INFRASTRUCTURE
@@ -545,7 +545,7 @@ function QualityTrustSection() {
 
   return (
     <section className="bg-[#050505] border-t border-rule py-20 overflow-hidden">
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 pb-8 border-b border-white/[0.04]">
           <div>
             <p className="font-tech text-blueprint text-[10px] tracking-[0.25em] uppercase mb-4">
@@ -784,7 +784,7 @@ export default function HowWeBuildPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(5,5,5,0.2)_10%,#050505_80%)] pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/50 via-transparent to-[#050505] pointer-events-none" />
         
-        <div className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="relative max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[65vh]">
             {/* Left Column: Massive Stark Typography and Data Dashboard */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
@@ -834,7 +834,7 @@ export default function HowWeBuildPage() {
       <MachineMatrix />
 
       {/* ── Process steps ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">MANUFACTURING SEQUENCE</p>
         <div className="flex flex-col gap-px bg-white/10">
           {PROCESS_STEPS.map((s) => (
@@ -882,7 +882,7 @@ export default function HowWeBuildPage() {
 
       {/* ── Inspection & NDT ── */}
       <section className="py-16 lg:py-20 border-t border-rule">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-4">INSPECTION FACILITIES</p>
@@ -952,7 +952,7 @@ export default function HowWeBuildPage() {
 
       {/* ── Manpower ── */}
       <section className="py-16 lg:py-20 border-t border-rule">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">MANPOWER</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/10">
             {[
@@ -972,7 +972,7 @@ export default function HowWeBuildPage() {
 
       {/* ── CTA ── */}
       <section className="bg-panel border-t border-rule py-16 lg:py-20">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div className="max-w-xl">
             <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-3">
               Ready to qualify SVAPL as a supplier?

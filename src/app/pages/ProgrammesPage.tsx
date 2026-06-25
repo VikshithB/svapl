@@ -154,7 +154,7 @@ export default function ProgrammesPage() {
           className="absolute inset-0 w-full h-full object-cover opacity-20"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 to-[#0a0a0a]" />
-        <div className="relative max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28">
+        <div className="relative max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-20 lg:py-28">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">
             PROGRAMMES
           </p>
@@ -174,7 +174,7 @@ export default function ProgrammesPage() {
 
       {/* ── Filter tabs ── */}
       <div className="sticky top-20 z-40 bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-rule">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex gap-1 py-3">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] flex gap-1 py-3">
           {(["ALL", "ISRO", "DRDO", "HAL"] as Client[]).map((f) => (
             <button
               key={f}
@@ -195,7 +195,7 @@ export default function ProgrammesPage() {
       </div>
 
       {/* ── Programme grid ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-rule">
           {visible.map((prog) => (
             <div key={prog.name} className="bg-ink flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">
@@ -252,7 +252,7 @@ export default function ProgrammesPage() {
 
       {/* ── Hypersonic callout ── */}
       <section className="bg-panel border-t border-rule">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
           <div className="max-w-xl">
             <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-3">2025 MILESTONE</p>
             <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] leading-tight tracking-[-0.5px] mb-3">

@@ -68,7 +68,7 @@ export function FactoryVideoPanel() {
       <div className="absolute left-6 md:left-10 top-0 bottom-0 w-[1px] bg-white/[0.025] pointer-events-none" />
       <div className="absolute right-6 md:right-10 top-0 bottom-0 w-[1px] bg-white/[0.025] pointer-events-none" />
 
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         {/* Section header */}
         <div className="mb-14 lg:mb-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
           <div>

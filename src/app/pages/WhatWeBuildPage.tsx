@@ -130,7 +130,7 @@ export default function WhatWeBuildPage() {
   return (
     <div className="bg-[#0a0a0a] pt-24">
       {/* ── Page hero ── */}
-      <section className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24 border-b border-rule">
+      <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-24 border-b border-rule">
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-5">WHAT WE BUILD</p>
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <h1 className="font-sans font-bold text-[#eaf2fb] text-4xl sm:text-5xl lg:text-[58px] leading-[1.05] tracking-[-2px] max-w-2xl">
@@ -143,7 +143,7 @@ export default function WhatWeBuildPage() {
       </section>
 
       {/* ── Capability selector + detail ── */}
-      <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
         {/* Tab strip */}
         <div className="flex gap-1 overflow-x-auto py-6 border-b border-rule -mx-5 px-5 sm:-mx-10 sm:px-10 lg:mx-0 lg:px-0 scrollbar-hide">
           {CAPABILITIES.map((c) => (
@@ -231,7 +231,7 @@ export default function WhatWeBuildPage() {
 
       {/* ── All capabilities quick-ref grid ── */}
       <section className="bg-panel border-t border-rule py-16 lg:py-20">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">ALL CAPABILITIES AT A GLANCE</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
             {[
@@ -256,7 +256,7 @@ export default function WhatWeBuildPage() {
 
       {/* ── CTA ── */}
       <section className="py-16 lg:py-20 border-t border-rule">
-        <div className="max-w-[1320px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div>
             <h3 className="font-sans font-bold text-[#eaf2fb] text-2xl lg:text-[32px] tracking-[-0.5px] mb-2">
               Have a programme requirement?
