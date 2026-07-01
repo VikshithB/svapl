@@ -1,62 +1,21 @@
 import { useState } from "react";
 import { ProductCanvas3D } from "./ProductCanvas3D";
+import { useSanity } from "@/lib/useSanity";
+import { PRODUCTS_3D_QUERY } from "@/lib/queries";
+import type { SanityProduct3D } from "@/lib/types";
 
-const PRODUCTS = [
-  {
-    id: "shroud",
-    label: "01 // LVM3 CORE BASE SHROUD",
-    title: "LVM3 CORE BASE SHROUD",
-    desc: "THIS ASSEMBLY COMBINES ADVANCED SHEET METAL FORMING WITH ISOGRID PANEL MACHINING, STRUCTURAL RIVETING THROUGH FIXTURE AND INTEGRATION, ROLLING OF BRACKETS.",
-    specs: [
-      { key: "PROGRAMME", val: "FOR ISRO" },
-      { key: "DIAMETER", val: "4200 MM" },
-      { key: "HEIGHT", val: "3300 MM" },
-      { key: "MATERIAL", val: "AA 7075, AA2014, 15CDV6" }
-    ]
-  },
-  {
-    id: "fin",
-    label: "02 // STABILIZER FIN ASSY.",
-    title: "STABILIZER FIN ASSEMBLY",
-    desc: "CONSTRUCTED FROM 108 COMPONENTS, THE COMPLETE FIN ASSEMBLY SHOWCASES COMPLEX MACHINING AND RIVETING OF SPECIALIZED MATERIALS LIKE TITANIUM GRADE 5, INCONEL, AND 13-8 MO.",
-    specs: [
-      { key: "PROGRAMME", val: "FOR DRDO" },
-      { key: "HEIGHT", val: "500 MM" },
-      { key: "LENGTH", val: "800 MM LONG" },
-      { key: "MATERIAL", val: "TI. GRADE-V, INCONEL 13-8MO" }
-    ]
-  },
-  {
-    id: "rcs",
-    label: "03 // RCS & VTP",
-    title: "RCS & VTP ASSEMBLY",
-    desc: "PRODUCT IS AN INTEGRATION OF PROPELLENT TANKS WITH ADAPTORS, THRUSTERS AND PIPELINE ASSEMBLIES.",
-    specs: [
-      { key: "PROGRAMME", val: "FOR DRDO" },
-      { key: "DIAMETER", val: "1500 MM" },
-      { key: "HEIGHT", val: "1000 MM" },
-      { key: "MATERIAL", val: "AL. ALLOY 2014, SS316L & SS308L GRAPHITE" }
-    ]
-  },
-  {
-    id: "canister",
-    label: "04 // METAL CANISTER",
-    title: "METAL CANISTER",
-    desc: "SPECIALIZED MISSILE LAUNCH CANISTER UTILIZING WELDED SA516 AND 15CDV6 CONSTRUCTION. HYDRAULIC PRESSURE TESTING UP TO 10 BAR AND PNEUMATIC LEAK TESTING UP TO 0.3 BAR.",
-    specs: [
-      { key: "PROGRAMME", val: "FOR DRDO" },
-      { key: "DIAMETER", val: "1300 MM" },
-      { key: "LENGTH", val: "9000 MM" },
-      { key: "MATERIAL", val: "SA516, 15CDV6" }
-    ]
-  }
-] as const;
-
-type ProductId = typeof PRODUCTS[number]["id"];
+const FALLBACK_PRODUCTS: SanityProduct3D[] = [
+  { _id: "p3d1", id: "shroud",   order: 1, label: "01 // LVM3 CORE BASE SHROUD",    title: "LVM3 CORE BASE SHROUD",      desc: "THIS ASSEMBLY COMBINES ADVANCED SHEET METAL FORMING WITH ISOGRID PANEL MACHINING, STRUCTURAL RIVETING THROUGH FIXTURE AND INTEGRATION, ROLLING OF BRACKETS.",                                                                                    specs: [{ key: "PROGRAMME", val: "FOR ISRO" }, { key: "DIAMETER", val: "4200 MM" }, { key: "HEIGHT", val: "3300 MM" }, { key: "MATERIAL", val: "AA 7075, AA2014, 15CDV6" }] },
+  { _id: "p3d2", id: "fin",      order: 2, label: "02 // STABILIZER FIN ASSY.",     title: "STABILIZER FIN ASSEMBLY",    desc: "CONSTRUCTED FROM 108 COMPONENTS, THE COMPLETE FIN ASSEMBLY SHOWCASES COMPLEX MACHINING AND RIVETING OF SPECIALIZED MATERIALS LIKE TITANIUM GRADE 5, INCONEL, AND 13-8 MO.",                                                                   specs: [{ key: "PROGRAMME", val: "FOR DRDO" }, { key: "HEIGHT", val: "500 MM" }, { key: "LENGTH", val: "800 MM LONG" }, { key: "MATERIAL", val: "TI. GRADE-V, INCONEL 13-8MO" }] },
+  { _id: "p3d3", id: "nosecap",  order: 3, label: "03 // NOSE CAP ASSY.",           title: "NOSE CAP ASSEMBLY",          desc: "PRECISION-FORMED NOSE CAP MACHINED FROM HIGH-STRENGTH ALUMINIUM ALLOY, FEATURING TIGHT-TOLERANCE OGIVE PROFILE AND INTEGRATED ATTACHMENT FLANGE FOR FLIGHT-CRITICAL AEROSTRUCTURE PROGRAMMES.",                                          specs: [{ key: "PROGRAMME", val: "FOR ISRO" }, { key: "PROFILE", val: "OGIVE / CONICAL" }, { key: "MATERIAL", val: "AA 2014, AA 7075" }, { key: "FINISH", val: "HARD ANODISED" }] },
+  { _id: "p3d4", id: "canister", order: 4, label: "04 // METAL CANISTER",          title: "METAL CANISTER",             desc: "SPECIALIZED MISSILE LAUNCH CANISTER UTILIZING WELDED SA516 AND 15CDV6 CONSTRUCTION. HYDRAULIC PRESSURE TESTING UP TO 10 BAR AND PNEUMATIC LEAK TESTING UP TO 0.3 BAR.",                                                               specs: [{ key: "PROGRAMME", val: "FOR DRDO" }, { key: "DIAMETER", val: "1300 MM" }, { key: "LENGTH", val: "9000 MM" }, { key: "MATERIAL", val: "SA516, 15CDV6" }] },
+];
 
 export function ProductShowcase3D({ onViewAll }: { onViewAll?: () => void }) {
-  const [activeTab, setActiveTab] = useState<ProductId>("shroud");
-  const product = PRODUCTS.find((p) => p.id === activeTab) || PRODUCTS[0];
+  const { data: productsData } = useSanity<SanityProduct3D[]>(PRODUCTS_3D_QUERY);
+  const PRODUCTS = productsData?.length ? productsData : FALLBACK_PRODUCTS;
+  const [activeTab, setActiveTab] = useState<string>("shroud");
+  const product = PRODUCTS.find((p) => p.id === activeTab) ?? PRODUCTS[0];
 
   return (
     <section className="bg-[#050505] border-b border-white/[0.06] py-20 lg:py-28 relative">
@@ -131,11 +90,11 @@ export function ProductShowcase3D({ onViewAll }: { onViewAll?: () => void }) {
             <span className="font-tech text-[9px] text-blueprint-dim tracking-widest uppercase mb-2 text-left select-none">
               LIVE VIEWPORT GRID
             </span>
-            <ProductCanvas3D modelName={activeTab} />
+            <ProductCanvas3D modelName={activeTab as "shroud" | "fin" | "nosecap" | "canister"} />
           </div>
 
           {/* Right Column: Blueprint specs */}
-          <div className="lg:col-span-4 flex flex-col text-left h-full justify-between">
+          <div className="lg:col-span-4 flex flex-col text-left gap-6">
             <div>
               <span className="font-tech text-[9px] text-blueprint-dim tracking-widest uppercase block mb-3 select-none">
                 HARDWARE PARAMETERS

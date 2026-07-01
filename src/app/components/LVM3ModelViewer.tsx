@@ -38,7 +38,7 @@ export function LVM3ModelViewer() {
     renderer.setSize(w, h);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 1.4;
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
@@ -46,28 +46,37 @@ export function LVM3ModelViewer() {
     const camera = new THREE.PerspectiveCamera(42, w / h, 0.01, 1000);
     camera.position.set(0, 1.5, 5.5);
 
-    // Studio lighting — RoomEnvironment provides soft wrap-around IBL
+    // IBL — RoomEnvironment at full intensity for soft wrap-around
     const pmrem = new THREE.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
-    envTexture = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    envTexture = pmrem.fromScene(new RoomEnvironment(), 0.6).texture;
     scene.environment = envTexture;
+    scene.environmentIntensity = 0.55;
     pmrem.dispose();
 
-    const key = new THREE.DirectionalLight(0xfff5e8, 3.5);
-    key.position.set(-3, 6, 5);
+    // Key — warm white from upper-left-front (main shadow-caster)
+    const key = new THREE.DirectionalLight(0xfff6e8, 5.0);
+    key.position.set(-4, 8, 6);
     scene.add(key);
 
-    const fillL = new THREE.DirectionalLight(0xd0e8ff, 1.1);
-    fillL.position.set(5, 2, 3);
+    // Fill — cool blue from right to open shadows
+    const fillL = new THREE.DirectionalLight(0xc8dcff, 1.6);
+    fillL.position.set(6, 1, 3);
     scene.add(fillL);
 
-    const rimL = new THREE.DirectionalLight(0xffffff, 1.8);
-    rimL.position.set(0, 8, -6);
+    // Rim — bright white from behind-top for edge separation
+    const rimL = new THREE.DirectionalLight(0xffffff, 2.8);
+    rimL.position.set(1, 10, -8);
     scene.add(rimL);
 
-    const bounce = new THREE.DirectionalLight(0xffe8c0, 0.3);
-    bounce.position.set(0, -4, 2);
-    scene.add(bounce);
+    // Accent — brand orange from lower-front for warm bounce off underside
+    const accent = new THREE.DirectionalLight(0xff7700, 0.8);
+    accent.position.set(0, -3, 4);
+    scene.add(accent);
+
+    // Ambient — very slight so deep shadows aren't pure black
+    const ambient = new THREE.AmbientLight(0x101820, 1.0);
+    scene.add(ambient);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;

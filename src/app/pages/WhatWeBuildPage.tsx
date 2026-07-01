@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { CAPABILITIES_QUERY } from "@/lib/queries";
+import type { SanityCapability } from "@/lib/types";
 
-/* ─── Content from SVAPL brochure + PPT ─── */
-
-const CAPABILITIES = [
+const FALLBACK_CAPABILITIES: SanityCapability[] = [
   {
-    id: "aerostructures",
+    _id: "1", id: "aerostructures",
     label: "Aerostructures",
     tag: "ISRO · DRDO · HAL",
     image: IMAGES.whatWeBuild.aerostructures,
@@ -29,7 +30,7 @@ const CAPABILITIES = [
     ],
   },
   {
-    id: "precision-machining",
+    _id: "2", id: "precision-machining",
     label: "Precision Components",
     tag: "ISRO · DRDO",
     image: IMAGES.whatWeBuild.precisionMachining,
@@ -51,7 +52,7 @@ const CAPABILITIES = [
     ],
   },
   {
-    id: "welded-structures",
+    _id: "3", id: "welded-structures",
     label: "Strucutural Fabrication",
     tag: "ISRO · DRDO",
     image: IMAGES.whatWeBuild.weldedStructures,
@@ -74,7 +75,7 @@ const CAPABILITIES = [
     ],
   },
   {
-    id: "integrated-assemblies",
+    _id: "4", id: "integrated-assemblies",
     label: "Assembly & Integration",
     tag: "ISRO · DRDO",
     image: IMAGES.whatWeBuild.integratedAssemblies,
@@ -97,7 +98,7 @@ const CAPABILITIES = [
     ],
   },
   {
-    id: "defence-systems",
+    _id: "5", id: "defence-systems",
     label: "Strategic Defence Systems",
     tag: "DRDO · ASL · RCI",
     image: IMAGES.whatWeBuild.defenceSystems,
@@ -124,8 +125,10 @@ const CAPABILITIES = [
 /* ─── Component ─── */
 
 export default function WhatWeBuildPage() {
+  const { data } = useSanity<SanityCapability[]>(CAPABILITIES_QUERY);
+  const CAPABILITIES = data?.length ? data : FALLBACK_CAPABILITIES;
   const [active, setActive] = useState(CAPABILITIES[0].id);
-  const cap = CAPABILITIES.find((c) => c.id === active)!;
+  const cap = CAPABILITIES.find((c) => c.id === active) ?? CAPABILITIES[0];;
 
   return (
     <div className="bg-[#0a0a0a] pt-24">

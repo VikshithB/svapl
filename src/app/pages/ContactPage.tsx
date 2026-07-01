@@ -378,14 +378,39 @@ export default function ContactPage() {
     setBlueprintFile(file);
   };
 
-  const submit = (e: React.FormEvent) => {
+  // Replace YOUR_FORM_ID below with the ID from formspree.io/forms after creating a free form
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mbdvagla";
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Simulate secure compliance verification submit sequence
-    setTimeout(() => {
+    try {
+      const body = new FormData();
+      body.append("name", form.name);
+      body.append("company", form.company);
+      body.append("classification", form.classification);
+      body.append("_replyto", form.email);
+      body.append("specifications", form.specifications);
+      body.append("_subject", `RFQ from ${form.company || form.name} — SVAPL Contact Portal`);
+      if (blueprintFile) body.append("blueprint", blueprintFile);
+
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body,
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        setSent(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data?.error ?? "Submission failed. Please email marketing@svapl.in directly.");
+      }
+    } catch {
+      alert("Network error. Please email marketing@svapl.in directly.");
+    } finally {
       setSubmitting(false);
-      setSent(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -470,21 +495,24 @@ export default function ContactPage() {
             <div className="font-tech flex flex-col gap-4">
               <div>
                 <span className="text-[10px] text-blueprint-dim tracking-widest uppercase block mb-1">
-                  SECURE SEC_LINE
+                  MOBILE
                 </span>
-                <span className="text-xs text-white tracking-widest block font-medium">
-                  +91-40-23026683
-                </span>
+                <a
+                  href="tel:+919390978255"
+                  className="text-xs text-white hover:text-blueprint tracking-widest block font-medium transition-colors"
+                >
+                  +91 93909 78255
+                </a>
               </div>
               <div>
                 <span className="text-[10px] text-blueprint-dim tracking-widest uppercase block mb-1">
                   ENQUIRY INBOX
                 </span>
                 <a
-                  href="mailto:contracts@svapl.in"
+                  href="mailto:marketing@svapl.in"
                   className="text-xs text-blueprint hover:text-white tracking-widest block font-medium transition-colors"
                 >
-                  contracts@svapl.in
+                  marketing@svapl.in
                 </a>
               </div>
             </div>

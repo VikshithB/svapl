@@ -2,11 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MetrologySimulator } from "@/app/components/MetrologySimulator";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { PROCESS_STEPS_QUERY, MACHINES_QUERY } from "@/lib/queries";
+import type { SanityProcessStep, SanityMachine } from "@/lib/types";
 
 /* ─── Content from SVAPL PPT + brochure ─── */
 
-const PROCESS_STEPS = [
+const FALLBACK_PROCESS_STEPS: SanityProcessStep[] = [
   {
+    _id: "ps1",
     step: "01",
     title: "Raw Material Receipt & Verification",
     desc: "Incoming raw materials — aluminium alloys, 15CDV6, maraging steel, titanium billet and forgings — are received, tagged and tested for mechanical and chemical compliance against customer-approved material certificates. Traceability is established from first log entry through to final dispatch.",
@@ -14,6 +18,7 @@ const PROCESS_STEPS = [
     image: IMAGES.howWeBuild.process.rawMaterial
   },
   {
+    _id: "ps2",
     step: "02",
     title: "Manufacturing Process & QA Plan",
     desc: "For every new component, SVAPL generates a Manufacturing Process Sheet and Quality Assurance Plan with defined inspection hold points. These documents are reviewed and signed off by the customer before shop-floor release.",
@@ -21,78 +26,25 @@ const PROCESS_STEPS = [
     image: IMAGES.howWeBuild.process.qaPlanning
   },
   {
+    _id: "ps3",
     step: "03",
     title: "Tooling & Fixturing",
     desc: "Critical tooling, jigs and fixtures are designed and manufactured in-house using CATIA V5. All tooling is dimensionally verified by CMM before first-piece production. We maintain a tooling library for repeat programmes, reducing qualification cycles.",
     detail: "In-house tooling design, CMM-verified fixtures, dedicated tooling stores.",
     image: IMAGES.howWeBuild.process.tooling
   },
-  {
-    step: "04",
-    title: "Fabrication",
-    desc: "Sheet metal forming, plate bending (up to 40 mm), ring rolling and large-format fabrication operations produce primary structural skins, frames and stiffeners. Weld assemblies are performed in our ISO 8 clean room with full humidity control for the most sensitive alloys.",
-    detail: "Plate bending up to 40 mm, ring rolling up to Ø 5,000 mm, clean-room TIG welding, hydro/pneumatic proof.",
-    image: IMAGES.howWeBuild.process.fabrication
-  },
-  {
-    step: "05",
-    title: "CNC Machining",
-    desc: "Components move to our machine shop: 11 CNC milling centres (5-axis, 4-axis, 3-axis), 4 plano mills, 4 CNC vertical turning lathes (up to Ø 5,400 mm) and 4 horizontal borers. Inter-operation inspection is performed at defined stages using CMM and 3D measuring arm.",
-    detail: "In-process CMM checks, toolpath verification, fixture re-qualification after every tool change on tight-tolerance features.",
-    image: IMAGES.howWeBuild.process.cncMachining
-  },
-  {
-    step: "06",
-    title: "Assembly & Integration",
-    desc: "Structural assembly — riveting, jo-bolt and shear-bolt fastening — is performed in jig, with assembly sequence verified by approved traveller. Functional integration (hydraulic lines, thrusters, harness routing) is carried out in our 5,000 sq.ft clean room with customer hold-point sign-offs.",
-    detail: "Jig-based assembly, approved sequence traveller, customer surveillance at IPIs.",
-    image: IMAGES.howWeBuild.process.assembly
-  },
-  {
-    step: "07",
-    title: "NDT & Dimensional Inspection",
-    desc: "Every weld joint undergoes radiographic or ultrasonic testing. Structural assemblies are inspected by CMM (600 × 600 × 500 mm), 3D arm (A6-2500, reach 2.5 m) or laser tracker. Dimensional reports are issued before release.",
-    detail: "RT (X-ray 350 kVA), UT, DP, TT; CMM report, laser-tracker dimensional certificate.",
-    image: IMAGES.howWeBuild.process.ndtInspection
-  },
-  {
-    step: "08",
-    title: "Pressure Testing",
-    desc: "Pressure-carrying structures — motor cases, nozzles, propellant tanks, canisters — are proof-tested on our dedicated hydro and pneumatic rigs: hydro up to 700 ATA, pneumatic up to 150 ATA. Strain gauge monitoring is available for critical tests.",
-    detail: "Hydro rig: 700 ATA. Pneumatic rig: 150 ATA. Strain gauge equipment, cycle fatigue testing.",
-    image: IMAGES.howWeBuild.process.pressureTesting
-  },
-  {
-    step: "09",
-    title: "Non-Conformance Review & Disposition",
-    desc: "Any non-conformance identified during inspection is documented, raised with the customer for disposition (use-as-is, rework, scrap) and resolved before the part progresses. A root-cause corrective action is raised for systemic issues.",
-    detail: "Customer NCR format, RCCA log, Pareto trend review in monthly QRB.",
-    image: IMAGES.howWeBuild.process.nonConformance
-  },
-  {
-    step: "10",
-    title: "Packing, Quality Docs & Dispatch",
-    desc: "Finished assemblies are preserved and packed per customer specification, accompanied by a full quality dossier: material certs, inspection records, NDT films/reports, pressure test certs, dimensional reports and any customer-specific data packages.",
-    detail: "Full traceability pack, preservation per customer spec, export-compliant packaging for ITAR/EAR-controlled items.",
-    image: IMAGES.howWeBuild.process.packingDispatch
-  }
+  { _id: "ps4",  step: "04", title: "Fabrication",                          desc: "Sheet metal forming, plate bending (up to 40 mm), ring rolling and large-format fabrication operations produce primary structural skins, frames and stiffeners. Weld assemblies are performed in our ISO 8 clean room with full humidity control for the most sensitive alloys.", detail: "Plate bending up to 40 mm, ring rolling up to Ø 5,000 mm, clean-room TIG welding, hydro/pneumatic proof.", image: IMAGES.howWeBuild.process.fabrication },
+  { _id: "ps5",  step: "05", title: "CNC Machining",                         desc: "Components move to our machine shop: 11 CNC milling centres (5-axis, 4-axis, 3-axis), 4 plano mills, 4 CNC vertical turning lathes (up to Ø 5,400 mm) and 4 horizontal borers. Inter-operation inspection is performed at defined stages using CMM and 3D measuring arm.", detail: "In-process CMM checks, toolpath verification, fixture re-qualification after every tool change on tight-tolerance features.", image: IMAGES.howWeBuild.process.cncMachining },
+  { _id: "ps6",  step: "06", title: "Assembly & Integration",                desc: "Structural assembly — riveting, jo-bolt and shear-bolt fastening — is performed in jig, with assembly sequence verified by approved traveller. Functional integration (hydraulic lines, thrusters, harness routing) is carried out in our 5,000 sq.ft clean room with customer hold-point sign-offs.", detail: "Jig-based assembly, approved sequence traveller, customer surveillance at IPIs.", image: IMAGES.howWeBuild.process.assembly },
+  { _id: "ps7",  step: "07", title: "NDT & Dimensional Inspection",          desc: "Every weld joint undergoes radiographic or ultrasonic testing. Structural assemblies are inspected by CMM (600 × 600 × 500 mm), 3D arm (A6-2500, reach 2.5 m) or laser tracker. Dimensional reports are issued before release.", detail: "RT (X-ray 350 kVA), UT, DP, TT; CMM report, laser-tracker dimensional certificate.", image: IMAGES.howWeBuild.process.ndtInspection },
+  { _id: "ps8",  step: "08", title: "Pressure Testing",                      desc: "Pressure-carrying structures — motor cases, nozzles, propellant tanks, canisters — are proof-tested on our dedicated hydro and pneumatic rigs: hydro up to 700 ATA, pneumatic up to 150 ATA. Strain gauge monitoring is available for critical tests.", detail: "Hydro rig: 700 ATA. Pneumatic rig: 150 ATA. Strain gauge equipment, cycle fatigue testing.", image: IMAGES.howWeBuild.process.pressureTesting },
+  { _id: "ps9",  step: "09", title: "Non-Conformance Review & Disposition",  desc: "Any non-conformance identified during inspection is documented, raised with the customer for disposition (use-as-is, rework, scrap) and resolved before the part progresses. A root-cause corrective action is raised for systemic issues.", detail: "Customer NCR format, RCCA log, Pareto trend review in monthly QRB.", image: IMAGES.howWeBuild.process.nonConformance },
+  { _id: "ps10", step: "10", title: "Packing, Quality Docs & Dispatch",      desc: "Finished assemblies are preserved and packed per customer specification, accompanied by a full quality dossier: material certs, inspection records, NDT films/reports, pressure test certs, dimensional reports and any customer-specific data packages.", detail: "Full traceability pack, preservation per customer spec, export-compliant packaging for ITAR/EAR-controlled items.", image: IMAGES.howWeBuild.process.packingDispatch },
 ];
 
-interface Machine {
-  name: string;
-  category: string;
-  image: string;
-  specs: { label: string; value: string }[];
-  schematics: {
-    origin: string;
-    travelRatio: string;
-    laserCalib: string;
-    axisEngaged: string;
-  };
-}
-
-const MACHINE_DATA: Machine[] = [
+const FALLBACK_MACHINE_DATA: SanityMachine[] = [
   {
+    _id: "m1",
     name: "MAZAK INTEGREX i-200",
     category: "milling",
     image: IMAGES.howWeBuild.process.assembly,
@@ -110,6 +62,7 @@ const MACHINE_DATA: Machine[] = [
     }
   },
   {
+    _id: "m2",
     name: "DECKEL MAHO DMU 80 P",
     category: "milling",
     image: IMAGES.howWeBuild.process.pressureTesting,
@@ -126,92 +79,13 @@ const MACHINE_DATA: Machine[] = [
       axisEngaged: "5-AXIS GANTRY INTERFACE"
     }
   },
+  { _id: "m3", name: "HAAS VF-6/50",         category: "milling",   image: IMAGES.howWeBuild.machines.haasVf6,          specs: [{ label: "ENVELOPE SIZE", value: "1626 mm × 813 mm × 762 mm" }, { label: "AXIS TRAVEL", value: "X: 1626 // Y: 813 // Z: 762" }, { label: "SPINDLE CAPACITY", value: "7,500 RPM // 22.4 kW" }, { label: "MAX LOAD LIMIT", value: "1,814 kg" }], schematics: { origin: "X0.000 / Y0.000 / Z0.001", travelRatio: "0.85m/sec Max", laserCalib: "DEV: < 0.005mm", axisEngaged: "3-AXIS + Rotary Table" } },
+  { _id: "m4", name: "TOSHIBA VTL Ø5400",    category: "turning",   image: IMAGES.howWeBuild.process.fabrication,       specs: [{ label: "ENVELOPE SIZE", value: "Ø 5,400 mm × 3,200 mm" }, { label: "AXIS TRAVEL", value: "X: 3,000 // Z: 1,800" }, { label: "TABLE CAPACITY", value: "60,000 kg" }, { label: "MAX CUTTING POWER", value: "75 kW" }], schematics: { origin: "X0.000 / Z0.000", travelRatio: "0.45m/sec Max", laserCalib: "DEV: < 0.008mm", axisEngaged: "2-AXIS VTL HYDRAULIC RAM" } },
+  { _id: "m5", name: "PUMA 400L",            category: "turning",   image: IMAGES.howWeBuild.machines.puma400l,         specs: [{ label: "ENVELOPE SIZE", value: "Ø 550 mm × 2,028 mm" }, { label: "AXIS TRAVEL", value: "X: 362 // Z: 2,150" }, { label: "SPINDLE SPEED", value: "2,000 RPM // 30 kW" }, { label: "MAX LOAD LIMIT", value: "1,500 kg" }], schematics: { origin: "X0.000 / Z0.002", travelRatio: "0.75m/sec Max", laserCalib: "DEV: < 0.004mm", axisEngaged: "2-AXIS RIGID LATHE BED" } },
+  { _id: "m6", name: "DOOSAN VTL V8300",     category: "turning",   image: IMAGES.howWeBuild.process.cncMachining,      specs: [{ label: "ENVELOPE SIZE", value: "Ø 830 mm × 780 mm" }, { label: "AXIS TRAVEL", value: "X: 490 // Z: 780" }, { label: "SPINDLE SPEED", value: "2,500 RPM // 45 kW" }, { label: "MAX LOAD LIMIT", value: "3,500 kg" }], schematics: { origin: "X0.001 / Z0.001", travelRatio: "0.60m/sec Max", laserCalib: "DEV: < 0.005mm", axisEngaged: "2-AXIS VERTICAL RAM CHUCK" } },
+  { _id: "m7", name: "HEXAGON GLOBAL CMM",   category: "metrology", image: IMAGES.howWeBuild.process.ndtInspection,     specs: [{ label: "MEASURING VOLUME", value: "600 mm × 600 mm × 500 mm" }, { label: "VOLUMETRIC ERROR", value: "MPEE = 1.5 + L/333 µm" }, { label: "PROBING SYSTEM", value: "Renishaw SP25M Continuous" }, { label: "METROLOGY SUITE", value: "PC-DMIS CAD++" }], schematics: { origin: "X0.000 / Y0.000 / Z0.000 (CALIBRATED)", travelRatio: "0.35m/sec Max", laserCalib: "DEV: < 0.0005mm", axisEngaged: "3-AXIS Gantry Metrology CMM" } },
   {
-    name: "HAAS VF-6/50",
-    category: "milling",
-    image: IMAGES.howWeBuild.machines.haasVf6,
-    specs: [
-      { label: "ENVELOPE SIZE", value: "1626 mm × 813 mm × 762 mm" },
-      { label: "AXIS TRAVEL", value: "X: 1626 // Y: 813 // Z: 762" },
-      { label: "SPINDLE CAPACITY", value: "7,500 RPM // 22.4 kW" },
-      { label: "MAX LOAD LIMIT", value: "1,814 kg" }
-    ],
-    schematics: {
-      origin: "X0.000 / Y0.000 / Z0.001",
-      travelRatio: "0.85m/sec Max",
-      laserCalib: "DEV: < 0.005mm",
-      axisEngaged: "3-AXIS + Rotary Table"
-    }
-  },
-  {
-    name: "TOSHIBA VTL Ø5400",
-    category: "turning",
-    image: IMAGES.howWeBuild.process.fabrication,
-    specs: [
-      { label: "ENVELOPE SIZE", value: "Ø 5,400 mm × 3,200 mm" },
-      { label: "AXIS TRAVEL", value: "X: 3,000 // Z: 1,800" },
-      { label: "TABLE CAPACITY", value: "60,000 kg" },
-      { label: "MAX CUTTING POWER", value: "75 kW" }
-    ],
-    schematics: {
-      origin: "X0.000 / Z0.000",
-      travelRatio: "0.45m/sec Max",
-      laserCalib: "DEV: < 0.008mm",
-      axisEngaged: "2-AXIS VTL HYDRAULIC RAM"
-    }
-  },
-  {
-    name: "PUMA 400L",
-    category: "turning",
-    image: IMAGES.howWeBuild.machines.puma400l,
-    specs: [
-      { label: "ENVELOPE SIZE", value: "Ø 550 mm × 2,028 mm" },
-      { label: "AXIS TRAVEL", value: "X: 362 // Z: 2,150" },
-      { label: "SPINDLE SPEED", value: "2,000 RPM // 30 kW" },
-      { label: "MAX LOAD LIMIT", value: "1,500 kg" }
-    ],
-    schematics: {
-      origin: "X0.000 / Z0.002",
-      travelRatio: "0.75m/sec Max",
-      laserCalib: "DEV: < 0.004mm",
-      axisEngaged: "2-AXIS RIGID LATHE BED"
-    }
-  },
-  {
-    name: "DOOSAN VTL V8300",
-    category: "turning",
-    image: IMAGES.howWeBuild.process.cncMachining,
-    specs: [
-      { label: "ENVELOPE SIZE", value: "Ø 830 mm × 780 mm" },
-      { label: "AXIS TRAVEL", value: "X: 490 // Z: 780" },
-      { label: "SPINDLE SPEED", value: "2,500 RPM // 45 kW" },
-      { label: "MAX LOAD LIMIT", value: "3,500 kg" }
-    ],
-    schematics: {
-      origin: "X0.001 / Z0.001",
-      travelRatio: "0.60m/sec Max",
-      laserCalib: "DEV: < 0.005mm",
-      axisEngaged: "2-AXIS VERTICAL RAM CHUCK"
-    }
-  },
-  {
-    name: "HEXAGON GLOBAL CMM",
-    category: "metrology",
-    image: IMAGES.howWeBuild.process.ndtInspection,
-    specs: [
-      { label: "MEASURING VOLUME", value: "600 mm × 600 mm × 500 mm" },
-      { label: "VOLUMETRIC ERROR", value: "MPEE = 1.5 + L/333 µm" },
-      { label: "PROBING SYSTEM", value: "Renishaw SP25M Continuous" },
-      { label: "METROLOGY SUITE", value: "PC-DMIS CAD++" }
-    ],
-    schematics: {
-      origin: "X0.000 / Y0.000 / Z0.000 (CALIBRATED)",
-      travelRatio: "0.35m/sec Max",
-      laserCalib: "DEV: < 0.0005mm",
-      axisEngaged: "3-AXIS Gantry Metrology CMM"
-    }
-  },
-  {
+    _id: "m8",
     name: "TRIMOS MEASURING ARM",
     category: "metrology",
     image: IMAGES.howWeBuild.process.nonConformance,
@@ -230,7 +104,7 @@ const MACHINE_DATA: Machine[] = [
   }
 ];
 
-function MachineCard({ machine }: { machine: Machine }) {
+function MachineCard({ machine }: { machine: SanityMachine }) {
   const [hovered, setHovered] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [revealed, setRevealed] = useState(false);
@@ -356,9 +230,11 @@ function MachineCard({ machine }: { machine: Machine }) {
 }
 
 function MachineMatrix() {
+  const { data: machineData } = useSanity<SanityMachine[]>(MACHINES_QUERY);
+  const MACHINE_DATA = machineData?.length ? machineData : FALLBACK_MACHINE_DATA;
   const [activeCategory, setActiveCategory] = useState("all");
-  const filteredMachines = activeCategory === "all" 
-    ? MACHINE_DATA 
+  const filteredMachines = activeCategory === "all"
+    ? MACHINE_DATA
     : MACHINE_DATA.filter(m => m.category === activeCategory);
 
   const categories = [
@@ -431,7 +307,7 @@ function MachineMatrix() {
 
           <div className="md:col-span-8 flex flex-col border border-white/[0.06] divide-y divide-white/[0.06]">
             {filteredMachines.map((machine) => (
-              <MachineCard key={machine.name} machine={machine} />
+              <MachineCard key={machine._id} machine={machine} />
             ))}
           </div>
         </div>
@@ -774,6 +650,8 @@ function QualityTrustSection() {
 }
 
 export default function HowWeBuildPage() {
+  const { data: stepsData } = useSanity<SanityProcessStep[]>(PROCESS_STEPS_QUERY);
+  const PROCESS_STEPS = stepsData?.length ? stepsData : FALLBACK_PROCESS_STEPS;
   const [openStep, setOpenStep] = useState<string | null>("01");
 
   return (
@@ -838,7 +716,7 @@ export default function HowWeBuildPage() {
         <p className="font-tech text-blueprint text-[11px] tracking-[0.2em] uppercase mb-10">MANUFACTURING SEQUENCE</p>
         <div className="flex flex-col gap-px bg-white/10">
           {PROCESS_STEPS.map((s) => (
-            <div key={s.step} className="bg-[#0a0a0a]">
+            <div key={s._id} className="bg-[#0a0a0a]">
               <button
                 className="w-full flex items-center gap-6 p-6 lg:p-7 text-left group hover:bg-[#141414] transition-colors"
                 onClick={() => setOpenStep(openStep === s.step ? null : s.step)}

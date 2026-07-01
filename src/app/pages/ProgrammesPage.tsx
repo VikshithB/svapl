@@ -1,136 +1,25 @@
 import { useState } from "react";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { PROGRAMMES_QUERY } from "@/lib/queries";
+import type { SanityProgramme } from "@/lib/types";
 
 type Client = "ALL" | "ISRO" | "DRDO" | "HAL";
 
-interface Programme {
-  client: "ISRO" | "DRDO" | "HAL";
-  name: string;
-  tag: string;
-  size?: string;
-  material?: string;
-  desc: string;
-  image: string;
-}
-
-const PROGRAMMES: Programme[] = [
-  {
-    client: "ISRO",
-    name: "PSLV Core Base Shroud",
-    tag: "PSLV",
-    size: "Ø 2860 × 2600 mm",
-    material: "Al Alloy 2014, 15CDV6, SS",
-    desc: "Full structural assembly integrating aluminium alloy skins, machined rings and 15CDV6 frames — delivered across 130+ units to VSSC.",
-    image: IMAGES.programmes.isro.pslvBaseShroud,
-  },
-  {
-    client: "ISRO",
-    name: "GSLV L40 Strapon Structures",
-    tag: "GSLV",
-    size: "Ø 2160 × 2000–3800 mm",
-    material: "Al Alloy 2014, 15CDV6, AISI 304",
-    desc: "Inter-tank structures, strapon nose cones and base shrouds for L40 liquid stages. First private company to develop these in 2004.",
-    image: IMAGES.programmes.isro.gslvStrapon,
-  },
-  {
-    client: "ISRO",
-    name: "LVM3 Core Base Shroud",
-    tag: "LVM3",
-    size: "Ø 3000 × 1500 mm",
-    material: "Al Alloy 2014, 15CDV6",
-    desc: "Combines advanced sheet metal forming with isogrid panel machining, structural riveting, fixture integration and bracket rolling.",
-    image: IMAGES.programmes.isro.lvm3BaseShroud,
-  },
-  {
-    client: "ISRO",
-    name: "Gaganyaan Crew Module Structure",
-    tag: "Gaganyaan",
-    size: "Ø 3.1 m",
-    material: "15CDV6, Al Alloy",
-    desc: "First unmanned crew module structure delivered in 2019–2020. Critical milestone in India's human spaceflight programme.",
-    image: IMAGES.programmes.isro.gaganyaanCrew,
-  },
-  {
-    client: "ISRO",
-    name: "L110 EGC Actuator Systems",
-    tag: "GSLV Mk III",
-    size: "56-component assembly",
-    material: "15CDV6, Inconel 718, 15-5PH",
-    desc: "High-precision actuator systems engineered to 15–25 micron tolerances, integrating 56 individual components for GSLV Mk III L110 stage.",
-    image: IMAGES.programmes.isro.l110Actuator,
-  },
-  {
-    client: "ISRO",
-    name: "PSOXL Motor Case",
-    tag: "PSLV",
-    size: "Ø 1000 × 12600 mm",
-    material: "15CDV6",
-    desc: "Full segment motor casing successfully tested and delivered — 90 motor casings to date for PSLV solid stages.",
-    image: IMAGES.programmes.isro.psoxlMotorCase,
-  },
-  {
-    client: "DRDO",
-    name: "Agni Series Motor Casings",
-    tag: "Agni I–V",
-    size: "Ø 1500 × 1000 mm",
-    material: "15CDV6, MDN250",
-    desc: "Motor casings for Agni-1, 2, 3, 4 and 5 ballistic missiles. One of the original programmes that established SVAPL's defence credentials.",
-    image: IMAGES.programmes.drdo.agniMotorCasings,
-  },
-  {
-    client: "DRDO",
-    name: "Pralay Airframe & Motor Assembly",
-    tag: "Pralay",
-    size: "Ø 740 × 3200 mm",
-    material: "15CDV6, Tungsten",
-    desc: "Complete airframe structure, motor casings, control surface panels and stabiliser fins for India's tactical ballistic missile — delivered 2019.",
-    image: IMAGES.programmes.drdo.pralayAirframe,
-  },
-  {
-    client: "DRDO",
-    name: "Sagarika Series Motor Cases",
-    tag: "Sagarika / K-15",
-    size: "Ø 800 × 1500 mm",
-    material: "Maraging Steel M250",
-    desc: "Flowform tube welding, precision machining, RT/DP inspection and proof pressure testing up to 210 Bar for submarine-launched ballistic missiles.",
-    image: IMAGES.programmes.isro.gslvStrapon,
-  },
-  {
-    client: "DRDO",
-    name: "Metal Canister — A1 PRIME",
-    tag: "A1 PRIME",
-    size: "Ø 1300–1400 × 8500–9000 mm",
-    material: "SA516, 15CDV6",
-    desc: "Specialised missile launch canister — welded SA516 and 15CDV6 construction. Hydraulic pressure testing to 10 Bar, pneumatic to 0.3 Bar. First facility of its kind in Hyderabad.",
-    image: IMAGES.programmes.drdo.metalCanisterA1,
-  },
-  {
-    client: "DRDO",
-    name: "ASTRA Airframe",
-    tag: "ASTRA",
-    size: "Ø 170 × 1650 mm",
-    material: "Al Alloy 2014, SS304, SS420",
-    desc: "40+ airframes delivered for India's beyond-visual-range air-to-air missile. Complex machining, riveting and integration of multi-material sections.",
-    image: IMAGES.programmes.drdo.astraAirframe,
-  },
-  {
-    client: "DRDO",
-    name: "Stabiliser Fin Assembly — Titanium",
-    tag: "Pralay / HGV",
-    size: "500 mm × 800 mm",
-    material: "Ti Grade V, Inconel, 13-8MO",
-    desc: "108-component fin assembly showcasing complex machining and riveting of Titanium Grade 5, Inconel and 13-8MO for hypersonic and tactical programmes.",
-    image: IMAGES.programmes.drdo.stabilizerFin,
-  },
-  {
-    client: "HAL",
-    name: "Maraging Steel Structural Components",
-    tag: "Helicopter Structures",
-    size: "Up to 1140 × 326 × 300 mm",
-    material: "Maraging Steel",
-    desc: "Precision-machined legs and struts in Maraging Steel for HAL helicopter programmes — Bangalore facility.",
-    image: IMAGES.programmes.hal.maragingSteel,
-  },
+const FALLBACK_PROGRAMMES: SanityProgramme[] = [
+  { _id: "1", client: "ISRO", name: "PSLV Core Base Shroud", tag: "PSLV", size: "Ø 2860 × 2600 mm", material: "Al Alloy 2014, 15CDV6, SS", desc: "Full structural assembly integrating aluminium alloy skins, machined rings and 15CDV6 frames — delivered across 130+ units to VSSC.", image: IMAGES.programmes.isro.pslvBaseShroud },
+  { _id: "2", client: "ISRO", name: "GSLV L40 Strapon Structures", tag: "GSLV", size: "Ø 2160 × 2000–3800 mm", material: "Al Alloy 2014, 15CDV6, AISI 304", desc: "Inter-tank structures, strapon nose cones and base shrouds for L40 liquid stages. First private company to develop these in 2004.", image: IMAGES.programmes.isro.gslvStrapon },
+  { _id: "3", client: "ISRO", name: "LVM3 Core Base Shroud", tag: "LVM3", size: "Ø 3000 × 1500 mm", material: "Al Alloy 2014, 15CDV6", desc: "Combines advanced sheet metal forming with isogrid panel machining, structural riveting, fixture integration and bracket rolling.", image: IMAGES.programmes.isro.lvm3BaseShroud },
+  { _id: "4", client: "ISRO", name: "Gaganyaan Crew Module Structure", tag: "Gaganyaan", size: "Ø 3.1 m", material: "15CDV6, Al Alloy", desc: "First unmanned crew module structure delivered in 2019–2020. Critical milestone in India's human spaceflight programme.", image: IMAGES.programmes.isro.gaganyaanCrew },
+  { _id: "5", client: "ISRO", name: "L110 EGC Actuator Systems", tag: "GSLV Mk III", size: "56-component assembly", material: "15CDV6, Inconel 718, 15-5PH", desc: "High-precision actuator systems engineered to 15–25 micron tolerances, integrating 56 individual components for GSLV Mk III L110 stage.", image: IMAGES.programmes.isro.l110Actuator },
+  { _id: "6", client: "ISRO", name: "PSOXL Motor Case", tag: "PSLV", size: "Ø 1000 × 12600 mm", material: "15CDV6", desc: "Full segment motor casing successfully tested and delivered — 90 motor casings to date for PSLV solid stages.", image: IMAGES.programmes.isro.psoxlMotorCase },
+  { _id: "7", client: "DRDO", name: "Agni Series Motor Casings", tag: "Agni I–V", size: "Ø 1500 × 1000 mm", material: "15CDV6, MDN250", desc: "Motor casings for Agni-1, 2, 3, 4 and 5 ballistic missiles. One of the original programmes that established SVAPL's defence credentials.", image: IMAGES.programmes.drdo.agniMotorCasings },
+  { _id: "8", client: "DRDO", name: "Pralay Airframe & Motor Assembly", tag: "Pralay", size: "Ø 740 × 3200 mm", material: "15CDV6, Tungsten", desc: "Complete airframe structure, motor casings, control surface panels and stabiliser fins for India's tactical ballistic missile — delivered 2019.", image: IMAGES.programmes.drdo.pralayAirframe },
+  { _id: "9", client: "DRDO", name: "Sagarika Series Motor Cases", tag: "Sagarika / K-15", size: "Ø 800 × 1500 mm", material: "Maraging Steel M250", desc: "Flowform tube welding, precision machining, RT/DP inspection and proof pressure testing up to 210 Bar for submarine-launched ballistic missiles.", image: IMAGES.programmes.isro.gslvStrapon },
+  { _id: "10", client: "DRDO", name: "Metal Canister — A1 PRIME", tag: "A1 PRIME", size: "Ø 1300–1400 × 8500–9000 mm", material: "SA516, 15CDV6", desc: "Specialised missile launch canister — welded SA516 and 15CDV6 construction. Hydraulic pressure testing to 10 Bar, pneumatic to 0.3 Bar. First facility of its kind in Hyderabad.", image: IMAGES.programmes.drdo.metalCanisterA1 },
+  { _id: "11", client: "DRDO", name: "ASTRA Airframe", tag: "ASTRA", size: "Ø 170 × 1650 mm", material: "Al Alloy 2014, SS304, SS420", desc: "40+ airframes delivered for India's beyond-visual-range air-to-air missile. Complex machining, riveting and integration of multi-material sections.", image: IMAGES.programmes.drdo.astraAirframe },
+  { _id: "12", client: "DRDO", name: "Stabiliser Fin Assembly — Titanium", tag: "Pralay / HGV", size: "500 mm × 800 mm", material: "Ti Grade V, Inconel, 13-8MO", desc: "108-component fin assembly showcasing complex machining and riveting of Titanium Grade 5, Inconel and 13-8MO for hypersonic and tactical programmes.", image: IMAGES.programmes.drdo.stabilizerFin },
+  { _id: "13", client: "HAL", name: "Maraging Steel Structural Components", tag: "Helicopter Structures", size: "Up to 1140 × 326 × 300 mm", material: "Maraging Steel", desc: "Precision-machined legs and struts in Maraging Steel for HAL helicopter programmes — Bangalore facility.", image: IMAGES.programmes.hal.maragingSteel },
 ];
 
 const CLIENT_COLORS: Record<string, string> = {
@@ -140,6 +29,8 @@ const CLIENT_COLORS: Record<string, string> = {
 };
 
 export default function ProgrammesPage() {
+  const { data } = useSanity<SanityProgramme[]>(PROGRAMMES_QUERY);
+  const PROGRAMMES = data?.length ? data : FALLBACK_PROGRAMMES;
   const [filter, setFilter] = useState<Client>("ALL");
   const visible = filter === "ALL" ? PROGRAMMES : PROGRAMMES.filter((p) => p.client === filter);
 
@@ -198,7 +89,7 @@ export default function ProgrammesPage() {
       <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] py-16 lg:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-rule">
           {visible.map((prog) => (
-            <div key={prog.name} className="bg-ink flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">
+            <div key={prog._id} className="bg-ink flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">
               {/* Image */}
               <div className="relative h-[200px] overflow-hidden">
                 <img

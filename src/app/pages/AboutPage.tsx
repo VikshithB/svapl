@@ -1,51 +1,36 @@
 import { useState, useRef } from "react";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { ABOUT_STATS_QUERY, TIMELINE_QUERY, PLANTS_QUERY } from "@/lib/queries";
+import type { SanityAboutStat, SanityTimelineEntry, SanityPlant } from "@/lib/types";
 
-const STATS = [
-  { value: "25+", label: "Years in Service" },
-  { value: "1.2L", label: "Sq.ft Facility" },
-  { value: "180+", label: "Skilled Engineers" },
-  { value: "25T", label: "Crane Capacity" },
-  { value: "AS9100D", label: "Certified" },
-  { value: "3", label: "Manufacturing Plants" },
+const FALLBACK_STATS: SanityAboutStat[] = [
+  { _id: "as1", value: "25+",     label: "Years in Service" },
+  { _id: "as2", value: "1.2L",    label: "Sq.ft Facility" },
+  { _id: "as3", value: "180+",    label: "Skilled Engineers" },
+  { _id: "as4", value: "25T",     label: "Crane Capacity" },
+  { _id: "as5", value: "AS9100D", label: "Certified" },
+  { _id: "as6", value: "3",       label: "Manufacturing Plants" },
 ];
 
-const TIMELINE = [
-  { year: "2000", image: IMAGES.about.timeline.y2000, text: "Established Unit-I with 10,000 sq.ft shop floor under the leadership of C.S.N. Reddy." },
-  { year: "2002", image: IMAGES.about.timeline.y2002, text: "First aerostructure RCS delivered to ISRO. Agni-1 & 2 rocket motor casings delivered to DRDO." },
-  { year: "2004", image: IMAGES.about.timeline.y2004, text: "First industry to develop the L40 structure for GSLV — successfully delivered to ISRO." },
-  { year: "2008", image: IMAGES.about.timeline.y2008, text: "First private sector company to integrate RCS & VTP and deliver to DRDO." },
-  { year: "2010", image: IMAGES.about.timeline.y2010, text: "Became lead vendor for PSLV & GSLV auxiliary separation systems. Sagarika series airframes delivered." },
-  { year: "2012", image: IMAGES.about.timeline.y2012, text: "Established Unit-II with 70,000 sq.ft — dedicated to DRDO & ISRO programmes." },
-  { year: "2014", image: IMAGES.about.timeline.y2014, text: "First Hyderabad-based industry to produce Maraging Steel M250 rocket motor casings Ø740mm for DRDO. Over 100 casings delivered to date." },
-  { year: "2019", image: IMAGES.about.timeline.y2019, text: "Airframes, control surfaces and motor casings for Pralay (DRDO) delivered. First unmanned crew module structure to ISRO. LVM3 Core Base Shroud completed." },
-  { year: "2023", image: IMAGES.about.timeline.y2023, text: "First metal canister manufacturing facility for DRDO established. PSOXL motor case successfully tested — 90 casings delivered." },
-  { year: "2025", image: IMAGES.about.timeline.y2025, text: "Airframes, motor casings and control surface panels delivered for India's first Hypersonic Glide Vehicle." },
-  { year: "2026", image: IMAGES.about.timeline.y2026, text: "Unit-III established — 45,000 sq.ft dedicated to global defence manufacturing requirements." },
+const FALLBACK_TIMELINE: SanityTimelineEntry[] = [
+  { _id: "tl1",  year: "2000", image: IMAGES.about.timeline.y2000, text: "Established Unit-I with 10,000 sq.ft shop floor under the leadership of C.S.N. Reddy." },
+  { _id: "tl2",  year: "2002", image: IMAGES.about.timeline.y2002, text: "First aerostructure RCS delivered to ISRO. Agni-1 & 2 rocket motor casings delivered to DRDO." },
+  { _id: "tl3",  year: "2004", image: IMAGES.about.timeline.y2004, text: "First industry to develop the L40 structure for GSLV — successfully delivered to ISRO." },
+  { _id: "tl4",  year: "2008", image: IMAGES.about.timeline.y2008, text: "First private sector company to integrate RCS & VTP and deliver to DRDO." },
+  { _id: "tl5",  year: "2010", image: IMAGES.about.timeline.y2010, text: "Became lead vendor for PSLV & GSLV auxiliary separation systems. Sagarika series airframes delivered." },
+  { _id: "tl6",  year: "2012", image: IMAGES.about.timeline.y2012, text: "Established Unit-II with 70,000 sq.ft — dedicated to DRDO & ISRO programmes." },
+  { _id: "tl7",  year: "2014", image: IMAGES.about.timeline.y2014, text: "First Hyderabad-based industry to produce Maraging Steel M250 rocket motor casings Ø740mm for DRDO. Over 100 casings delivered to date." },
+  { _id: "tl8",  year: "2019", image: IMAGES.about.timeline.y2019, text: "Airframes, control surfaces and motor casings for Pralay (DRDO) delivered. First unmanned crew module structure to ISRO. LVM3 Core Base Shroud completed." },
+  { _id: "tl9",  year: "2023", image: IMAGES.about.timeline.y2023, text: "First metal canister manufacturing facility for DRDO established. PSOXL motor case successfully tested — 90 casings delivered." },
+  { _id: "tl10", year: "2025", image: IMAGES.about.timeline.y2025, text: "Airframes, motor casings and control surface panels delivered for India's first Hypersonic Glide Vehicle." },
+  { _id: "tl11", year: "2026", image: IMAGES.about.timeline.y2026, text: "Unit-III established — 45,000 sq.ft dedicated to global defence manufacturing requirements." },
 ];
 
-const PLANTS = [
-  {
-    name: "Unit I",
-    area: "60,000 SQ.FT",
-    plot: "20,370 SQ.YARDS",
-    highlights: ["6 shop floor bays", "Crane capacity up to 20T", "Clean room 5,000 sq.ft", "Hydro & pneumatic test rigs"],
-    image: IMAGES.about.facilities.unitI,
-  },
-  {
-    name: "Unit II",
-    area: "45,000 SQ.FT",
-    plot: "14,800 SQ.YARDS",
-    highlights: ["DRDO & ISRO dedicated", "Crane capacity 10T × 3", "Auto TIG ISO 8 clean room", "CMM & NDT facility"],
-    image: IMAGES.about.facilities.unitII,
-  },
-  {
-    name: "Unit III",
-    area: "45,000 SQ.FT",
-    plot: "3 ACRES",
-    highlights: ["Global defence focus", "9.5m bay height", "Expanded welding facility", "Commissioned 2026"],
-    image: IMAGES.about.facilities.unitIII,
-  },
+const FALLBACK_PLANTS: SanityPlant[] = [
+  { _id: "pl1", name: "Unit I",   area: "60,000 SQ.FT", plot: "20,370 SQ.YARDS", highlights: ["6 shop floor bays", "Crane capacity up to 20T", "Clean room 5,000 sq.ft", "Hydro & pneumatic test rigs"], image: IMAGES.about.facilities.unitI },
+  { _id: "pl2", name: "Unit II",  area: "45,000 SQ.FT", plot: "14,800 SQ.YARDS", highlights: ["DRDO & ISRO dedicated", "Crane capacity 10T × 3", "Auto TIG ISO 8 clean room", "CMM & NDT facility"],       image: IMAGES.about.facilities.unitII },
+  { _id: "pl3", name: "Unit III", area: "45,000 SQ.FT", plot: "3 ACRES",          highlights: ["Global defence focus", "9.5m bay height", "Expanded welding facility", "Commissioned 2026"],                  image: IMAGES.about.facilities.unitIII },
 ];
 
 const CERTS = [
@@ -57,7 +42,7 @@ const CERTS = [
 
 const CLIENTS = ["ISRO", "DRDO", "HAL", "BEL", "BDL"];
 
-function TimelinePanel({ activeItem }: { activeItem: typeof TIMELINE[0] }) {
+function TimelinePanel({ activeItem }: { activeItem: SanityTimelineEntry }) {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -129,9 +114,9 @@ function TimelinePanel({ activeItem }: { activeItem: typeof TIMELINE[0] }) {
   );
 }
 
-function InfrastructureShowcase() {
+function InfrastructureShowcase({ plants }: { plants: SanityPlant[] }) {
   const [activeIdx, setActiveIdx] = useState(0);
-  const plant = PLANTS[activeIdx];
+  const plant = plants[activeIdx];
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -152,7 +137,7 @@ function InfrastructureShowcase() {
           SELECT FACILITY NODE
         </span>
         <div className="flex flex-col gap-2">
-          {PLANTS.map((p, idx) => {
+          {plants.map((p, idx) => {
             const active = idx === activeIdx;
             return (
               <button
@@ -262,7 +247,13 @@ function InfrastructureShowcase() {
 }
 
 export default function AboutPage() {
-  const [activeTimelineYear, setActiveTimelineYear] = useState(TIMELINE[0].year);
+  const { data: statsData } = useSanity<SanityAboutStat[]>(ABOUT_STATS_QUERY);
+  const { data: timelineData } = useSanity<SanityTimelineEntry[]>(TIMELINE_QUERY);
+  const { data: plantsData } = useSanity<SanityPlant[]>(PLANTS_QUERY);
+  const STATS = statsData?.length ? statsData : FALLBACK_STATS;
+  const TIMELINE = timelineData?.length ? timelineData : FALLBACK_TIMELINE;
+  const PLANTS = plantsData?.length ? plantsData : FALLBACK_PLANTS;
+  const [activeTimelineYear, setActiveTimelineYear] = useState(FALLBACK_TIMELINE[0].year);
 
   return (
     <div className="bg-[#050505] pt-24">
@@ -285,7 +276,7 @@ export default function AboutPage() {
         <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px]">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 lg:divide-x divide-white/[0.06] border-l border-r border-white/[0.06] bg-[#0d0f12]/10">
             {STATS.map((s, i) => (
-              <div key={s.label} className="px-6 py-8 flex flex-col gap-1.5 text-left font-tech relative group hover:bg-[#0d0f12]/20 transition-colors">
+              <div key={s._id} className="px-6 py-8 flex flex-col gap-1.5 text-left font-tech relative group hover:bg-[#0d0f12]/20 transition-colors">
                 <span className="text-blueprint text-[9px] tracking-[0.2em]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -366,7 +357,7 @@ export default function AboutPage() {
                   const active = item.year === activeTimelineYear;
                   return (
                     <div
-                      key={item.year}
+                      key={item._id}
                       onMouseEnter={() => setActiveTimelineYear(item.year)}
                       className="flex gap-6 sm:gap-8 group cursor-pointer relative pb-10 last:pb-0"
                     >
@@ -407,7 +398,7 @@ export default function AboutPage() {
                 <span className="font-tech text-[9px] text-blueprint-dim tracking-widest uppercase mb-1 text-left">
                   MILESTONE VISUAL INDEX
                 </span>
-                <TimelinePanel activeItem={TIMELINE.find(t => t.year === activeTimelineYear) || TIMELINE[0]} />
+                <TimelinePanel activeItem={TIMELINE.find(t => t.year === activeTimelineYear) ?? TIMELINE[0]} />
               </div>
             </div>
           </div>
@@ -422,7 +413,7 @@ export default function AboutPage() {
             1,20,000 SQ.FT OF PRECISION.
           </h2>
         </div>
-        <InfrastructureShowcase />
+        <InfrastructureShowcase plants={PLANTS} />
       </section>
 
       {/* ── Certifications Section ── */}

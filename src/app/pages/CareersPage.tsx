@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { JOB_POSITIONS_QUERY } from "@/lib/queries";
+import type { SanityJobPosition } from "@/lib/types";
 
-const POSITIONS = [
+const FALLBACK_POSITIONS: SanityJobPosition[] = [
   {
+    _id: "1",
     dept: "Engineering",
     title: "CNC Programmer — 5-Axis Milling",
     type: "Full-time",
@@ -12,6 +16,7 @@ const POSITIONS = [
     skills: ["CATIA V5 / NX CAM", "Titanium & Inconel machining", "GD&T proficiency", "AS9100 process awareness"],
   },
   {
+    _id: "2",
     dept: "Engineering",
     title: "Senior Structural Engineer — Aerostructures",
     type: "Full-time",
@@ -21,6 +26,7 @@ const POSITIONS = [
     skills: ["FEA / NASTRAN", "Riveted joint design", "Drawing interpretation (DRDO/ISRO formats)", "ECAD tooling design"],
   },
   {
+    _id: "3",
     dept: "Production",
     title: "TIG Welder — Aerospace Certified",
     type: "Full-time",
@@ -30,6 +36,7 @@ const POSITIONS = [
     skills: ["15CDV6 & Ti Grade V welding", "Clean room protocols", "RT/UT interpretation", "Procedure qualification"],
   },
   {
+    _id: "4",
     dept: "Quality",
     title: "NDT Inspector — Level II",
     type: "Full-time",
@@ -39,6 +46,7 @@ const POSITIONS = [
     skills: ["RT / UT / DP", "ASNT Level II certification", "CMM operation", "Non-conformance reporting"],
   },
   {
+    _id: "5",
     dept: "Quality",
     title: "Quality Assurance Engineer",
     type: "Full-time",
@@ -48,6 +56,7 @@ const POSITIONS = [
     skills: ["AS9100D / ISO 9001", "PPAP / FAIR documentation", "SPC / control charting", "Customer liaison"],
   },
   {
+    _id: "6",
     dept: "Production",
     title: "Assembly Technician — Riveted Structures",
     type: "Full-time",
@@ -68,6 +77,9 @@ const VALUES = [
 ];
 
 export default function CareersPage() {
+  const { data } = useSanity<SanityJobPosition[]>(JOB_POSITIONS_QUERY);
+  const POSITIONS = data?.length ? data : FALLBACK_POSITIONS;
+
   const [dept, setDept] = useState("All");
   const [open, setOpen] = useState<string | null>(null);
   const visible = dept === "All" ? POSITIONS : POSITIONS.filter((p) => p.dept === dept);
@@ -138,13 +150,13 @@ export default function CareersPage() {
 
         <div className="flex flex-col gap-px bg-white/10">
           {visible.map((pos) => (
-            <div key={pos.title} className="bg-[#0a0a0a]">
+            <div key={pos._id} className="bg-[#0a0a0a]">
               {/* Row header */}
               <button
                 className="w-full text-left p-6 lg:p-8 flex flex-col sm:flex-row sm:items-center gap-4 group hover:bg-[#141414] transition-colors"
-                aria-expanded={open === pos.title}
-                aria-controls={`career-${pos.title}`}
-                onClick={() => setOpen(open === pos.title ? null : pos.title)}
+                aria-expanded={open === pos._id}
+                aria-controls={`career-${pos._id}`}
+                onClick={() => setOpen(open === pos._id ? null : pos._id)}
               >
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-1">
@@ -158,12 +170,12 @@ export default function CareersPage() {
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
                   <span className="font-body text-blueprint-dim text-xs border border-rule px-3 py-1 rounded-full">{pos.type}</span>
-                  <span className={`text-blueprint text-lg transition-transform ${open === pos.title ? "rotate-45" : ""}`}>+</span>
+                  <span className={`text-blueprint text-lg transition-transform ${open === pos._id ? "rotate-45" : ""}`}>+</span>
                 </div>
               </button>
 
               {/* Expanded */}
-              {open === pos.title && (
+              {open === pos._id && (
                 <div className="px-6 lg:px-8 pb-8 border-t border-white/[0.06]">
                   <div className="pt-6 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-start">
                     <div>

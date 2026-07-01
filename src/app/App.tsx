@@ -5,6 +5,9 @@ import { CrewModuleCanvas } from "@/app/components/CrewModuleCanvas";
 import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from "motion/react";
 import { PreLoader } from "@/app/components/PreLoader";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { INSIGHTS_QUERY, CAPABILITY_SLIDES_QUERY, SITE_SETTINGS_QUERY } from "@/lib/queries";
+import type { SanityInsight, SanityCapabilitySlide, SanitySiteSettings } from "@/lib/types";
 
 import imgHeader from "@/imports/Desktop1/44363911e71cf9a03eb8eca1d986961f050713d9.png";
 import imgLogo from "@/imports/Desktop1/1d148265799be8543f36d6a99d6999ef7e88dcf8.png";
@@ -48,7 +51,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "CONNECT", page: "contact" as Page },
 ];
 
-const CAPABILITIES = [
+const FALLBACK_CAPABILITIES_TICKER = [
   "AEROSTRUCTURES",
   "PRECISION MACHINING",
   "SPECIAL-PROCESS WELDING",
@@ -86,27 +89,11 @@ const CATEGORY_DATA = [
   },
 ];
 
-const INSIGHTS = [
-  {
-    date: "JUN 2026",
-    title: "The economics of vertical integration in aerostructures",
-    desc: "Why owning the full process chain de-risks delivery for tier-1 programmes.",
-  },
-  {
-    date: "MAY 2026",
-    title: "Inside our Class-10K assembly & integration halls",
-    desc: "A look at the controlled environments where flight hardware comes together.",
-  },
-  {
-    date: "APR 2026",
-    title: "How we hold ±5µm across a 1.2m envelope",
-    desc: "Thermal control, fixturing and metrology behind repeatable precision.",
-  },
-  {
-    date: "MAR 2026",
-    title: "NADCAP welding: what first-article really proves",
-    desc: "The accreditation discipline that keeps special processes flight-safe.",
-  },
+const FALLBACK_INSIGHTS: SanityInsight[] = [
+  { _id: "i1", date: "JUN 2026", title: "The economics of vertical integration in aerostructures", desc: "Why owning the full process chain de-risks delivery for tier-1 programmes." },
+  { _id: "i2", date: "MAY 2026", title: "Inside our Class-10K assembly & integration halls",        desc: "A look at the controlled environments where flight hardware comes together." },
+  { _id: "i3", date: "APR 2026", title: "How we hold ±5µm across a 1.2m envelope",                 desc: "Thermal control, fixturing and metrology behind repeatable precision." },
+  { _id: "i4", date: "MAR 2026", title: "NADCAP welding: what first-article really proves",         desc: "The accreditation discipline that keeps special processes flight-safe." },
 ];
 
 // HAL logo rendered from SVG path data
@@ -444,8 +431,8 @@ function HeroSection() {
 
 // ─── Capability Ticker ─────────────────────────────────────────────────────────
 
-function CapabilityTicker() {
-  const doubled = [...CAPABILITIES, ...CAPABILITIES, ...CAPABILITIES];
+function CapabilityTicker({ capabilities }: { capabilities: string[] }) {
+  const doubled = [...capabilities, ...capabilities, ...capabilities];
 
   return (
     <div className="bg-[#0a0a0a] overflow-hidden border-t border-b border-white/[0.07]">
@@ -594,67 +581,19 @@ function WhatWeBuild() {
   // Translate vertical scroll (0 to 1) to horizontal translation (0% to -66.66%)
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
 
-  const items = [
-    {
-      id: "01",
-      title: "UPTO 6-AXIS CNC MILLING",
-      image: IMAGES.home.capabilityCards.cncMilling,
-      alt: "Close-up of high-precision multi-axis milled aerospace titanium manifold showcasing sub-micron edge tolerances.",
-      specs: [
-        "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
-        "ACCURACY: < 0.006MM (6 MICRONS)",
-        "VOLUMETRIC CAPACITY: 6000MM X 3500MM X 1400MM",
-        "SPINDLE SPEED: 24,000 RPM / HIGH-TORQUE",
-        "CALIBRATION: 3D CMM, 3D ARM"
-      ]
-    },
-    {
-      id: "02",
-      title: "PRECISION TURNING",
-      image: IMAGES.home.capabilityCards.precisionTurning,
-      alt: "Aerospace cylindrical rotor shaft being turned to tight tolerances under high-contrast lighting.",
-      specs: [
-        "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
-        "ACCURACY: < 0.003MM (3 MICRONS)",
-        "SWING ENVELOPE: Ø42000MM X 2500MM LENGTH",
-        "SURFACE FINISH: RA 0.2 MICRONS",
-        "INSPECTION: UNIMASTER & LASER SCANNING"
-      ]
-    },
-    {
-      id: "03",
-      title: "AEROSPACE STRUCTURAL ASSEMBLY",
-      image: IMAGES.home.capabilityCards.structuralAssembly,
-      alt: "Cleanroom assembly of flight-critical structural brackets and aerostructure bulkheads.",
-      specs: [
-        // "MATERIALS: TITANIUM, INCONEL 718, M250, 15CDV6",
-        "COMPATIBILITY: FLIGHT-CRITICAL AEROSTRUCTURES",
-        "CERTIFICATION: AS9100D COMPLIANT",
-        "LOAD TOLERANCE: 450KN TESTING RATING",
-        "HANDLING CAPACITY: Ø42000MM X 4M LENGTH",
-        "ENVIRONMENTS: CLASS-10K CLEAN ROOM",
-        "NDT METHODS: ULTRASONIC, DYE PENETRANT, CONDUCTIVITY"
-      ]
-    },
-    {
-      id: "04",
-      title: "WELDING & JOINING",
-      image: IMAGES.home.capabilityCards.weldingJoining,
-      alt: "Certified welder performing TIG welding on flight-critical aerostructure components in a controlled environment.",
-      specs: [
-        // "MATERIALS: AA2219, INCONEL 718, M250 & More",
-        "COMPATIBILITY: AEROSPACE & DEFENCE MOTOR CASING",
-        "CERTIFICATION: AUTHORIZED BY ISRO & DRDO",
-        "ENVIRONMENTS: ISO 8 CLEAN ROOM",
-        "NDT METHODS: XRAY, ULTRASONIC, DYE PENETRANT, CONDUCTIVITY"
-      ]
-    },
+  const FALLBACK_SLIDES: SanityCapabilitySlide[] = [
+    { _id: "cs1", id: "01", order: 1, code: "01", title: "UPTO 6-AXIS CNC MILLING",          image: IMAGES.home.capabilityCards.cncMilling,         imageAlt: "Close-up of high-precision multi-axis milled aerospace titanium manifold showcasing sub-micron edge tolerances.", specs: [{ key: "MATERIALS", value: "TITANIUM, INCONEL 718, M250, 15CDV6" }, { key: "ACCURACY", value: "< 0.006MM (6 MICRONS)" }, { key: "VOLUMETRIC CAPACITY", value: "6000MM X 3500MM X 1400MM" }, { key: "SPINDLE SPEED", value: "24,000 RPM / HIGH-TORQUE" }, { key: "CALIBRATION", value: "3D CMM, 3D ARM" }] },
+    { _id: "cs2", id: "02", order: 2, code: "02", title: "PRECISION TURNING",                image: IMAGES.home.capabilityCards.precisionTurning,    imageAlt: "Aerospace cylindrical rotor shaft being turned to tight tolerances under high-contrast lighting.",              specs: [{ key: "MATERIALS", value: "TITANIUM, INCONEL 718, M250, 15CDV6" }, { key: "ACCURACY", value: "< 0.003MM (3 MICRONS)" }, { key: "SWING ENVELOPE", value: "Ø42000MM X 2500MM LENGTH" }, { key: "SURFACE FINISH", value: "RA 0.2 MICRONS" }, { key: "INSPECTION", value: "UNIMASTER & LASER SCANNING" }] },
+    { _id: "cs3", id: "03", order: 3, code: "03", title: "AEROSPACE STRUCTURAL ASSEMBLY",    image: IMAGES.home.capabilityCards.structuralAssembly, imageAlt: "Cleanroom assembly of flight-critical structural brackets and aerostructure bulkheads.",                          specs: [{ key: "COMPATIBILITY", value: "FLIGHT-CRITICAL AEROSTRUCTURES" }, { key: "CERTIFICATION", value: "AS9100D COMPLIANT" }, { key: "LOAD TOLERANCE", value: "450KN TESTING RATING" }, { key: "HANDLING CAPACITY", value: "Ø42000MM X 4M LENGTH" }, { key: "ENVIRONMENTS", value: "CLASS-10K CLEAN ROOM" }, { key: "NDT METHODS", value: "ULTRASONIC, DYE PENETRANT, CONDUCTIVITY" }] },
+    { _id: "cs4", id: "04", order: 4, code: "04", title: "WELDING & JOINING",                image: IMAGES.home.capabilityCards.weldingJoining,     imageAlt: "Certified welder performing TIG welding on flight-critical aerostructure components in a controlled environment.", specs: [{ key: "COMPATIBILITY", value: "AEROSPACE & DEFENCE MOTOR CASING" }, { key: "CERTIFICATION", value: "AUTHORIZED BY ISRO & DRDO" }, { key: "ENVIRONMENTS", value: "ISO 8 CLEAN ROOM" }, { key: "NDT METHODS", value: "XRAY, ULTRASONIC, DYE PENETRANT, CONDUCTIVITY" }] },
   ];
+  const { data: slidesData } = useSanity<SanityCapabilitySlide[]>(CAPABILITY_SLIDES_QUERY);
+  const items = slidesData?.length ? slidesData : FALLBACK_SLIDES;
 
   return (
     <section id="what-we-build" ref={targetRef} className="relative h-[400vh] bg-[#050505] overflow-visible">
       {/* Sticky viewport container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center pt-20">
         
 
 
@@ -669,7 +608,7 @@ function WhatWeBuild() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="relative w-screen h-full flex items-center justify-center select-none overflow-hidden"
+              className="relative w-screen h-100vh flex items-center justify-center select-none overflow-show"
             >
               {/* Massive background number outline */}
               <div className="absolute left-10 md:left-24 top-1/2 -translate-y-1/2 font-sans font-black text-[22vw] text-white/[0.015] leading-none tracking-tighter select-none pointer-events-none font-bold">
@@ -688,10 +627,10 @@ function WhatWeBuild() {
                   </div>
 
                   {/* Isolated image container */}
-                  <div className="relative aspect-[16/9] w-full rounded-sm border border-white/[0.05] bg-[#0D0F12] overflow-hidden group">
+                  <div className="relative aspect-[16/9] min-h-[40vh] w-full rounded-sm border border-white/[0.05] bg-[#0D0F12] overflow-hidden group">
                     <img
                       src={item.image}
-                      alt={item.alt}
+                      alt={item.imageAlt}
                       className="w-full h-full object-cover grayscale brightness-90 contrast-110 group-hover:scale-[1.02] group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
@@ -711,15 +650,12 @@ function WhatWeBuild() {
                   </div>
                   
                   <div className="flex flex-col gap-4">
-                    {item.specs.map((spec, sIdx) => {
-                      const [label, val] = spec.split(": ");
-                      return (
-                        <div key={sIdx} className="flex flex-col border-b border-white/[0.03] pb-2">
-                          <span className="font-tech text-[9px] tracking-wider text-blueprint-dim uppercase">{label}</span>
-                          <span className="font-tech text-xs tracking-widest text-white font-medium uppercase mt-0.5">{val}</span>
-                        </div>
-                      );
-                    })}
+                    {item.specs.map((spec, sIdx) => (
+                      <div key={sIdx} className="flex flex-col border-b border-white/[0.03] pb-2">
+                        <span className="font-tech text-[9px] tracking-wider text-blueprint-dim uppercase">{spec.key}</span>
+                        <span className="font-tech text-xs tracking-widest text-white font-medium uppercase mt-0.5">{spec.value}</span>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Micro digital status indicator */}
@@ -927,6 +863,8 @@ function NewsSection() {
 // ─── Insights ──────────────────────────────────────────────────────────────────
 
 function InsightsSection() {
+  const { data: insightsData } = useSanity<SanityInsight[]>(INSIGHTS_QUERY);
+  const INSIGHTS = insightsData?.length ? insightsData : FALLBACK_INSIGHTS;
 
   return (
     <section className="bg-[#0a0a0a] py-16 sm:py-20 lg:py-[110px]">
@@ -951,7 +889,7 @@ function InsightsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-10">
           {INSIGHTS.map((item, i) => (
             <article
-              key={i}
+              key={item._id}
               className={`rounded-[14px] p-[26px] flex flex-col gap-[9px] bg-white/[0.025] border border-white/[0.08] ${
                 i > 0 ? "border-l border-white/10" : ""
               }`}
@@ -1123,10 +1061,15 @@ function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => 
 // ─── Home page bundle ─────────────────────────────────────────────────────────
 
 function HomePage({ onNavigate }: { onNavigate: (page: Page) => void }) {
+  const { data: settings } = useSanity<SanitySiteSettings>(SITE_SETTINGS_QUERY);
+  const capabilitiesTicker = settings?.capabilitiesTicker?.length
+    ? settings.capabilitiesTicker
+    : FALLBACK_CAPABILITIES_TICKER;
+
   return (
     <>
       <HeroSection />
-      <CapabilityTicker />
+      <CapabilityTicker capabilities={capabilitiesTicker} />
       <ClientLogos />
       <VerificationProofStrip />
       <WhatWeBuild />

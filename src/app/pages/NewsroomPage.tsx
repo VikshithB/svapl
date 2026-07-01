@@ -1,50 +1,61 @@
 import { useState } from "react";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { NEWS_ARTICLES_QUERY } from "@/lib/queries";
+import type { SanityNewsArticle } from "@/lib/types";
 
-const ARTICLES = [
+const FALLBACK_ARTICLES: SanityNewsArticle[] = [
   {
+    _id: "1", slug: "", readTime: "5 min",
     date: "JUN 2026", tag: "Engineering", featured: true,
     title: "The economics of vertical integration in aerostructures",
     desc: "Why owning the full process chain — from raw material receipt through final integration — de-risks delivery timelines for tier-1 programmes.",
     image: IMAGES.newsroom.verticalIntegration,
   },
   {
+    _id: "2", slug: "", readTime: "4 min",
     date: "MAY 2026", tag: "Facility", featured: false,
     title: "Unit-III: Scaling to meet global defence requirements",
     desc: "Our third manufacturing facility — 45,000 sq.ft on a 3-acre site in Shamshabad — is now operational and accepting new programmes.",
     image: IMAGES.newsroom.unitIIIFacility,
   },
   {
+    _id: "3", slug: "", readTime: "6 min",
     date: "APR 2026", tag: "Precision", featured: false,
     title: "How we hold ±5µm across a 1.2m envelope",
     desc: "Thermal control protocols, custom fixturing strategies and closed-loop CMM verification behind our repeatable machining accuracy.",
     image: IMAGES.newsroom.precisionMachining,
   },
   {
+    _id: "4", slug: "", readTime: "5 min",
     date: "MAR 2026", tag: "Quality", featured: false,
     title: "NADCAP welding: what first-article qualification really proves",
     desc: "The accreditation discipline, operator certification cycles, and in-process inspection protocols that keep our special processes flight-safe.",
     image: IMAGES.newsroom.nadcapWelding,
   },
   {
+    _id: "5", slug: "", readTime: "7 min",
     date: "FEB 2026", tag: "Programme", featured: false,
     title: "LVM3's Core Base Shroud: an integration story",
     desc: "From isogrid panel machining and sheet metal forming to final structural riveting — the manufacturing narrative behind LVM3's CBS assembly.",
     image: IMAGES.newsroom.lvm3Shroud,
   },
   {
+    _id: "6", slug: "", readTime: "6 min",
     date: "JAN 2026", tag: "Defence", featured: false,
     title: "Metal canisters for strategic missiles: a manufacturing deep-dive",
     desc: "How SVAPL designed India's first private-sector metallic canister facility — welding SA516 to 15CDV6, pressure-tested to 10 Bar.",
     image: IMAGES.newsroom.metalCanisters,
   },
   {
+    _id: "7", slug: "", readTime: "5 min",
     date: "DEC 2025", tag: "Programme", featured: false,
     title: "First article qualification on PRALAY airframes",
     desc: "Process control, dimensional verification and fatigue-cycle validation — the qualification route for Ø740mm airframes in 15CDV6.",
     image: IMAGES.newsroom.pralayFirstArticle,
   },
   {
+    _id: "8", slug: "", readTime: "8 min",
     date: "NOV 2025", tag: "Materials", featured: false,
     title: "Maraging Steel M250: why we invested in the capability",
     desc: "The case for in-house Maraging Steel flow-forming, welding and heat treatment — and what it unlocked for India's strategic missile programmes.",
@@ -65,6 +76,8 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 export default function NewsroomPage() {
+  const { data } = useSanity<SanityNewsArticle[]>(NEWS_ARTICLES_QUERY);
+  const ARTICLES = data?.length ? data : FALLBACK_ARTICLES;
   const [tag, setTag] = useState("All");
   const featured = ARTICLES[0] ?? null;
   const rest = ARTICLES.slice(1).filter((a) => tag === "All" || a.tag === tag);
@@ -145,7 +158,7 @@ export default function NewsroomPage() {
       <section className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-[44px] pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
           {rest.map((a) => (
-            <article key={a.title} className="bg-[#0a0a0a] flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">
+            <article key={a._id} className="bg-[#0a0a0a] flex flex-col group cursor-pointer hover:bg-[#141414] transition-colors">
               <div className="relative h-[200px] overflow-hidden">
                 <img
                   src={a.image}

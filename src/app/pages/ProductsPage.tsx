@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { IMAGES } from "@/config/images";
+import { useSanity } from "@/lib/useSanity";
+import { PRODUCTS_QUERY } from "@/lib/queries";
+import type { SanityProduct } from "@/lib/types";
 
 type Programme = "ALL" | "ISRO" | "DRDO" | "HSFC";
-
-interface Product {
-  id: string;
-  num: string;
-  title: string;
-  programme: "ISRO" | "DRDO" | "HSFC";
-  img: string;
-  specs: { k: string; v: string }[];
-  desc: string;
-}
 
 const I = {
   shell: IMAGES.products.shell,
@@ -22,139 +15,50 @@ const I = {
   fac:   IMAGES.products.facility,
 };
 
-const PRODUCTS: Product[] = [
+const FALLBACK_PRODUCTS: SanityProduct[] = [
   {
-    id: "lvm3-shroud", num: "01", title: "LVM3 Core Base Shroud", programme: "ISRO", img: I.shell,
+    _id: "1", id: "lvm3-shroud", num: "01", title: "LVM3 Core Base Shroud", programme: "ISRO", img: I.shell,
     specs: [{ k: "DIAMETER", v: "4200 MM" }, { k: "HEIGHT", v: "3300 MM" }, { k: "MATERIAL", v: "AA 7075, AA2014, 15CDV6" }],
     desc: "Assembly combines advanced sheet metal forming with isogrid panel machining, structural riveting through fixture and integration, rolling of brackets.",
   },
-  {
-    id: "stab-fin", num: "02", title: "Stabilizer Fin Assy.", programme: "DRDO", img: I.fin,
-    specs: [{ k: "HEIGHT", v: "500 MM" }, { k: "LENGTH", v: "800 MM" }, { k: "MATERIAL", v: "Ti. Grade-V, Inconel 13-8MO" }],
-    desc: "Constructed from 108 components showcasing complex machining and riveting of specialized materials like Titanium Grade 5, Inconel, and 13-8 MO.",
-  },
-  {
-    id: "rcs-vtp", num: "03", title: "RCS & VTP", programme: "DRDO", img: I.prec,
-    specs: [{ k: "DIAMETER", v: "1500 MM" }, { k: "HEIGHT", v: "1000 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, SS316L & SS308L Graphite" }],
-    desc: "Integration of propellent tanks with adaptors, thrusters and pipeline assemblies.",
-  },
-  {
-    id: "metal-canister", num: "04", title: "Metal Canister", programme: "DRDO", img: I.weld,
-    specs: [{ k: "DIAMETER", v: "1300 MM" }, { k: "LENGTH", v: "9000 MM" }, { k: "MATERIAL", v: "SA516, 15CDV6" }],
-    desc: "Specialized missile launch canister utilizing welded SA516 and 15CDV6 construction. Hydraulic pressure testing up to 10 bar and pneumatic leak testing up to 0.3 bar.",
-  },
-  {
-    id: "nose-cap", num: "05", title: "Nose Cap", programme: "DRDO", img: I.assy,
-    specs: [{ k: "DIAMETER", v: "1400 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "15CDV6, AA2219, Titanium Grade V" }],
-    desc: "Combination of honeycomb machining, welding AA2219 honeycomb sections and final assembly with lock ring, inner ring, dome and package fitting brackets.",
-  },
-  {
-    id: "payload", num: "06", title: "Pay Load", programme: "DRDO", img: I.prec,
-    specs: [{ k: "DIAMETER", v: "600 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "15CDV6, AA2014" }],
-    desc: "Combination of machining, riveting, and assembly.",
-  },
-  {
-    id: "smf", num: "07", title: "SMF", programme: "HSFC", img: I.fac,
-    specs: [{ k: "DIAMETER", v: "4200 MM" }, { k: "HEIGHT", v: "4000 MM" }, { k: "MATERIAL", v: "AA7075" }],
-    desc: "Features sophisticated blend of precision-machined isogrid panels and high-strength riveted assembly.",
-  },
-  {
-    id: "airframe-structure", num: "08", title: "Air Frame Structure", programme: "DRDO", img: I.fin,
-    specs: [{ k: "DIAMETER", v: "740 MM" }, { k: "HEIGHT", v: "3200 MM" }, { k: "MATERIAL", v: "15CDV6, Tungsten" }],
-    desc: "Assembly integrates sections with precision milling, turning and welding techniques for final structure realisation.",
-  },
-  {
-    id: "nozzle-assy", num: "09", title: "Nozzle Assy.", programme: "ISRO", img: I.assy,
-    specs: [{ k: "DIAMETER", v: "2500 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "15CDV6" }],
-    desc: "Precision-engineered fabrication, rolling of Grade 70 plates, RT quality weld and machining to final stage maintaining thickness very accurately to avoid weight penalties for launch vehicle.",
-  },
-  {
-    id: "lem-motor-case", num: "10", title: "LEM Motor Case", programme: "ISRO", img: I.shell,
-    specs: [{ k: "DIAMETER", v: "800 MM" }, { k: "HEIGHT", v: "4000 MM" }, { k: "MATERIAL", v: "15CDV6" }],
-    desc: "Fabricated from sheet rolling to machining to welding; featuring complex machining of cant angle nozzle convergents, with certificated proof pressure testing up to 132 kg/cm².",
-  },
-  {
-    id: "sagarika-motor-case", num: "11", title: "Sagarika Motor Case", programme: "DRDO", img: I.weld,
-    specs: [{ k: "DIAMETER", v: "800 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "Maraging Steel M250" }],
-    desc: "Fabricated from sheet rolling to final assembly: featuring high-precision machining, specialized heat treatment and rigorous 125 kg/cm² pressure validation.",
-  },
-  {
-    id: "mandrel", num: "12", title: "Mandrel", programme: "ISRO", img: I.prec,
-    specs: [{ k: "DIAMETER", v: "3200 MM" }, { k: "HEIGHT", v: "5000 MM" }, { k: "MATERIAL", v: "Grade 70" }],
-    desc: "One of its kind 13 fin mandrel for S200 boosters executed by welding of Grade 70 material, machining of fins to highest accuracy, final assembly by laser inspection followed by Teflon coating.",
-  },
-  {
-    id: "tbsl", num: "13", title: "TBSL", programme: "ISRO", img: I.shell,
-    specs: [{ k: "DIAMETER", v: "2000 MM (3200 INC. FINS)" }, { k: "HEIGHT", v: "1800 MM" }, { k: "MATERIAL", v: "AA7075" }],
-    desc: "Features precision machining of isogrid panels and high strength riveted assembly.",
-  },
-  {
-    id: "astra-casing", num: "14", title: "Astra Rocket Motor Casing", programme: "DRDO", img: I.weld,
-    specs: [{ k: "DIAMETER", v: "190 MM" }, { k: "LENGTH", v: "2000 MM" }, { k: "MATERIAL", v: "Maraging Steel M250" }],
-    desc: "Combination of flowform tube welding, machining, RT, DP, and proof pressure testing up to 210 bar.",
-  },
-  {
-    id: "control-surface", num: "15", title: "Control Surface", programme: "DRDO", img: I.fin,
-    specs: [{ k: "HEIGHT", v: "400 MM" }, { k: "LENGTH", v: "500 MM" }, { k: "MATERIAL", v: "Ti. Grade V, Inconel 718, 13-8MO, Custom 465" }],
-    desc: "Constructed from 95 components, showcasing complex machining and riveting of specialized materials including Titanium Grade 5, Custom 465, Inconel 718 and 13-8 MO.",
-  },
-  {
-    id: "l110-egc", num: "16", title: "L110 EGC Actuator System Components", programme: "ISRO", img: I.prec,
-    specs: [{ k: "MATERIAL", v: "15CDV6, Inconel 718, 15-5PH, 17-4PH, AA7075" }, { k: "TOLERANCE", v: "15–25 MICRONS" }, { k: "COMPONENTS", v: "56 INDIVIDUAL PARTS" }],
-    desc: "High-precision actuator systems engineered to tolerances of 15–25 microns, featuring a sophisticated integration of 56 individual components.",
-  },
-  {
-    id: "sbs-assy", num: "17", title: "SBS Assy.", programme: "ISRO", img: I.fac,
-    specs: [{ k: "DIAMETER", v: "2160 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "15CDV6, Al. Alloy 2014" }],
-    desc: "Assembly of engine mounting adaptor with 2° angular accuracy in internal section, along with rings, sheet metal formation of skins and stiffeners, assembled with reviting, jo-bolt and shear bolt fixing.",
-  },
-  {
-    id: "slant-nose-cone", num: "18", title: "Slant Nose Cone Assy.", programme: "ISRO", img: I.assy,
-    specs: [{ k: "DIAMETER", v: "2160 MM" }, { k: "HEIGHT", v: "3800 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6" }],
-    desc: "Precision-engineered assembly — a combination of sheet rolling and ring machining, finalised with high-strength riveting and specialised jobolt fastening.",
-  },
-  {
-    id: "rcs-assy", num: "19", title: "Reaction Control Structure Assy.", programme: "ISRO", img: I.shell,
-    specs: [{ k: "DIAMETER", v: "700 MM" }, { k: "HEIGHT", v: "2700 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6, EN24, AISI304" }],
-    desc: "Unique structure 700mm dia and height 2700mm. Assembly from top to bottom concentricity shall be maintained within 0.4mm, achieved by precision fixturing and assembly sequence techniques.",
-  },
-  {
-    id: "thrust-frame", num: "20", title: "Thrust Frame", programme: "ISRO", img: I.assy,
-    specs: [{ k: "DIAMETER", v: "3000 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CD V6" }],
-    desc: "Combination of sheet rolling, riveting, ring machining, and jo-bolt fixing.",
-  },
-  {
-    id: "strap-on-nose-cone", num: "21", title: "Strap On Nose Cone Assy.", programme: "ISRO", img: I.fin,
-    specs: [{ k: "DIAMETER", v: "Ø 1000 MM" }, { k: "HEIGHT", v: "1387 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6, MDN 250 & EN24" }],
-    desc: "Combination of sheet rolling, riveting, ring machining, and jo-bolt fixing.",
-  },
-  {
-    id: "its-assy", num: "22", title: "ITS Assy.", programme: "ISRO", img: I.shell,
-    specs: [{ k: "DIAMETER", v: "Ø 2160 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "Al.Alloy2014, 15CD V6, AISI 304" }],
-    desc: "Features precision machining of rings, sheet metal formation of skins and stiffeners, assembled with reviting, jo-bolt fixing, shear bolt fixing and quality checked by laser measurement.",
-  },
-  {
-    id: "propellant-tank", num: "23", title: "Propellant Tank Assy.", programme: "DRDO", img: I.prec,
-    specs: [{ k: "OVERALL SIZE", v: "80, 48, 36, 32, 21, 7 LTS" }, { k: "MATERIAL", v: "Al. Alloy 65032, 19500, & AISI 321" }],
-    desc: "Combination of machining of top dish and bottom dish welding, hydraulic pressure test up to 60 bar and pneumatic pressure test up to 45 bar.",
-  },
-  {
-    id: "akash-airframes", num: "24", title: "Airframes Section 1A & II Assy. (AKASH)", programme: "DRDO", img: I.fin,
-    specs: [{ k: "DIAMETER", v: "300 MM" }, { k: "HEIGHT", v: "1200 MM" }, { k: "MATERIAL", v: "Al. Alloy AA 2014 & FRP" }],
-    desc: "Combination of machining, riveting, and assembly of Section I & II.",
-  },
+  { _id: "2",  id: "stab-fin",           num: "02", title: "Stabilizer Fin Assy.",                      programme: "DRDO", img: I.fin,   specs: [{ k: "HEIGHT", v: "500 MM" }, { k: "LENGTH", v: "800 MM" }, { k: "MATERIAL", v: "Ti. Grade-V, Inconel 13-8MO" }], desc: "Constructed from 108 components showcasing complex machining and riveting of specialized materials like Titanium Grade 5, Inconel, and 13-8 MO." },
+  { _id: "3",  id: "rcs-vtp",            num: "03", title: "RCS & VTP",                                  programme: "DRDO", img: I.prec,  specs: [{ k: "DIAMETER", v: "1500 MM" }, { k: "HEIGHT", v: "1000 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, SS316L & SS308L Graphite" }], desc: "Integration of propellent tanks with adaptors, thrusters and pipeline assemblies." },
+  { _id: "4",  id: "metal-canister",     num: "04", title: "Metal Canister",                             programme: "DRDO", img: I.weld,  specs: [{ k: "DIAMETER", v: "1300 MM" }, { k: "LENGTH", v: "9000 MM" }, { k: "MATERIAL", v: "SA516, 15CDV6" }], desc: "Specialized missile launch canister utilizing welded SA516 and 15CDV6 construction. Hydraulic pressure testing up to 10 bar and pneumatic leak testing up to 0.3 bar." },
+  { _id: "5",  id: "nose-cap",           num: "05", title: "Nose Cap",                                   programme: "DRDO", img: I.assy,  specs: [{ k: "DIAMETER", v: "1400 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "15CDV6, AA2219, Titanium Grade V" }], desc: "Combination of honeycomb machining, welding AA2219 honeycomb sections and final assembly with lock ring, inner ring, dome and package fitting brackets." },
+  { _id: "6",  id: "payload",            num: "06", title: "Pay Load",                                   programme: "DRDO", img: I.prec,  specs: [{ k: "DIAMETER", v: "600 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "15CDV6, AA2014" }], desc: "Combination of machining, riveting, and assembly." },
+  { _id: "7",  id: "smf",               num: "07", title: "SMF",                                        programme: "HSFC", img: I.fac,   specs: [{ k: "DIAMETER", v: "4200 MM" }, { k: "HEIGHT", v: "4000 MM" }, { k: "MATERIAL", v: "AA7075" }], desc: "Features sophisticated blend of precision-machined isogrid panels and high-strength riveted assembly." },
+  { _id: "8",  id: "airframe-structure", num: "08", title: "Air Frame Structure",                        programme: "DRDO", img: I.fin,   specs: [{ k: "DIAMETER", v: "740 MM" }, { k: "HEIGHT", v: "3200 MM" }, { k: "MATERIAL", v: "15CDV6, Tungsten" }], desc: "Assembly integrates sections with precision milling, turning and welding techniques for final structure realisation." },
+  { _id: "9",  id: "nozzle-assy",        num: "09", title: "Nozzle Assy.",                               programme: "ISRO", img: I.assy,  specs: [{ k: "DIAMETER", v: "2500 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "15CDV6" }], desc: "Precision-engineered fabrication, rolling of Grade 70 plates, RT quality weld and machining to final stage maintaining thickness very accurately to avoid weight penalties for launch vehicle." },
+  { _id: "10", id: "lem-motor-case",     num: "10", title: "LEM Motor Case",                             programme: "ISRO", img: I.shell, specs: [{ k: "DIAMETER", v: "800 MM" }, { k: "HEIGHT", v: "4000 MM" }, { k: "MATERIAL", v: "15CDV6" }], desc: "Fabricated from sheet rolling to machining to welding; featuring complex machining of cant angle nozzle convergents, with certificated proof pressure testing up to 132 kg/cm²." },
+  { _id: "11", id: "sagarika-motor-case",num: "11", title: "Sagarika Motor Case",                        programme: "DRDO", img: I.weld,  specs: [{ k: "DIAMETER", v: "800 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "Maraging Steel M250" }], desc: "Fabricated from sheet rolling to final assembly: featuring high-precision machining, specialized heat treatment and rigorous 125 kg/cm² pressure validation." },
+  { _id: "12", id: "mandrel",            num: "12", title: "Mandrel",                                    programme: "ISRO", img: I.prec,  specs: [{ k: "DIAMETER", v: "3200 MM" }, { k: "HEIGHT", v: "5000 MM" }, { k: "MATERIAL", v: "Grade 70" }], desc: "One of its kind 13 fin mandrel for S200 boosters executed by welding of Grade 70 material, machining of fins to highest accuracy, final assembly by laser inspection followed by Teflon coating." },
+  { _id: "13", id: "tbsl",              num: "13", title: "TBSL",                                       programme: "ISRO", img: I.shell, specs: [{ k: "DIAMETER", v: "2000 MM (3200 INC. FINS)" }, { k: "HEIGHT", v: "1800 MM" }, { k: "MATERIAL", v: "AA7075" }], desc: "Features precision machining of isogrid panels and high strength riveted assembly." },
+  { _id: "14", id: "astra-casing",       num: "14", title: "Astra Rocket Motor Casing",                 programme: "DRDO", img: I.weld,  specs: [{ k: "DIAMETER", v: "190 MM" }, { k: "LENGTH", v: "2000 MM" }, { k: "MATERIAL", v: "Maraging Steel M250" }], desc: "Combination of flowform tube welding, machining, RT, DP, and proof pressure testing up to 210 bar." },
+  { _id: "15", id: "control-surface",    num: "15", title: "Control Surface",                            programme: "DRDO", img: I.fin,   specs: [{ k: "HEIGHT", v: "400 MM" }, { k: "LENGTH", v: "500 MM" }, { k: "MATERIAL", v: "Ti. Grade V, Inconel 718, 13-8MO, Custom 465" }], desc: "Constructed from 95 components, showcasing complex machining and riveting of specialized materials including Titanium Grade 5, Custom 465, Inconel 718 and 13-8 MO." },
+  { _id: "16", id: "l110-egc",           num: "16", title: "L110 EGC Actuator System Components",        programme: "ISRO", img: I.prec,  specs: [{ k: "MATERIAL", v: "15CDV6, Inconel 718, 15-5PH, 17-4PH, AA7075" }, { k: "TOLERANCE", v: "15–25 MICRONS" }, { k: "COMPONENTS", v: "56 INDIVIDUAL PARTS" }], desc: "High-precision actuator systems engineered to tolerances of 15–25 microns, featuring a sophisticated integration of 56 individual components." },
+  { _id: "17", id: "sbs-assy",           num: "17", title: "SBS Assy.",                                  programme: "ISRO", img: I.fac,   specs: [{ k: "DIAMETER", v: "2160 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "15CDV6, Al. Alloy 2014" }], desc: "Assembly of engine mounting adaptor with 2° angular accuracy in internal section, along with rings, sheet metal formation of skins and stiffeners, assembled with reviting, jo-bolt and shear bolt fixing." },
+  { _id: "18", id: "slant-nose-cone",    num: "18", title: "Slant Nose Cone Assy.",                      programme: "ISRO", img: I.assy,  specs: [{ k: "DIAMETER", v: "2160 MM" }, { k: "HEIGHT", v: "3800 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6" }], desc: "Precision-engineered assembly — a combination of sheet rolling and ring machining, finalised with high-strength riveting and specialised jobolt fastening." },
+  { _id: "19", id: "rcs-assy",           num: "19", title: "Reaction Control Structure Assy.",           programme: "ISRO", img: I.shell, specs: [{ k: "DIAMETER", v: "700 MM" }, { k: "HEIGHT", v: "2700 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6, EN24, AISI304" }], desc: "Unique structure 700mm dia and height 2700mm. Assembly from top to bottom concentricity shall be maintained within 0.4mm, achieved by precision fixturing and assembly sequence techniques." },
+  { _id: "20", id: "thrust-frame",       num: "20", title: "Thrust Frame",                               programme: "ISRO", img: I.assy,  specs: [{ k: "DIAMETER", v: "3000 MM" }, { k: "HEIGHT", v: "1500 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CD V6" }], desc: "Combination of sheet rolling, riveting, ring machining, and jo-bolt fixing." },
+  { _id: "21", id: "strap-on-nose-cone", num: "21", title: "Strap On Nose Cone Assy.",                   programme: "ISRO", img: I.fin,   specs: [{ k: "DIAMETER", v: "Ø 1000 MM" }, { k: "HEIGHT", v: "1387 MM" }, { k: "MATERIAL", v: "Al. Alloy 2014, 15CDV6, MDN 250 & EN24" }], desc: "Combination of sheet rolling, riveting, ring machining, and jo-bolt fixing." },
+  { _id: "22", id: "its-assy",           num: "22", title: "ITS Assy.",                                  programme: "ISRO", img: I.shell, specs: [{ k: "DIAMETER", v: "Ø 2160 MM" }, { k: "HEIGHT", v: "2000 MM" }, { k: "MATERIAL", v: "Al.Alloy2014, 15CD V6, AISI 304" }], desc: "Features precision machining of rings, sheet metal formation of skins and stiffeners, assembled with reviting, jo-bolt fixing, shear bolt fixing and quality checked by laser measurement." },
+  { _id: "23", id: "propellant-tank",    num: "23", title: "Propellant Tank Assy.",                      programme: "DRDO", img: I.prec,  specs: [{ k: "OVERALL SIZE", v: "80, 48, 36, 32, 21, 7 LTS" }, { k: "MATERIAL", v: "Al. Alloy 65032, 19500, & AISI 321" }], desc: "Combination of machining of top dish and bottom dish welding, hydraulic pressure test up to 60 bar and pneumatic pressure test up to 45 bar." },
+  { _id: "24", id: "akash-airframes",    num: "24", title: "Airframes Section 1A & II Assy. (AKASH)",   programme: "DRDO", img: I.fin,   specs: [{ k: "DIAMETER", v: "300 MM" }, { k: "HEIGHT", v: "1200 MM" }, { k: "MATERIAL", v: "Al. Alloy AA 2014 & FRP" }], desc: "Combination of machining, riveting, and assembly of Section I & II." },
 ];
 
 const FILTERS: Programme[] = ["ALL", "ISRO", "DRDO", "HSFC"];
 
-const PROGRAMME_COUNTS = {
-  ALL:  PRODUCTS.length,
-  ISRO: PRODUCTS.filter(p => p.programme === "ISRO").length,
-  DRDO: PRODUCTS.filter(p => p.programme === "DRDO").length,
-  HSFC: PRODUCTS.filter(p => p.programme === "HSFC").length,
-};
-
 export function ProductsPage({ onBack }: { onBack: () => void }) {
+  const { data } = useSanity<SanityProduct[]>(PRODUCTS_QUERY);
+  const PRODUCTS = data?.length ? data : FALLBACK_PRODUCTS;
+
+  const PROGRAMME_COUNTS = {
+    ALL:  PRODUCTS.length,
+    ISRO: PRODUCTS.filter(p => p.programme === "ISRO").length,
+    DRDO: PRODUCTS.filter(p => p.programme === "DRDO").length,
+    HSFC: PRODUCTS.filter(p => p.programme === "HSFC").length,
+  };
+
   const [filter, setFilter] = useState<Programme>("ALL");
   const [activeId, setActiveId] = useState(PRODUCTS[0].id);
 

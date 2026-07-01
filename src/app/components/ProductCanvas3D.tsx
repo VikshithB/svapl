@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LVM3ModelViewer } from "./LVM3ModelViewer";
+import { StabilizerFinModelViewer } from "./StabilizerFinModelViewer";
+import { NoseCapModelViewer } from "./NoseCapModelViewer";
 
 interface Point3D {
   x: number;
@@ -16,14 +18,13 @@ interface Point2D {
 }
 
 interface ProductCanvas3DProps {
-  modelName: "shroud" | "fin" | "rcs" | "canister";
+  modelName: "shroud" | "fin" | "nosecap" | "canister";
 }
 
-// Wrapper: conditionally renders the 3D viewer or the 2D wireframe canvas.
-// Split into two components to satisfy React's Rules of Hooks
-// (hooks must not be called after a conditional return).
 export function ProductCanvas3D({ modelName }: ProductCanvas3DProps) {
-  if (modelName === "shroud") return <LVM3ModelViewer />;
+  if (modelName === "shroud")   return <LVM3ModelViewer />;
+  if (modelName === "fin")      return <StabilizerFinModelViewer />;
+  if (modelName === "nosecap")  return <NoseCapModelViewer />;
   return <WireframeCanvas modelName={modelName} />;
 }
 
@@ -237,79 +238,6 @@ function WireframeCanvas({ modelName }: ProductCanvas3DProps) {
           );
         }
 
-      } else if (model === "rcs") {
-        // RCS & VTP — circular ring frame viewed face-on (Ø1500, H1000mm).
-        // Outer ring, inner hub, 8 radial spokes, 3 propellant tanks, 4 thrusters.
-        const outerR = 68;
-        const seg16 = 16;
-        const seg8  = 8;
-
-        // Outer structural ring (double, front & back face)
-        const or1 = addCircle(outerR,  7, seg16, "outer_ring");
-        const or2 = addCircle(outerR, -7, seg16, "outer_ring");
-        for (let i = 0; i < seg16; i++) {
-          edges.push([or1+i, or1+((i+1)%seg16)]);
-          edges.push([or2+i, or2+((i+1)%seg16)]);
-          edges.push([or1+i, or2+i]);
-        }
-
-        // Inner manifold hub ring
-        const hub1 = addCircle(20, 7, seg8, "hub");
-        const hub2 = addCircle(20,-7, seg8, "hub");
-        for (let i = 0; i < seg8; i++) {
-          edges.push([hub1+i, hub1+((i+1)%seg8)]);
-          edges.push([hub2+i, hub2+((i+1)%seg8)]);
-          edges.push([hub1+i, hub2+i]);
-        }
-
-        // 8 radial spokes (hub → outer ring)
-        for (let s = 0; s < 8; s++) {
-          const oi = or1 + (s * 2);        // every 2nd outer pt (16/8 = 2)
-          const hi = hub1 + s;
-          // Mid-span pipe joint node
-          const ang = (s / 8) * Math.PI * 2;
-          const m1 = vertices.length;
-          vertices.push({ x: Math.cos(ang)*44, y: Math.sin(ang)*44, z:  7, type: "spoke" });
-          const m2 = vertices.length;
-          vertices.push({ x: Math.cos(ang)*44, y: Math.sin(ang)*44, z: -7, type: "spoke" });
-          edges.push([hi, m1], [hub2+s, m2], [m1, oi], [m2, or2+(s*2)], [m1, m2]);
-        }
-
-        // 3 propellant tanks at 120° spacing (offset 30°)
-        for (let t = 0; t < 3; t++) {
-          const ang = (t / 3) * Math.PI * 2 + Math.PI / 6;
-          const tx = Math.cos(ang) * 44;
-          const ty = Math.sin(ang) * 44;
-          const tRing1 = addCircle(10, 14, 8, "tank");
-          const tRing2 = addCircle(10,-14, 8, "tank");
-          for (let i = 0; i < 8; i++) {
-            const a2 = (i / 8) * Math.PI * 2;
-            vertices[tRing1+i].x = tx + Math.cos(a2)*10;
-            vertices[tRing1+i].y = ty + Math.sin(a2)*10;
-            vertices[tRing2+i].x = tx + Math.cos(a2)*10;
-            vertices[tRing2+i].y = ty + Math.sin(a2)*10;
-            edges.push([tRing1+i, tRing1+((i+1)%8)]);
-            edges.push([tRing2+i, tRing2+((i+1)%8)]);
-            edges.push([tRing1+i, tRing2+i]);
-          }
-        }
-
-        // 4 RCS thrusters at cardinal positions, pointing radially outward
-        for (let t = 0; t < 4; t++) {
-          const ang = (t / 4) * Math.PI * 2;
-          const perp = ang + Math.PI / 2;
-          const bx = Math.cos(ang) * outerR;
-          const by = Math.sin(ang) * outerR;
-          const ex = Math.cos(ang) * (outerR + 20);
-          const ey = Math.sin(ang) * (outerR + 20);
-          const t0 = vertices.length;
-          vertices.push({ x: bx, y: by, z: 0, type: "thruster" });
-          vertices.push({ x: ex, y: ey, z: 0, type: "thruster" });
-          vertices.push({ x: ex + Math.cos(perp)*9, y: ey + Math.sin(perp)*9, z: 0, type: "thruster" });
-          vertices.push({ x: ex - Math.cos(perp)*9, y: ey - Math.sin(perp)*9, z: 0, type: "thruster" });
-          edges.push([t0, t0+1], [t0+1, t0+2], [t0+1, t0+3]);
-        }
-
       } else if (model === "canister") {
         // Metal Canister — extremely elongated cylinder (Ø1300, L9000mm → ~7:1).
         // Body rings, 4 longerons, domed end caps, stiffening collars, external lugs.
@@ -458,53 +386,91 @@ function WireframeCanvas({ modelName }: ProductCanvas3DProps) {
       ctx.lineTo(centerX, centerY + 170);
       ctx.stroke();
 
+      // ── Studio lighting simulation ──────────────────────────────────────────
+      // Key light direction in world space (upper-left-front, matching Three.js rig)
+      const KLX = -4, KLY = 8, KLZ = 6;
+      const klLen = Math.sqrt(KLX*KLX + KLY*KLY + KLZ*KLZ);
+      const klNx = KLX/klLen, klNy = KLY/klLen, klNz = KLZ/klLen;
+
+      // Rim light (behind-top)
+      const RLX = 1, RLY = 10, RLZ = -8;
+      const rlLen = Math.sqrt(RLX*RLX + RLY*RLY + RLZ*RLZ);
+      const rlNx = RLX/rlLen, rlNy = RLY/rlLen, rlNz = RLZ/rlLen;
+
       // Draw Edges
       for (let i = 0; i < edges.length; i++) {
         const [idxA, idxB] = edges[i];
         const pA = projected[idxA];
         const pB = projected[idxB];
-
         if (!pA || !pB) continue;
 
+        const vA = vertices[idxA];
+        const vB = vertices[idxB];
+
+        // Edge midpoint in world space (pre-rotation)
+        const mx = (vA.x + vB.x) * 0.5;
+        const my = (vA.y + vB.y) * 0.5;
+        const mz = (vA.z + vB.z) * 0.5;
+        const mLen = Math.sqrt(mx*mx + my*my + mz*mz) || 1;
+        // Surface normal approximated as the outward radial direction from centroid
+        const nx = mx/mLen, ny = my/mLen, nz = mz/mLen;
+
+        // Rotate the normal the same way we rotated the vertices
+        let ny1 = ny * cx - nz * sx;
+        let nz1 = ny * sx + nz * cx;
+        let nx2 = nx * cy + nz1 * sy;
+        let nz2 = -nx * sy + nz1 * cy;
+        let nx3 = nx2 * cz - ny1 * sz;
+        let ny3 = nx2 * sz + ny1 * cz;
+
+        // Lambert diffuse dot products (clamped to 0)
+        const keyDot = Math.max(0, nx3*klNx + ny3*klNy + nz2*klNz);
+        const rimDot = Math.max(0, nx3*rlNx + ny3*rlNy + nz2*rlNz);
+
+        // Combined lighting: ambient + key + rim contribution
+        const lit = 0.18 + keyDot * 0.65 + rimDot * 0.22;
+
         const avgDepth = (pA.zDepth + pB.zDepth) / 2;
-        const normalizedDepth = (avgDepth + 100) / 200; // 0 to 1
-        const alpha = Math.max(0.08, 0.90 - normalizedDepth * 0.82);
+        const normalizedDepth = (avgDepth + 100) / 200;
+        // Depth fade still present but lighter — lighting does most of the work
+        const depthFade = Math.max(0.55, 1.0 - normalizedDepth * 0.45);
+        const alpha = Math.max(0.07, lit * depthFade);
 
         let strokeColor = `rgba(255, 119, 0, ${alpha})`;
         let lineWidth = 1;
 
-        // Custom styling by node type
         const ta = pA.type ?? "";
         const tb = pB.type ?? "";
         if (ta === "flange" || tb === "flange") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 1.35})`;
+          strokeColor = `rgba(255, 119, 0, ${Math.min(1, alpha * 1.35)})`;
           lineWidth = 1.4;
         } else if (ta === "spar" || tb === "spar" || ta === "hub" || tb === "hub") {
-          strokeColor = `rgba(69, 162, 158, ${alpha * 0.95})`;
+          strokeColor = `rgba(69, 162, 158, ${Math.min(1, alpha * 0.95)})`;
           lineWidth = 1.0;
         } else if (ta === "rib" || tb === "rib") {
-          strokeColor = `rgba(69, 162, 158, ${alpha * 0.75})`;
+          strokeColor = `rgba(69, 162, 158, ${Math.min(1, alpha * 0.75)})`;
           lineWidth = 0.8;
         } else if (ta === "thruster" || tb === "thruster") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 1.4})`;
+          // Thrusters catch the accent orange rim — brighter when rim-lit
+          const thrusterAlpha = Math.max(0.15, 0.18 + keyDot * 0.55 + rimDot * 0.55);
+          strokeColor = `rgba(255, 119, 0, ${Math.min(1, thrusterAlpha * depthFade)})`;
           lineWidth = 1.5;
         } else if (ta === "tank" || tb === "tank") {
-          strokeColor = `rgba(69, 162, 158, ${alpha * 0.9})`;
+          strokeColor = `rgba(69, 162, 158, ${Math.min(1, alpha * 0.9)})`;
           lineWidth = 0.9;
         } else if (ta === "spoke" || tb === "spoke") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 0.7})`;
+          strokeColor = `rgba(255, 119, 0, ${Math.min(1, alpha * 0.7)})`;
           lineWidth = 0.7;
         } else if (ta === "lug" || tb === "lug") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 1.2})`;
+          strokeColor = `rgba(255, 119, 0, ${Math.min(1, alpha * 1.2)})`;
           lineWidth = 1.2;
         } else if (ta === "dome" || tb === "dome") {
-          strokeColor = `rgba(255, 119, 0, ${alpha * 0.65})`;
+          strokeColor = `rgba(255, 119, 0, ${Math.min(1, alpha * 0.65)})`;
           lineWidth = 0.7;
         }
 
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = lineWidth;
-        
         ctx.beginPath();
         ctx.moveTo(pA.px, pA.py);
         ctx.lineTo(pB.px, pB.py);
