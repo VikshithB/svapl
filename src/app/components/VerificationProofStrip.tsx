@@ -1,8 +1,4 @@
-import { useSanity } from "@/lib/useSanity";
-import { STATS_QUERY } from "@/lib/queries";
-import type { SanityStat } from "@/lib/types";
-
-const FALLBACK_STATS = [
+const STATS = [
   { _id: "1", value: "99.984%", label: "QUALITY YIELD RATE", code: "6-SIGMA CONFORMANCE" },
   { _id: "2", value: "110+", label: "CASINGS DELIVERED", code: "M250 MARAGING STEEL" },
   { _id: "3", value: "25+ YRS", label: "FLIGHT-PROVEN HERITAGE", code: "ESTABLISHED IN 2000" },
@@ -12,8 +8,7 @@ const FALLBACK_STATS = [
 ];
 
 export function VerificationProofStrip() {
-  const { data } = useSanity<SanityStat[]>(STATS_QUERY);
-  const stats = data?.length ? data : FALLBACK_STATS;
+  const stats = STATS;
 
   return (
     <section className="bg-[#050505] border-b border-white/[0.06] py-1 relative">

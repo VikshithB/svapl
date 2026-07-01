@@ -389,7 +389,7 @@ export default function ContactPage() {
       body.append("name", form.name);
       body.append("company", form.company);
       body.append("classification", form.classification);
-      body.append("_replyto", form.email);
+      body.append("email", form.email);
       body.append("specifications", form.specifications);
       body.append("_subject", `RFQ from ${form.company || form.name} — SVAPL Contact Portal`);
       if (blueprintFile) body.append("blueprint", blueprintFile);
